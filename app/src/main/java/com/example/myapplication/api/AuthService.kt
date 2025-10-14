@@ -2,6 +2,7 @@ package com.example.myapplication.api
 
 import com.example.myapplication.model.AuthResponse
 import com.example.myapplication.model.LoginRequest
+import com.example.myapplication.model.SignupRequest
 import com.example.myapplication.model.User
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -13,4 +14,7 @@ interface AuthService {
 
     @GET("auth/me")
     suspend fun me(): User
+
+    @POST("auth/signup")
+    suspend fun signup(@Body request: SignupRequest): AuthResponse
 }

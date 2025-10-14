@@ -34,6 +34,14 @@
         android:text="Login"
         android:layout_marginBottom="16dp" />
 
+    <!-- Botón para ir a la actividad de registro (Compose) -->
+    <Button
+        android:id="@+id/btnGoRegister"
+        android:layout_width="280dp"
+        android:layout_height="wrap_content"
+        android:text="Ir a Registro"
+        android:layout_marginBottom="16dp" />
+
     <ProgressBar
         android:id="@+id/progress"
         style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"

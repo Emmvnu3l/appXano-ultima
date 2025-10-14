@@ -38,6 +38,11 @@ class MainActivity : AppCompatActivity() {
             }
             doLogin(email, password)
         }
+
+        // Navegar a la nueva actividad de Registro (Compose)
+        binding.btnGoRegister.setOnClickListener {
+            startActivity(Intent(this, RegisterActivity::class.java))
+        }
     }
 
     private fun doLogin(email: String, password: String) {
