@@ -17,7 +17,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField("String", "AUTH_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:QGdanllI/\"")
-        buildConfigField("String", "STORE_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:3Xncgo9I/\"")
+        buildConfigField("String", "STORE_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:3BVxr_UT/\"")
         buildConfigField("int", "TOKEN_TTL_SEC", "3600")
     }
     buildTypes {
@@ -58,4 +58,5 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.recyclerview)
     implementation(libs.coil)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

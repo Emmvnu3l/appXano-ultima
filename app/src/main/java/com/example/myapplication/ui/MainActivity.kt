@@ -52,7 +52,12 @@ class MainActivity : AppCompatActivity() {
                 if (token.isNullOrEmpty()) {
                     Toast.makeText(this@MainActivity, "Token no recibido", Toast.LENGTH_SHORT).show()
                 } else {
-                    tokenManager.saveAuth(token, response.user?.name, response.user?.email)
+                    tokenManager.saveAuth(
+                        token,
+                        response.user?.name,
+                        response.user?.email,
+                        response.user?.id
+                    )
                     navigateToHome()
                 }
             } catch (e: Exception) {
