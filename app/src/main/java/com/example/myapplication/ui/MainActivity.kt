@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Opción 3: desactivar edge-to-edge para evitar solapamientos con barras del sistema.
+        WindowCompat.setDecorFitsSystemWindows(window, true)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -40,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Navegar a la nueva actividad de Registro (Compose)
-        binding.btnGoRegister.setOnClickListener {
+         binding.btnGoRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
@@ -61,8 +64,22 @@ class MainActivity : AppCompatActivity() {
                         token,
                         response.user?.name,
                         response.user?.email,
-                        response.user?.id
+                        response.user?.id,
+                        response.user?.role
                     )
+                    // Asegurar rol desde /auth/me en caso de que el login no lo incluya
+                    try {
+                        val me = withContext(Dispatchers.IO) { service.me() }
+                        tokenManager.saveAuth(
+                            token,
+                            me.name,
+                            me.email,
+                            me.id,
+                            me.role
+                        )
+                    } catch (_: Exception) {
+                        // Si falla, continuamos con lo que tenemos
+                    }
                     navigateToHome()
                 }
             } catch (e: Exception) {

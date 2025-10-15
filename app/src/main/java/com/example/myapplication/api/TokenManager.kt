@@ -7,12 +7,13 @@ class TokenManager(context: Context) {
     private val prefs: SharedPreferences =
         context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
 
-    fun saveAuth(token: String, name: String? = null, email: String? = null, userId: Int? = null) {
+    fun saveAuth(token: String, name: String? = null, email: String? = null, userId: Int? = null, role: String? = null) {
         prefs.edit()
             .putString(KEY_TOKEN, token)
             .putString(KEY_NAME, name)
             .putString(KEY_EMAIL, email)
             .putInt(KEY_USER_ID, userId ?: -1)
+            .putString(KEY_ROLE, role)
             .apply()
     }
 
@@ -27,9 +28,18 @@ class TokenManager(context: Context) {
         return if (id >= 0) id else null
     }
 
+    fun getRole(): String? = prefs.getString(KEY_ROLE, null)
+
+    fun setRole(role: String?) {
+        prefs.edit().putString(KEY_ROLE, role).apply()
+    }
+
     fun isLoggedIn(): Boolean = !getToken().isNullOrEmpty()
 
-    fun isAdmin(): Boolean = getUserId() == 1
+    fun isAdmin(): Boolean {
+        val role = getRole()?.lowercase()?.trim()
+        return role == "admin"
+    }
 
     fun clear() {
         prefs.edit().clear().apply()
@@ -40,5 +50,6 @@ class TokenManager(context: Context) {
         private const val KEY_NAME = "name"
         private const val KEY_EMAIL = "email"
         private const val KEY_USER_ID = "user_id"
+        private const val KEY_ROLE = "role"
     }
 }

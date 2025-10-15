@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
@@ -21,6 +21,25 @@ class ProductsFragment : Fragment() {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ProductAdapter
+    // Comentario: query inicial opcional para filtrar productos por nombre/descr.
+    private var initialQuery: String? = null
+
+    companion object {
+        // Comentario: permite crear el fragment con un query predefinido.
+        fun newInstance(query: String?): ProductsFragment {
+            val f = ProductsFragment()
+            val args = Bundle()
+            args.putString("query", query)
+            f.arguments = args
+            return f
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Comentario: recupera el query pasado por argumentos.
+        initialQuery = arguments?.getString("query")
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,23 +52,40 @@ class ProductsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        adapter = ProductAdapter { product ->
-            val intent = Intent(requireContext(), ProductDetailActivity::class.java)
-            intent.putExtra("product", product)
-            startActivity(intent)
+        adapter = ProductAdapter(
+            onProductClick = { product ->
+                val intent = Intent(requireContext(), ProductDetailActivity::class.java)
+                intent.putExtra("product", product)
+                startActivity(intent)
+            },
+            onResultsCountChanged = { count ->
+                if (count == 0) {
+                    binding.tvError.text = "Sin resultados"
+                    binding.tvError.visibility = View.VISIBLE
+                } else {
+                    binding.tvError.visibility = View.GONE
+                }
+            }
+        )
+        val glm = GridLayoutManager(requireContext(), 2)
+        // Hacer que el header ocupe el ancho completo (span=2)
+        glm.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                return if (position == 0) 2 else 1
+            }
         }
-        binding.recycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.recycler.layoutManager = glm
         binding.recycler.adapter = adapter
 
         binding.swipeRefresh.setOnRefreshListener { loadProducts() }
         binding.btnRetry.setOnClickListener { loadProducts() }
 
         val tm = TokenManager(requireContext())
-        binding.fabAdd.visibility = if (tm.isAdmin()) View.VISIBLE else View.GONE
+        // Modo testeo: mostrar siempre el FAB
+        binding.fabAdd.visibility = View.VISIBLE
         binding.fabAdd.setOnClickListener {
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, AddProductFragment())
-                .commit()
+            val intent = Intent(requireContext(), CreateProductActivity::class.java)
+            startActivity(intent)
         }
 
         loadProducts()
@@ -82,7 +118,9 @@ class ProductsFragment : Fragment() {
     }
 
     private fun onProductsLoaded(list: List<Product>) {
-        adapter.submitList(list)
+        // Pasamos el query inicial al adapter para que lo aplique y muestre en el header
+        adapter.initialQuery = initialQuery
+        adapter.setProducts(list)
     }
 
     override fun onDestroyView() {

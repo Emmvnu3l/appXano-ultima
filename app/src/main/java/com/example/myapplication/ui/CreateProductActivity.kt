@@ -3,18 +3,19 @@ package com.example.myapplication.ui
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
-import com.example.myapplication.databinding.FragmentAddProductBinding
+import com.example.myapplication.api.TokenManager
+import com.example.myapplication.databinding.ActivityCreateProductBinding
 import com.example.myapplication.model.CreateProductFullRequest
-import com.example.myapplication.model.ProductImage
 import com.example.myapplication.model.ImagePayload
+import com.example.myapplication.model.ProductImage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -23,34 +24,46 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class AddProductFragment : Fragment() {
-    private var _binding: FragmentAddProductBinding? = null
-    private val binding get() = _binding!!
+class CreateProductActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityCreateProductBinding
+    private lateinit var tokenManager: TokenManager
     private var selectedUris: List<Uri> = emptyList()
+
+    private val categories = listOf(
+        "15% de descuento",
+        "50% de descuento",
+        "perecibles",
+        "no perecibles",
+        "congelados"
+    )
 
     private val pickImages = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         selectedUris = uris ?: emptyList()
         binding.tvImagesStatus.text = "Imágenes seleccionadas: ${selectedUris.size}"
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentAddProductBinding.inflate(inflater, container, false)
-        return binding.root
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        // Opción 3: desactivar edge-to-edge para evitar solapamientos con barras del sistema.
+        WindowCompat.setDecorFitsSystemWindows(window, true)
+        binding = ActivityCreateProductBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        tokenManager = TokenManager(this)
+
+        setupCategory()
+
+        binding.btnPickImages.setOnClickListener { pickImages.launch("image/*") }
+        binding.btnCreate.setOnClickListener { submitCreate() }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.btnPickImages.setOnClickListener {
-            pickImages.launch("image/*")
-        }
-
-        binding.btnCreate.setOnClickListener {
-            createProduct()
+    private fun setupCategory() {
+        val isAdmin = tokenManager.isAdmin()
+        binding.spCategory.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        if (isAdmin) {
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, categories)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spCategory.adapter = adapter
         }
     }
 
@@ -59,45 +72,47 @@ class AddProductFragment : Fragment() {
         binding.btnCreate.isEnabled = !loading
     }
 
-    private fun createProduct() {
+    private fun submitCreate() {
         val name = binding.etName.text?.toString()?.trim().orEmpty()
         val description = binding.etDescription.text?.toString()?.trim()
-        val priceStr = binding.etPrice.text?.toString()?.trim().orEmpty()
-        val price = priceStr.toDoubleOrNull()
+        val price = binding.etPrice.text?.toString()?.trim()?.toDoubleOrNull()
+        val stock = binding.etStock.text?.toString()?.trim()?.toIntOrNull()
+        val brand = binding.etBrand.text?.toString()?.trim()
+        val category = if (binding.spCategory.visibility == View.VISIBLE && binding.spCategory.selectedItem != null) {
+            binding.spCategory.selectedItem.toString()
+        } else null
+
         if (name.isEmpty() || price == null) {
-            Toast.makeText(requireContext(), "Nombre y precio son obligatorios", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Nombre y precio son obligatorios", Toast.LENGTH_SHORT).show()
             return
         }
 
         setLoading(true)
         lifecycleScope.launch {
             try {
-                // 1) Subir imágenes si hay
-                val uploadService = RetrofitClient.createUploadService(requireContext())
-                val uploaded: MutableList<ProductImage> = mutableListOf()
+                val uploadService = RetrofitClient.createUploadService(this@CreateProductActivity)
+                val uploadedPayloads: MutableList<ImagePayload> = mutableListOf()
                 for (uri in selectedUris) {
                     val part = makeImagePart(uri)
                     val img = withContext(Dispatchers.IO) { uploadService.uploadImage(part) }
-                    uploaded.add(img)
+                    uploadedPayloads.add(toPayload(img))
                 }
 
-                // 2) Crear producto
-                val productService = RetrofitClient.createProductService(requireContext())
-                val payloads: List<ImagePayload> = uploaded.map { toPayload(it) }
+                val productService = RetrofitClient.createProductService(this@CreateProductActivity)
                 val req = CreateProductFullRequest(
                     name = name,
                     description = description,
-                    price = price!!,
-                    stock = null,
-                    brand = null,
-                    category = null,
-                    images = payloads
+                    price = price,
+                    stock = stock,
+                    brand = brand,
+                    category = category,
+                    images = uploadedPayloads
                 )
                 withContext(Dispatchers.IO) { productService.createProductFull(req) }
-                Toast.makeText(requireContext(), "Producto creado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CreateProductActivity, "Producto creado", Toast.LENGTH_SHORT).show()
                 clearForm()
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error creando producto: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@CreateProductActivity, "Error creando producto: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }
@@ -108,17 +123,22 @@ class AddProductFragment : Fragment() {
         binding.etName.setText("")
         binding.etDescription.setText("")
         binding.etPrice.setText("")
+        binding.etStock.setText("")
+        binding.etBrand.setText("")
         selectedUris = emptyList()
         binding.tvImagesStatus.text = "Sin imágenes"
+        if (binding.spCategory.visibility == View.VISIBLE && binding.spCategory.adapter?.count ?: 0 > 0) {
+            binding.spCategory.setSelection(0)
+        }
     }
 
     private fun makeImagePart(uri: Uri): MultipartBody.Part {
-        val cr = requireContext().contentResolver
+        val cr = contentResolver
         // Obtiene MIME real si existe; por defecto usa JPEG
         val mime = cr.getType(uri) ?: "image/jpeg"
         val bytes = cr.openInputStream(uri)?.use { it.readBytes() } ?: ByteArray(0)
         val rb: RequestBody = bytes.toRequestBody(mime.toMediaTypeOrNull())
-        // Determina extensión desde MIME para que el backend acepte el archivo
+        // Determina extensión desde MIME (jpg/png/webp, etc.)
         val ext = MimeTypeMap.getSingleton().getExtensionFromMimeType(mime) ?: "jpg"
         val filename = "image_${System.currentTimeMillis()}.$ext"
         return MultipartBody.Part.createFormData("content", filename, rb)
@@ -136,10 +156,5 @@ class AddProductFragment : Fragment() {
             mime = img.mime,
             meta = emptyMap()
         )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

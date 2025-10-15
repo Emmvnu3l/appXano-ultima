@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- Menú para navegación superior (iconos sin etiquetas) -->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/nav_home"
-        android:title="Home"
-        />
+        android:icon="@drawable/ic_home"
+        android:title="Home" />
     <item
         android:id="@+id/nav_products"
-        android:title="Productos"
-        />
+        android:icon="@drawable/ic_store"
+        android:title="Productos" />
     <item
         android:id="@+id/nav_profile"
-        android:title="Perfil"
-        />
+        android:icon="@drawable/ic_user"
+        android:title="Perfil" />
 </menu>

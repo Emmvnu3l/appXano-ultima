@@ -2,6 +2,7 @@ package com.example.myapplication.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
 import com.example.myapplication.R
 import com.example.myapplication.databinding.ActivityHomeBinding
@@ -11,16 +12,27 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Opción 3: desactivar edge-to-edge para evitar solapamientos con barras del sistema.
+        WindowCompat.setDecorFitsSystemWindows(window, true)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Fragment por defecto
-        replaceFragment(HomeFragment())
+        // Comentario: si venimos con un query de productos, abrimos la pestaña Productos filtrada.
+        val productsQuery = intent?.getStringExtra("products_query")
+        val openProducts = intent?.getBooleanExtra("open_products", false) ?: false
+        if (openProducts || !productsQuery.isNullOrEmpty()) {
+            replaceFragment(ProductsFragment.newInstance(productsQuery))
+            binding.bottomNav.selectedItemId = R.id.nav_products
+        } else {
+            // Fragment por defecto
+            replaceFragment(HomeFragment())
+        }
 
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> replaceFragment(HomeFragment())
-                R.id.nav_products -> replaceFragment(ProductsFragment())
+                // Comentario: al seleccionar Productos desde el bottom nav, sin filtro inicial.
+                R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
                 else -> false
             }

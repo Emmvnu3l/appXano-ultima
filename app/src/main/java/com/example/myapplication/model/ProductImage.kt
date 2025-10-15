@@ -6,7 +6,7 @@ import java.io.Serializable
 data class ProductImage(
     @SerializedName("id") val id: Int? = null,
     @SerializedName("url") val url: String? = null,
-    @SerializedName("mime_type") val mimeType: String? = null,
+    @SerializedName("mime") val mime: String? = null,
     @SerializedName("size") val size: Long? = null,
     @SerializedName("path") val path: String? = null
 ) : Serializable
