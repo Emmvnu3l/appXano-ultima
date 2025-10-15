@@ -92,7 +92,11 @@ class ProductsFragment : Fragment() {
     }
 
     private fun setLoading(loading: Boolean) {
+        // Mostrar solo el spinner centrado cuando loading=true; ocultar el contenido
         binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
+        binding.swipeRefresh.visibility = if (loading) View.GONE else View.VISIBLE
+        binding.fabAdd.visibility = if (loading) View.GONE else View.VISIBLE
+        // Ocultar mensajes de error al iniciar una nueva carga
         binding.tvError.visibility = View.GONE
         if (!loading) binding.swipeRefresh.isRefreshing = false
     }

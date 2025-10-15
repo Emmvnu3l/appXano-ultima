@@ -5,6 +5,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.compose")
 }
 
+// Evitamos bloqueos de R.jar en Windows usando un directorio de build alterno
+buildDir = file("$rootDir/app/build2")
+
 android {
     namespace = "com.example.myapplication"
     compileSdk = 36

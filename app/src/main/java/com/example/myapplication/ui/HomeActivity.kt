@@ -49,6 +49,10 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
                 R.id.nav_add_product -> replaceFragment(AddProductFragment())
+                R.id.nav_logout -> {
+                    startActivity(android.content.Intent(this, LogoutActivity::class.java))
+                    true
+                }
                 else -> false
             }
             if (handled) {
@@ -60,6 +64,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
+        // Usamos el contenedor FragmentContainerView (id: fragmentContainer)
+        // Reemplazos sin back stack son adecuados para destinos top-level del Drawer
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
