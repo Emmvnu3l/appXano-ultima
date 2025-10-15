@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Overlay de forma para un indicador totalmente cuadrado -->
+    <style name="ShapeOverlay.BottomNav.ActiveIndicator" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">0dp</item>
+    </style>
+
+    <!-- Estilo del indicador activo: cuadrado y apenas mayor que el ícono -->
+    <style name="BottomNav.ActiveIndicator" parent="">
+        <item name="shapeAppearanceOverlay">@style/ShapeOverlay.BottomNav.ActiveIndicator</item>
+        <item name="android:width">28dp</item>
+        <item name="android:height">28dp</item>
+    </style>
+</resources>

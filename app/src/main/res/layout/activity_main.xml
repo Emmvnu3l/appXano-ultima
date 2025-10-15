@@ -34,8 +34,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
             android:gravity="center_horizontal"
+            android:orientation="vertical"
             android:padding="24dp">
 
             <Space
@@ -47,32 +47,32 @@
                 android:id="@+id/etEmail"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
                 android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:layout_marginBottom="12dp" />
+                android:inputType="textEmailAddress" />
 
             <EditText
                 android:id="@+id/etPassword"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:hint="Password"
-                android:inputType="textPassword"
-                android:layout_marginBottom="16dp" />
+                android:inputType="textPassword" />
 
             <Button
                 android:id="@+id/btnLogin"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:text="Login"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                android:text="Login" />
 
             <!-- Botón para ir a la actividad de registro -->
             <Button
                 android:id="@+id/btnGoRegister"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:text="Ir a Registro"
-                android:layout_marginBottom="16dp" />
+                android:layout_marginBottom="16dp"
+                android:text="Ir a Registro" />
 
             <ProgressBar
                 android:id="@+id/progress"
