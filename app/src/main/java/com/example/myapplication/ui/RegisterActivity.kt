@@ -1,4 +1,8 @@
 package com.example.myapplication.ui
+// Activity de registro de usuarios. Demuestra:
+// - Ajuste de UI para evitar solapamientos con barras del sistema (WindowCompat.setDecorFitsSystemWindows).
+// - Validaciones locales de email y password antes de llamar al backend.
+// - Uso de RetrofitClient.createAuthService(this@RegisterActivity) sin token para signup.
 
 import android.os.Bundle
 import android.view.View
@@ -31,6 +35,7 @@ class RegisterActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener { finish() }
 
         binding.btnRegister.setOnClickListener { submitRegister() }
+        // Al pulsar "Registrar", validamos y enviamos los datos al endpoint /auth/signup.
         // Ocultamos el botón "Volver" en favor de la flecha del Toolbar
         binding.btnBack.visibility = View.GONE
     }
@@ -41,6 +46,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun submitRegister() {
+        // Recolecta valores del formulario; se usan .orEmpty() para evitar nulls.
         // Campo "Nombre" no visible; no lo pedimos al usuario
         val name = ""
         val firstName = binding.etFirstName.text?.toString()?.trim().orEmpty()
@@ -56,6 +62,7 @@ class RegisterActivity : AppCompatActivity() {
         }
 
         // Validaciones de formato
+        // validateEmail/validatePassword devuelven un mensaje de error o null si todo está ok.
         validateEmail(email)?.let {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             return
@@ -80,6 +87,7 @@ class RegisterActivity : AppCompatActivity() {
         setLoading(true)
         lifecycleScope.launch {
             try {
+                // Creamos el servicio de auth SIN token (login/signup). El context es this@RegisterActivity.
                 val service = RetrofitClient.createAuthService(this@RegisterActivity)
                 val response = withContext(Dispatchers.IO) { service.signup(request) }
                 val token = response.effectiveToken()
@@ -109,6 +117,7 @@ class RegisterActivity : AppCompatActivity() {
      * Permite solo correos @duocuc.cl o @gmail.com y valida formato general.
      */
     private fun validateEmail(email: String): String? {
+        // Normaliza a minúsculas y valida dominio permitido y patrón general de email.
         val lower = email.lowercase()
         val allowedDomain = lower.endsWith("@duocuc.cl") || lower.endsWith("@gmail.com")
         if (!allowedDomain) return "Solo se permiten correos @duocuc.cl o @gmail.com"
@@ -123,6 +132,7 @@ class RegisterActivity : AppCompatActivity() {
      * Al menos 8 caracteres, con 1 dígito y 1 carácter especial.
      */
     private fun validatePassword(password: String): String? {
+        // Reglas mínimas: longitud, al menos un dígito y un carácter especial.
         if (password.length < 8) return "La contraseña debe tener al menos 8 caracteres"
         val hasDigit = password.any { it.isDigit() }
         val specialChars = "!@#\$%^&*()-_=+{}[]:;\"'<>,.?/|\\`~"

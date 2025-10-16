@@ -1,4 +1,6 @@
 package com.example.myapplication.model
+// Payload para asociar imágenes a un producto en la creación/edición.
+// Es una referencia (no binario) a lo que se subió antes: path, mime, etc.
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable

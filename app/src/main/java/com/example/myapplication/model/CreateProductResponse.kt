@@ -1,4 +1,6 @@
 package com.example.myapplication.model
+// Respuesta al crear producto: contiene el producto creado y/o metadatos de la operación.
+// Se usa como retorno de ProductService.createProductFull.
 
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable

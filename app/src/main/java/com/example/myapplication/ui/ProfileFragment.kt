@@ -1,4 +1,8 @@
 package com.example.myapplication.ui
+// Fragment de perfil: obtiene el usuario autenticado vía /auth/me y
+// muestra campos con View Binding (por ejemplo, firstName/lastName/email).
+// Usa binding.tvFirstNameValue.text = me.firstName ?: "" para evitar nulls en UI.
+// En onDestroyView se anula _binding para evitar fugas de memoria.
 
 import android.os.Bundle
 import android.view.LayoutInflater

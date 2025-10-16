@@ -3763,6 +3763,7 @@ id btnGoRegister
 id btnLogin
 id btnLogout
 id btnMinus
+id btnPickImage
 id btnPickImages
 id btnPlus
 id btnRegister
@@ -4000,6 +4001,7 @@ id mtrl_view_tag_bottom_padding
 id multiply
 id navView
 id nav_add_product
+id nav_create_category
 id nav_home
 id nav_logout
 id nav_products
@@ -4207,6 +4209,7 @@ id tvError
 id tvFirstName
 id tvFirstNameValue
 id tvHeaderName
+id tvImageStatus
 id tvImagesStatus
 id tvLastName
 id tvLastNameValue
@@ -4387,6 +4390,7 @@ layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout dialog_image_viewer
 layout fragment_add_product
+layout fragment_create_category
 layout fragment_home
 layout fragment_products
 layout fragment_profile

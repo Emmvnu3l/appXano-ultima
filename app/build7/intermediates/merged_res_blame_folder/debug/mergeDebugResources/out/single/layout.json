@@ -4,6 +4,10 @@
         "source": "com.example.myapplication.app-main-67:/layout/dialog_image_viewer.xml"
     },
     {
+        "merged": "com.example.myapplication.app-mergeDebugResources-64:/layout/fragment_create_category.xml",
+        "source": "com.example.myapplication.app-main-67:/layout/fragment_create_category.xml"
+    },
+    {
         "merged": "com.example.myapplication.app-mergeDebugResources-64:/layout/item_product.xml",
         "source": "com.example.myapplication.app-main-67:/layout/item_product.xml"
     },

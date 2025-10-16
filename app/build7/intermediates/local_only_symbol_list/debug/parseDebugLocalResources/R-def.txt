@@ -21,6 +21,7 @@ id btnGoRegister
 id btnLogin
 id btnLogout
 id btnMinus
+id btnPickImage
 id btnPickImages
 id btnPlus
 id btnRegister
@@ -49,6 +50,7 @@ id ivImage
 id listProfileData
 id navView
 id nav_add_product
+id nav_create_category
 id nav_home
 id nav_logout
 id nav_products
@@ -69,6 +71,7 @@ id tvError
 id tvFirstName
 id tvFirstNameValue
 id tvHeaderName
+id tvImageStatus
 id tvImagesStatus
 id tvLastName
 id tvLastNameValue
@@ -90,6 +93,7 @@ layout activity_product_detail
 layout activity_register
 layout dialog_image_viewer
 layout fragment_add_product
+layout fragment_create_category
 layout fragment_home
 layout fragment_products
 layout fragment_profile

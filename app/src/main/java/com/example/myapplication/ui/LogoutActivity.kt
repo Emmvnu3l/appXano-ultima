@@ -1,4 +1,6 @@
 package com.example.myapplication.ui
+// Activity para cerrar sesión. Usa Drawer + NavigationView con el mismo menú (@menu/nav_drawer_menu)
+// para mantener consistencia visual. Marca el ítem 'Logout' como seleccionado.
 
 import android.content.Intent
 import android.os.Bundle

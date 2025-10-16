@@ -10,11 +10,13 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
+ 
 import com.example.myapplication.api.TokenManager
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.databinding.FragmentAddProductBinding
 import com.example.myapplication.model.CreateProductFullRequest
+import com.example.myapplication.model.Category
 import com.example.myapplication.model.ProductImage
 import com.example.myapplication.model.ImagePayload
 import kotlinx.coroutines.Dispatchers
@@ -30,16 +32,10 @@ class AddProductFragment : Fragment() {
     private val binding get() = _binding!!
     private var selectedUris: List<Uri> = emptyList()
     private lateinit var tokenManager: TokenManager
-
-    private val categories = listOf(
-        "15% de descuento",
-        "50% de descuento",
-        "perecibles",
-        "no perecibles",
-        "congelados"
-    )
+    private var categories: List<Category> = emptyList()
 
     private val pickImages = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
+        // Selector de múltiples imágenes: guarda los Uri seleccionados y actualiza el estado en UI.
         selectedUris = uris ?: emptyList()
         binding.tvImagesStatus.text = "Imágenes seleccionadas: ${selectedUris.size}"
     }
@@ -56,24 +52,47 @@ class AddProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tokenManager = TokenManager(requireContext())
+        // Ocultar el toolbar propio del fragmento para evitar doble flecha
+        binding.toolbar.visibility = View.GONE
         setupCategory()
 
+
         binding.btnPickImages.setOnClickListener {
+            // Abre el selector de imágenes del sistema. Filtra por tipo MIME 'image/*'.
             pickImages.launch("image/*")
         }
 
         binding.btnCreate.setOnClickListener {
+            // 1) Sube cada imagen como Multipart.
+            // 2) Convierte la respuesta ProductImage a ImagePayload.
+            // 3) Envía CreateProductFullRequest al endpoint POST /product.
             createProduct()
         }
     }
 
     private fun setupCategory() {
-        val isAdmin = tokenManager.isAdmin()
-        binding.spCategory.visibility = if (isAdmin) View.VISIBLE else View.GONE
-        if (isAdmin) {
-            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.spCategory.adapter = adapter
+        // Siempre visible; cargamos categorías desde la API y habilitamos al finalizar.
+        binding.spCategory.visibility = View.VISIBLE
+        binding.spCategory.isEnabled = false
+        binding.btnCreate.isEnabled = false
+        loadCategories()
+    }
+
+    private fun loadCategories() {
+        lifecycleScope.launch {
+            try {
+                val service = RetrofitClient.createCategoryService(requireContext())
+                val list = withContext(Dispatchers.IO) { service.getCategories() }
+                categories = list
+                val names = list.map { it.name }
+                val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, names)
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.spCategory.adapter = adapter
+                binding.spCategory.isEnabled = true
+                binding.btnCreate.isEnabled = true
+            } catch (e: Exception) {
+                Toast.makeText(requireContext(), "Error cargando categorías: ${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -89,11 +108,9 @@ class AddProductFragment : Fragment() {
         val price = priceStr.toDoubleOrNull()
         val stock = binding.etStock.text?.toString()?.trim()?.toIntOrNull()
         val brand = binding.etBrand.text?.toString()?.trim()
-        val category = if (binding.spCategory.visibility == View.VISIBLE && binding.spCategory.selectedItem != null) {
-            binding.spCategory.selectedItem.toString()
-        } else null
-        if (name.isEmpty() || price == null) {
-            Toast.makeText(requireContext(), "Nombre y precio son obligatorios", Toast.LENGTH_SHORT).show()
+        val categoryId = categories.getOrNull(binding.spCategory.selectedItemPosition)?.id
+        if (name.isEmpty() || price == null || categoryId == null) {
+            Toast.makeText(requireContext(), "Nombre, precio y categoría son obligatorios", Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -118,7 +135,7 @@ class AddProductFragment : Fragment() {
                     price = price!!,
                     stock = stock,
                     brand = brand,
-                    category = category,
+                    category = categoryId,
                     images = payloads
                 )
                 withContext(Dispatchers.IO) { productService.createProductFull(req) }
@@ -158,6 +175,8 @@ class AddProductFragment : Fragment() {
     }
 
     private fun toPayload(img: ProductImage): ImagePayload {
+        // Transforma la respuesta de subida (ProductImage) en el payload que espera el endpoint de producto.
+        // Incluye path, nombre, tipo y metadatos como tamaño y MIME.
         val path = img.path ?: img.url ?: ""
         val name = path.split('/').lastOrNull()
         return ImagePayload(

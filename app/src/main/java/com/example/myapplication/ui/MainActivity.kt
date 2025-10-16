@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                     )
                     // Asegurar rol desde /auth/me en caso de que el login no lo incluya
                     try {
+                        // Llamada autenticada a /auth/me para obtener y guardar el rol del usuario.
                         val me = withContext(Dispatchers.IO) { RetrofitClient.createAuthServiceAuthenticated(this@MainActivity).me() }
                         tokenManager.saveAuth(
                             token,
