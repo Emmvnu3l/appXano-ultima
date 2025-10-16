@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
@@ -24,8 +25,14 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Toolbar con flecha atrás, sin menú hamburguesa
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener { finish() }
+
         binding.btnRegister.setOnClickListener { submitRegister() }
-        binding.btnBack.setOnClickListener { finish() }
+        // Ocultamos el botón "Volver" en favor de la flecha del Toolbar
+        binding.btnBack.visibility = View.GONE
     }
 
     private fun setLoading(loading: Boolean) {
@@ -34,7 +41,8 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun submitRegister() {
-        val name = binding.etName.text?.toString()?.trim().orEmpty()
+        // Campo "Nombre" no visible; no lo pedimos al usuario
+        val name = ""
         val firstName = binding.etFirstName.text?.toString()?.trim().orEmpty()
         val lastName = binding.etLastName.text?.toString()?.trim().orEmpty()
         val email = binding.etEmail.text?.toString()?.trim().orEmpty()

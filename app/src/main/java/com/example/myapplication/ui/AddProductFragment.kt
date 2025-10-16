@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import android.widget.ArrayAdapter
+import com.example.myapplication.api.TokenManager
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.databinding.FragmentAddProductBinding
@@ -27,6 +29,15 @@ class AddProductFragment : Fragment() {
     private var _binding: FragmentAddProductBinding? = null
     private val binding get() = _binding!!
     private var selectedUris: List<Uri> = emptyList()
+    private lateinit var tokenManager: TokenManager
+
+    private val categories = listOf(
+        "15% de descuento",
+        "50% de descuento",
+        "perecibles",
+        "no perecibles",
+        "congelados"
+    )
 
     private val pickImages = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         selectedUris = uris ?: emptyList()
@@ -44,6 +55,8 @@ class AddProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        tokenManager = TokenManager(requireContext())
+        setupCategory()
 
         binding.btnPickImages.setOnClickListener {
             pickImages.launch("image/*")
@@ -51,6 +64,16 @@ class AddProductFragment : Fragment() {
 
         binding.btnCreate.setOnClickListener {
             createProduct()
+        }
+    }
+
+    private fun setupCategory() {
+        val isAdmin = tokenManager.isAdmin()
+        binding.spCategory.visibility = if (isAdmin) View.VISIBLE else View.GONE
+        if (isAdmin) {
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categories)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spCategory.adapter = adapter
         }
     }
 
@@ -64,6 +87,11 @@ class AddProductFragment : Fragment() {
         val description = binding.etDescription.text?.toString()?.trim()
         val priceStr = binding.etPrice.text?.toString()?.trim().orEmpty()
         val price = priceStr.toDoubleOrNull()
+        val stock = binding.etStock.text?.toString()?.trim()?.toIntOrNull()
+        val brand = binding.etBrand.text?.toString()?.trim()
+        val category = if (binding.spCategory.visibility == View.VISIBLE && binding.spCategory.selectedItem != null) {
+            binding.spCategory.selectedItem.toString()
+        } else null
         if (name.isEmpty() || price == null) {
             Toast.makeText(requireContext(), "Nombre y precio son obligatorios", Toast.LENGTH_SHORT).show()
             return
@@ -88,9 +116,9 @@ class AddProductFragment : Fragment() {
                     name = name,
                     description = description,
                     price = price!!,
-                    stock = null,
-                    brand = null,
-                    category = null,
+                    stock = stock,
+                    brand = brand,
+                    category = category,
                     images = payloads
                 )
                 withContext(Dispatchers.IO) { productService.createProductFull(req) }
@@ -108,8 +136,13 @@ class AddProductFragment : Fragment() {
         binding.etName.setText("")
         binding.etDescription.setText("")
         binding.etPrice.setText("")
+        binding.etStock.setText("")
+        binding.etBrand.setText("")
         selectedUris = emptyList()
         binding.tvImagesStatus.text = "Sin imágenes"
+        if (binding.spCategory.visibility == View.VISIBLE && binding.spCategory.adapter?.count ?: 0 > 0) {
+            binding.spCategory.setSelection(0)
+        }
     }
 
     private fun makeImagePart(uri: Uri): MultipartBody.Part {

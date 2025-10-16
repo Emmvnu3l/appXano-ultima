@@ -38,6 +38,13 @@ object RetrofitClient {
             .create(AuthService::class.java)
     }
 
+    // Cliente autenticado para endpoints que requieren token (p.ej. /auth/me)
+    fun createAuthServiceAuthenticated(context: Context): AuthService {
+        val tm = TokenManager(context)
+        return retrofit(ApiConfig.authBaseUrl, authenticated = true, tokenManager = tm)
+            .create(AuthService::class.java)
+    }
+
     fun createProductService(context: Context): ProductService {
         val tm = TokenManager(context)
         return retrofit(ApiConfig.storeBaseUrl, authenticated = true, tokenManager = tm)

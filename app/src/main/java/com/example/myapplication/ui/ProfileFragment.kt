@@ -31,13 +31,25 @@ class ProfileFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val service = RetrofitClient.createAuthService(requireContext())
+                val service = RetrofitClient.createAuthServiceAuthenticated(requireContext())
                 val me = withContext(Dispatchers.IO) { service.me() }
-                binding.tvFirstName.text = "Nombre(s): ${me.firstName ?: ""}"
-                binding.tvLastName.text = "Apellidos: ${me.lastName ?: ""}"
-                binding.tvEmail.text = "Email: ${me.email ?: ""}"
-                binding.tvShippingAddress.text = "Dirección de envío: ${me.shippingAddress ?: ""}"
-                binding.tvPhone.text = "Teléfono: ${me.phone ?: ""}"
+
+                // Encabezado con nombre
+                val headerName = listOfNotNull(me.firstName?.takeIf { it.isNotBlank() }, me.lastName?.takeIf { it.isNotBlank() })
+                    .takeIf { it.isNotEmpty() }?.joinToString(" ") ?: me.name
+                binding.tvHeaderName.text = headerName
+
+                // Métricos (por ahora placeholders; conectar a backend cuando estén disponibles)
+                binding.tvPurchases.text = "02"
+                binding.tvPoints.text = "200"
+                binding.tvCoupons.text = "01"
+
+                // Lista de datos
+                binding.tvFirstNameValue.text = me.firstName ?: ""
+                binding.tvLastNameValue.text = me.lastName ?: ""
+                binding.tvEmailValue.text = me.email ?: ""
+                binding.tvShippingAddressValue.text = me.shippingAddress ?: ""
+                binding.tvPhoneValue.text = me.phone ?: ""
             } catch (e: Exception) {
                 // Fallback a datos locales si falla la consulta
                 val tm = TokenManager(requireContext())
@@ -45,11 +57,19 @@ class ProfileFragment : Fragment() {
                 val parts = name.trim().split(" ")
                 val first = parts.firstOrNull().orEmpty()
                 val last = if (parts.size > 1) parts.drop(1).joinToString(" ") else ""
-                binding.tvFirstName.text = "Nombre(s): $first"
-                binding.tvLastName.text = "Apellidos: $last"
-                binding.tvEmail.text = "Email: ${tm.getEmail().orEmpty()}"
-                binding.tvShippingAddress.text = "Dirección de envío: "
-                binding.tvPhone.text = "Teléfono: "
+                val headerName = listOf(first.takeIf { it.isNotBlank() }, last.takeIf { it.isNotBlank() })
+                    .filterNotNull().takeIf { it.isNotEmpty() }?.joinToString(" ") ?: name
+                binding.tvHeaderName.text = headerName
+
+                binding.tvPurchases.text = "0"
+                binding.tvPoints.text = "0"
+                binding.tvCoupons.text = "0"
+
+                binding.tvFirstNameValue.text = first
+                binding.tvLastNameValue.text = last
+                binding.tvEmailValue.text = tm.getEmail().orEmpty()
+                binding.tvShippingAddressValue.text = ""
+                binding.tvPhoneValue.text = ""
             }
         }
     }

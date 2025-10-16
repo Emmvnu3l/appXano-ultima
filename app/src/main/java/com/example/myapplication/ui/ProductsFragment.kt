@@ -84,8 +84,7 @@ class ProductsFragment : Fragment() {
         // Modo testeo: mostrar siempre el FAB
         binding.fabAdd.visibility = View.VISIBLE
         binding.fabAdd.setOnClickListener {
-            val intent = Intent(requireContext(), CreateProductActivity::class.java)
-            startActivity(intent)
+            NavigationHelper.openAddProduct(requireContext())
         }
 
         loadProducts()

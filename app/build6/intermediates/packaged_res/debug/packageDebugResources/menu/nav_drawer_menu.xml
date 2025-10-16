@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="Inicio" />
+        <item
+            android:id="@+id/nav_products"
+            android:icon="@drawable/ic_store"
+            android:title="Productos" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_user"
+            android:title="Perfil" />
+    </group>
+
+    <item android:title="Más">
+        <menu>
+            <item
+                android:id="@+id/nav_add_product"
+                android:icon="@android:drawable/ic_input_add"
+                android:title="Agregar producto" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="Cerrar sesión" />
+        </menu>
+    </item>
+
+</menu>

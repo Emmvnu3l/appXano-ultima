@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import com.example.myapplication.R
 import com.example.myapplication.model.Product
+import com.example.myapplication.ui.NavigationHelper
 
 /**
  * Adapter reestructurado con dos tipos de ítems:
@@ -144,10 +146,8 @@ class ProductAdapter(
             btnCart.text = if (added) "Añadido" else "Añadir al carrito"
             btnCart.isEnabled = !added
             btnCart.setOnClickListener {
-                addedToCart.add(p.id)
-                btnCart.text = "Añadido"
-                btnCart.isEnabled = false
-                android.widget.Toast.makeText(itemView.context, "Añadido: ${p.name}", android.widget.Toast.LENGTH_SHORT).show()
+                val ctx = itemView.context
+                NavigationHelper.openAddProduct(ctx)
             }
 
             itemView.setOnClickListener { onProductClick(p) }

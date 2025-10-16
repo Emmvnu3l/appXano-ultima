@@ -11,3 +11,4 @@ data class CreateProductFullRequest(
     @SerializedName("category") val category: String? = null,
     @SerializedName("images") val images: List<ImagePayload> = emptyList()
 )
+

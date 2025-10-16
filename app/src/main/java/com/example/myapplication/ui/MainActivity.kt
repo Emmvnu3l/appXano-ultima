@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
@@ -25,6 +26,15 @@ class MainActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // Toolbar sin flecha atrás y con título "Inicio"
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(false)
+            setHomeButtonEnabled(false)
+            title = "Inicio"
+        }
+        binding.toolbar.navigationIcon = null
 
         tokenManager = TokenManager(this)
         if (tokenManager.isLoggedIn()) {
@@ -69,7 +79,7 @@ class MainActivity : AppCompatActivity() {
                     )
                     // Asegurar rol desde /auth/me en caso de que el login no lo incluya
                     try {
-                        val me = withContext(Dispatchers.IO) { service.me() }
+                        val me = withContext(Dispatchers.IO) { RetrofitClient.createAuthServiceAuthenticated(this@MainActivity).me() }
                         tokenManager.saveAuth(
                             token,
                             me.name,

@@ -31,16 +31,24 @@ class HomeActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Comentario: si venimos con un query de productos, abrimos la pestaña Productos filtrada.
+        // Abrir destinos iniciales según extras
         val productsQuery = intent?.getStringExtra("products_query")
         val openProducts = intent?.getBooleanExtra("open_products", false) ?: false
-        if (openProducts || !productsQuery.isNullOrEmpty()) {
-            replaceFragment(ProductsFragment.newInstance(productsQuery))
-            binding.navView.setCheckedItem(R.id.nav_products)
-        } else {
-            // Fragment por defecto
-            replaceFragment(HomeFragment())
-            binding.navView.setCheckedItem(R.id.nav_home)
+        val openAddProduct = intent?.getBooleanExtra("open_add_product", false) ?: false
+        when {
+            openAddProduct -> {
+                replaceFragment(AddProductFragment())
+                binding.navView.setCheckedItem(R.id.nav_add_product)
+            }
+            openProducts || !productsQuery.isNullOrEmpty() -> {
+                replaceFragment(ProductsFragment.newInstance(productsQuery))
+                binding.navView.setCheckedItem(R.id.nav_products)
+            }
+            else -> {
+                // Fragment por defecto
+                replaceFragment(HomeFragment())
+                binding.navView.setCheckedItem(R.id.nav_home)
+            }
         }
 
         binding.navView.setNavigationItemSelectedListener { item ->

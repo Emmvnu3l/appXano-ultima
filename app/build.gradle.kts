@@ -6,7 +6,8 @@ plugins {
 }
 
 // Evitamos bloqueos de R.jar en Windows usando un directorio de build alterno
-buildDir = file("$rootDir/app/build2")
+// Rotamos el directorio si está retenido por otro proceso
+buildDir = file("$rootDir/app/build7")
 
 android {
     namespace = "com.example.myapplication"

@@ -20,6 +20,7 @@ class LogoutActivity : AppCompatActivity() {
 
         // Toolbar + Drawer
         setSupportActionBar(binding.toolbar)
+        supportActionBar?.title = ""
         val toggle = ActionBarDrawerToggle(
             this,
             binding.drawerLayout,
