@@ -16,4 +16,17 @@ object NavigationHelper {
             context.startActivity(intent)
         }
     }
+
+    fun openCreateCategory(context: Context) {
+        if (context is HomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, CreateCategoryFragment())
+                .commit()
+        } else {
+            val intent = Intent(context, HomeActivity::class.java)
+            // Reutilizamos HomeActivity; opcionalmente podríamos definir un extra dedicado.
+            intent.putExtra("open_create_category", true)
+            context.startActivity(intent)
+        }
+    }
 }

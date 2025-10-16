@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -15,19 +16,23 @@ import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
 import androidx.viewbinding.ViewBindings;
 import com.example.myapplication.R;
+import com.google.android.material.appbar.MaterialToolbar;
 import java.lang.NullPointerException;
 import java.lang.Override;
 import java.lang.String;
 
 public final class FragmentAddProductBinding implements ViewBinding {
   @NonNull
-  private final ScrollView rootView;
+  private final FrameLayout rootView;
 
   @NonNull
   public final Button btnCreate;
 
   @NonNull
   public final Button btnPickImages;
+
+  @NonNull
+  public final ScrollView contentScroll;
 
   @NonNull
   public final EditText etBrand;
@@ -51,16 +56,20 @@ public final class FragmentAddProductBinding implements ViewBinding {
   public final Spinner spCategory;
 
   @NonNull
+  public final MaterialToolbar toolbar;
+
+  @NonNull
   public final TextView tvImagesStatus;
 
-  private FragmentAddProductBinding(@NonNull ScrollView rootView, @NonNull Button btnCreate,
-      @NonNull Button btnPickImages, @NonNull EditText etBrand, @NonNull EditText etDescription,
-      @NonNull EditText etName, @NonNull EditText etPrice, @NonNull EditText etStock,
-      @NonNull ProgressBar progress, @NonNull Spinner spCategory,
-      @NonNull TextView tvImagesStatus) {
+  private FragmentAddProductBinding(@NonNull FrameLayout rootView, @NonNull Button btnCreate,
+      @NonNull Button btnPickImages, @NonNull ScrollView contentScroll, @NonNull EditText etBrand,
+      @NonNull EditText etDescription, @NonNull EditText etName, @NonNull EditText etPrice,
+      @NonNull EditText etStock, @NonNull ProgressBar progress, @NonNull Spinner spCategory,
+      @NonNull MaterialToolbar toolbar, @NonNull TextView tvImagesStatus) {
     this.rootView = rootView;
     this.btnCreate = btnCreate;
     this.btnPickImages = btnPickImages;
+    this.contentScroll = contentScroll;
     this.etBrand = etBrand;
     this.etDescription = etDescription;
     this.etName = etName;
@@ -68,12 +77,13 @@ public final class FragmentAddProductBinding implements ViewBinding {
     this.etStock = etStock;
     this.progress = progress;
     this.spCategory = spCategory;
+    this.toolbar = toolbar;
     this.tvImagesStatus = tvImagesStatus;
   }
 
   @Override
   @NonNull
-  public ScrollView getRoot() {
+  public FrameLayout getRoot() {
     return rootView;
   }
 
@@ -107,6 +117,12 @@ public final class FragmentAddProductBinding implements ViewBinding {
       id = R.id.btnPickImages;
       Button btnPickImages = ViewBindings.findChildViewById(rootView, id);
       if (btnPickImages == null) {
+        break missingId;
+      }
+
+      id = R.id.contentScroll;
+      ScrollView contentScroll = ViewBindings.findChildViewById(rootView, id);
+      if (contentScroll == null) {
         break missingId;
       }
 
@@ -152,14 +168,21 @@ public final class FragmentAddProductBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.toolbar;
+      MaterialToolbar toolbar = ViewBindings.findChildViewById(rootView, id);
+      if (toolbar == null) {
+        break missingId;
+      }
+
       id = R.id.tvImagesStatus;
       TextView tvImagesStatus = ViewBindings.findChildViewById(rootView, id);
       if (tvImagesStatus == null) {
         break missingId;
       }
 
-      return new FragmentAddProductBinding((ScrollView) rootView, btnCreate, btnPickImages, etBrand,
-          etDescription, etName, etPrice, etStock, progress, spCategory, tvImagesStatus);
+      return new FragmentAddProductBinding((FrameLayout) rootView, btnCreate, btnPickImages,
+          contentScroll, etBrand, etDescription, etName, etPrice, etStock, progress, spCategory,
+          toolbar, tvImagesStatus);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

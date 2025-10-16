@@ -1,4 +1,6 @@
 package com.example.myapplication.model
+// Request para crear producto. Incluye datos básicos y 'images' como lista de ImagePayload
+// (referencias a imágenes previamente subidas vía UploadService).
 
 import com.google.gson.annotations.SerializedName
 
@@ -8,7 +10,7 @@ data class CreateProductFullRequest(
     @SerializedName("price") val price: Double,
     @SerializedName("stock") val stock: Int? = null,
     @SerializedName("brand") val brand: String? = null,
-    @SerializedName("category") val category: String? = null,
+    @SerializedName("category") val category: Int? = null,
     @SerializedName("images") val images: List<ImagePayload> = emptyList()
 )
 

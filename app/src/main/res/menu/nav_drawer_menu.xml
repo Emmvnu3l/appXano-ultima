@@ -24,6 +24,10 @@
                 android:icon="@android:drawable/ic_input_add"
                 android:title="Agregar producto" />
             <item
+                android:id="@+id/nav_create_category"
+                android:icon="@android:drawable/ic_menu_add"
+                android:title="Crear categoría" />
+            <item
                 android:id="@+id/nav_logout"
                 android:icon="@android:drawable/ic_lock_power_off"
                 android:title="Cerrar sesión" />
