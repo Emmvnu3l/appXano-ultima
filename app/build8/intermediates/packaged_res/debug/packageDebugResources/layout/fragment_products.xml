@@ -18,14 +18,41 @@
             android:clipToPadding="false" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
+    <FrameLayout
+        android:id="@+id/fabContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
-        android:layout_marginBottom="28dp"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        android:layout_marginBottom="28dp">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_cart"
+            app:maxImageSize="48dp"
+            android:contentDescription="Carrito de compras" />
+
+        <TextView
+            android:id="@+id/tvCartBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="20dp"
+            android:minHeight="20dp"
+            android:padding="2dp"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:textSize="12sp"
+            android:gravity="center"
+            android:background="@drawable/bg_badge"
+            android:layout_gravity="end|top"
+            android:translationX="8dp"
+            android:translationY="-8dp"
+            android:visibility="gone"
+            android:importantForAccessibility="no"/>
+
+    </FrameLayout>
 
     <include
         android:id="@+id/state"

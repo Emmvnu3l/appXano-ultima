@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.ActivityMainBinding
@@ -16,6 +18,7 @@ import com.example.myapplication.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.net.UnknownHostException
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -60,6 +63,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun doLogin(email: String, password: String) {
+        if (!isOnline()) {
+            Toast.makeText(this, getString(R.string.msg_login_failed, "Sin conexión a Internet"), Toast.LENGTH_LONG).show()
+            return
+        }
         setLoading(true)
         lifecycleScope.launch {
             try {
@@ -95,7 +102,8 @@ class MainActivity : AppCompatActivity() {
                     navigateToHome()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, getString(R.string.msg_login_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
+                val msg = if (e is UnknownHostException) "No se pudo resolver el host (verifique conexión y DNS)" else (e.message ?: "")
+                Toast.makeText(this@MainActivity, getString(R.string.msg_login_failed, msg), Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }
@@ -112,5 +120,12 @@ class MainActivity : AppCompatActivity() {
     private fun setLoading(loading: Boolean) {
         binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
         binding.btnLogin.isEnabled = !loading
+    }
+
+    private fun isOnline(): Boolean {
+        val cm = getSystemService(ConnectivityManager::class.java)
+        val nw = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(nw) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 }

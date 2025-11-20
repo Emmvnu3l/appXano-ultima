@@ -19,6 +19,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import com.example.myapplication.ui.StateUi
+import android.util.Log
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import java.net.UnknownHostException
 
 class ProductsFragment : Fragment() {
     private var _binding: FragmentProductsBinding? = null
@@ -26,6 +30,7 @@ class ProductsFragment : Fragment() {
     private lateinit var adapter: ProductAdapter
     // Comentario: query inicial opcional para filtrar productos por nombre/descr.
     private var initialQuery: String? = null
+    private var cartPrefsListener: android.content.SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     companion object {
         // Comentario: permite crear el fragment con un query predefinido.
@@ -82,14 +87,22 @@ class ProductsFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener { loadProducts() }
         binding.state.btnRetry.setOnClickListener { loadProducts() }
 
-        val tm = TokenManager(requireContext())
-        if (tm.isAdmin()) {
-            binding.fabAdd.visibility = View.VISIBLE
-            binding.fabAdd.setOnClickListener { NavigationHelper.openAddProduct(requireContext()) }
-        } else {
-            binding.fabAdd.visibility = View.VISIBLE
-            binding.fabAdd.setOnClickListener { NavigationHelper.openCart(requireContext()) }
+        binding.fabAdd.visibility = View.VISIBLE
+        binding.fabAdd.setOnClickListener { NavigationHelper.openCart(requireContext()) }
+
+        val cm = CartManager(requireContext())
+        val updateBadge = {
+            val count = cm.getItems().values.sum()
+            if (count > 0) {
+                binding.tvCartBadge.visibility = View.VISIBLE
+                binding.tvCartBadge.text = count.toString()
+            } else {
+                binding.tvCartBadge.visibility = View.GONE
+            }
         }
+        updateBadge()
+        cartPrefsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> updateBadge() }
+        cm.registerListener(cartPrefsListener!!)
 
         loadProducts()
     }
@@ -111,28 +124,49 @@ class ProductsFragment : Fragment() {
     }
 
     private fun hideError() {
-        binding.state.tvError.visibility = View.GONE
+        StateUi.hide(binding.state)
     }
 
     private fun loadProducts() {
+        if (!isOnline()) {
+            showError(getString(R.string.msg_products_error, "Sin conexión a Internet"))
+            return
+        }
         setLoading(true)
         lifecycleScope.launch {
             try {
                 val authed = RetrofitClient.createProductService(requireContext())
                 val products = withContext(Dispatchers.IO) { authed.getProducts() }
-                onProductsLoaded(products)
+                Log.d("ProductsLoad", "Auth returned ${products.size} products")
+                if (products.isEmpty()) {
+                    try {
+                        val publicSvc = RetrofitClient.createProductServicePublic(requireContext())
+                        val publicProducts = withContext(Dispatchers.IO) { publicSvc.getProducts() }
+                        Log.d("ProductsLoad", "Public fallback after empty auth returned ${publicProducts.size} products")
+                        onProductsLoaded(publicProducts)
+                    } catch (e2: Exception) {
+                        Log.e("ProductsLoad", "Public fallback after empty auth failed: ${NetworkError.message(e2)}")
+                        onProductsLoaded(products)
+                    }
+                } else {
+                    onProductsLoaded(products)
+                }
             } catch (e: Exception) {
-                val fallback = (e is HttpException && e.code() == 401)
+                val fallback = (e is HttpException && (e.code() == 401 || e.code() == 403))
                 if (fallback) {
                     try {
                         val publicSvc = RetrofitClient.createProductServicePublic(requireContext())
                         val products = withContext(Dispatchers.IO) { publicSvc.getProducts() }
+                        Log.d("ProductsLoad", "Public fallback after auth error returned ${products.size} products")
                         onProductsLoaded(products)
                     } catch (e2: Exception) {
+                        Log.e("ProductsLoad", "Public fallback failed: ${NetworkError.message(e2)}")
                         showError(getString(R.string.msg_products_error, NetworkError.message(e2)))
                     }
                 } else {
-                    showError(getString(R.string.msg_products_error, NetworkError.message(e)))
+                    val msg = if (e is UnknownHostException) "Sin conexión o host no resolvible" else NetworkError.message(e)
+                    Log.e("ProductsLoad", "Auth request failed: $msg")
+                    showError(getString(R.string.msg_products_error, msg))
                 }
             } finally {
                 setLoading(false)
@@ -144,10 +178,27 @@ class ProductsFragment : Fragment() {
         // Pasamos el query inicial al adapter para que lo aplique y muestre en el header
         adapter.initialQuery = initialQuery
         adapter.setProducts(list)
+        if (list.isEmpty()) {
+            showEmpty()
+        } else {
+            hideError()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        try {
+            val cm = CartManager(requireContext())
+            cartPrefsListener?.let { cm.unregisterListener(it) }
+            cartPrefsListener = null
+        } catch (_: Exception) {}
         _binding = null
+    }
+
+    private fun isOnline(): Boolean {
+        val cm = requireContext().getSystemService(ConnectivityManager::class.java)
+        val nw = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(nw) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 }

@@ -1,0 +1,130 @@
+[
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_orders.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_orders.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_fullscreen_image.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_fullscreen_image.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_cart.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_cart.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_checkout.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_checkout.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_home.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_home.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/activity_register.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/activity_register.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/activity_logout.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/activity_logout.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_add_product.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_add_product.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_product_detail.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_product_detail.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_logout.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_logout.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\dialog_image_viewer.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\dialog_image_viewer.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_register.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_register.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_profile.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_profile.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\view_state.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\view_state.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_user.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_main.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_limited_home.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_limited_home.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_product.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_product.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_cart.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_cart.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/activity_main.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/activity_main.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_users.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_users.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_order.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_order.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\dialog_edit_user.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\dialog_edit_user.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_edit_product.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_edit_product.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_home.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_home.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_products_header.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_products_header.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/activity_checkout.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/activity_checkout.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/activity_home.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/activity_home.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_products.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_products.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/activity_limited_home.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/activity_limited_home.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/activity_product_detail.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/activity_product_detail.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_create_category.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_create_category.xml"
+    }
+]
