@@ -60,10 +60,9 @@ class ProductsFragment : Fragment() {
             },
             onResultsCountChanged = { count ->
                 if (count == 0) {
-                    binding.tvError.text = "Sin resultados"
-                    binding.tvError.visibility = View.VISIBLE
+                    showEmpty()
                 } else {
-                    binding.tvError.visibility = View.GONE
+                    hideError()
                 }
             }
         )
@@ -81,10 +80,12 @@ class ProductsFragment : Fragment() {
         binding.btnRetry.setOnClickListener { loadProducts() }
 
         val tm = TokenManager(requireContext())
-        // Modo testeo: mostrar siempre el FAB
-        binding.fabAdd.visibility = View.VISIBLE
-        binding.fabAdd.setOnClickListener {
-            NavigationHelper.openAddProduct(requireContext())
+        if (tm.isAdmin()) {
+            binding.fabAdd.visibility = View.VISIBLE
+            binding.fabAdd.setOnClickListener { NavigationHelper.openAddProduct(requireContext()) }
+        } else {
+            binding.fabAdd.visibility = View.VISIBLE
+            binding.fabAdd.setOnClickListener { NavigationHelper.openCart(requireContext()) }
         }
 
         loadProducts()
@@ -103,6 +104,17 @@ class ProductsFragment : Fragment() {
     private fun showError(message: String) {
         binding.tvError.text = message
         binding.tvError.visibility = View.VISIBLE
+        binding.swipeRefresh.isRefreshing = false
+    }
+
+    private fun showEmpty() {
+        binding.tvError.text = getString(R.string.state_empty)
+        binding.tvError.visibility = View.VISIBLE
+        binding.swipeRefresh.isRefreshing = false
+    }
+
+    private fun hideError() {
+        binding.tvError.visibility = View.GONE
     }
 
     private fun loadProducts() {
@@ -113,7 +125,7 @@ class ProductsFragment : Fragment() {
                 val products = withContext(Dispatchers.IO) { service.getProducts() }
                 onProductsLoaded(products)
             } catch (e: Exception) {
-                showError("Error cargando productos: ${e.message}")
+                showError(getString(R.string.msg_products_error, e.message ?: ""))
             } finally {
                 setLoading(false)
             }

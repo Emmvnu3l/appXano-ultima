@@ -15,6 +15,7 @@ import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.ActivityRegisterBinding
 import com.example.myapplication.model.SignupRequest
+import com.example.myapplication.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -57,7 +58,7 @@ class RegisterActivity : AppCompatActivity() {
         val shippingAddress = binding.etShippingAddress.text?.toString()?.trim().orEmpty()
 
         if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Email y contraseña son obligatorios", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.msg_enter_email_password), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -92,7 +93,7 @@ class RegisterActivity : AppCompatActivity() {
                 val response = withContext(Dispatchers.IO) { service.signup(request) }
                 val token = response.effectiveToken()
                 if (token.isNullOrEmpty()) {
-                    Toast.makeText(this@RegisterActivity, "Token no recibido", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegisterActivity, getString(R.string.msg_token_missing), Toast.LENGTH_SHORT).show()
                 } else {
                     val tm = TokenManager(this@RegisterActivity)
                     tm.saveAuth(
@@ -102,11 +103,11 @@ class RegisterActivity : AppCompatActivity() {
                         response.user?.id,
                         response.user?.role
                     )
-                    Toast.makeText(this@RegisterActivity, "Registro exitoso", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_success), Toast.LENGTH_SHORT).show()
                     finish()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@RegisterActivity, "Registro falló: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }

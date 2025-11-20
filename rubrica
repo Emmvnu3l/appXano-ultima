@@ -1,0 +1,128 @@
+Proyecto Final — App Android (Kotlin + Layout XML)
+Entrega: última semana de noviembre
+Formato: individual o en parejas (recomendado)
+Entregables: APK + video demo (5–7 min) + repositorio con README
+1) Objetivo
+Desarrollar una app móvil de e-commerce básico con dos roles (Cliente y Admin) y
+gestión de sesión con SharedPreferences. La app debe permitir: catálogo y carrito
+(cliente), gestión de productos/usuarios y revisión de pagos (admin), además de un flujo de
+pago simulado y solicitud de envío.
+2) Requisitos funcionales
+Autenticación y sesión
+● Login y logout.
+● Persistencia de sesión y tipo de usuario con SharedPreferences.
+● Redirección automática por rol: Cliente → Vista Cliente; Admin → Vista Admin.
+● Cierre de sesión limpia las preferencias.
+Vista Admin
+Productos
+● Crear, editar, buscar, listar y borrar productos.
+● Carga de múltiples imágenes por producto.
+Usuarios
+● Crear, editar, buscar, listar.
+● Bloquear / desbloquear usuario.
+Pagos/Órdenes
+● Listar pagos/órdenes pendientes.
+● Aceptar pago ⇒ marcar pedido como enviado.
+● Rechazar pago ⇒ marcar pedido como rechazado.
+Vista Cliente
+Catálogo y Carrito
+● Buscar y listar productos.
+● Agregar al carrito y editar carrito (cambiar cantidades, eliminar ítems).
+● Pagar (simulado) y solicitar envío.
+Perfil
+● Ver y editar datos personales.
+El flujo de pago es simulado y debe dejar registro para que Admin
+acepte/rechace y marque enviado.
+3) Requisitos técnicos (obligatorios)
+● Kotlin + Layouts XML (no Compose).
+● NO usar MVVM (organización libre: Activities/Fragments, helpers, managers).
+● ViewBinding habilitado.
+● SharedPreferences para estado de sesión/rol y pequeñas preferencias.
+● Retrofit para consumo de servicios REST (capa HTTP obligatoria).
+● RecyclerView para listados.
+● Subida de múltiples imágenes por producto (almacenamiento según backend
+elegido).
+● Ícono de la app personalizado.
+● APK compilada (debug o release).
+● Manejo de errores y validaciones de formularios.
+● Recursos bien gestionados (strings, colores, dimensiones sin “hardcode”).
+4) Backend (opciones válidas)
+● Recomendado: Xano (rapidez para REST + media).
+● Alternativas aceptadas: Supabase, Google Firebase, o APIs REST propias con
+Spring Boot Java desplegadas en Render, AWS, Vercel o Heroku.
+● Debe existir una capa REST consumible por Retrofit y una política clara para
+almacenamiento de imágenes.
+● Documenta en el README cómo inicializar el backend y las credenciales de prueba.
+5) UX/UI mínimos
+● Pantallas responsivas.
+● Estados: cargando, vacío, error (con reintento).
+● Confirmaciones en operaciones destructivas.
+● Mensajería de feedback (toasts/snackbars) clara y no invasiva.
+● Controles visibles según rol (no mostrar lo que no aplica).
+6) Flujo de demostración (para el video)
+1. Login como Admin → crear/editar producto con múltiples imágenes → listar/buscar
+→ bloquear/desbloquear usuario → revisar pago/orden pendiente y aceptar (marcar
+enviado) y luego rechazar un caso.
+2. Logout.
+3. Login como Cliente → navegar catálogo → agregar al carrito → editar cantidades
+→ pagar (simulado) → solicitar envío → ver estado de su pedido → editar perfil.
+4. Logout.
+7) Entregables
+1. Repositorio con:
+○ Código fuente.
+○ README con:
+■ Pasos de configuración (Android y backend elegido).
+■ Variables/URLs necesarias.
+■ Usuarios de prueba (admin/cliente) y credenciales de demo.
+■ Nota sobre dónde se almacenan imágenes.
+○ (Opcional) colección de pruebas de API.
+2. APK lista para instalar.
+3. Video demo (5–7 min) cumpliendo el flujo anterior.
+8) Criterios de evaluación (100 pts)
+● Auth + sesión + ruteo por rol (SharedPreferences) — 15 pts
+● Vista Cliente (catálogo, carrito, pago simulado, envío) — 20 pts
+● Vista Admin — Productos (CRUD + múltiples imágenes) — 20 pts
+● Vista Admin — Usuarios (listar/buscar/editar/bloquear) — 10 pts
+● Pagos/Órdenes (pendientes, aceptar/rechazar, enviado) — 10 pts
+● Integración técnica (Retrofit, ViewBinding, RecyclerView) — 10 pts
+● Calidad UI/UX (estados, validaciones, feedback, accesos por rol, ícono) — 10
+pts
+● Calidad de entrega (estructura del repo, README claro, APK funcional, demo
+completa) — 5 pts
+Bonos (+5 pts máximo): filtrado/orden avanzado, paginación de listas, soporte offline del
+carrito, tests instrumentados básicos.
+9) Criterios de aceptación (QA rápido)
+● La app siempre redirige correctamente según el rol guardado.
+● El logout elimina el estado de sesión.
+● Se pueden subir al menos 2 imágenes por producto y volver a verlas listadas.
+● Carrito persistente durante la sesión y editable.
+● “Pago” deja un registro gestionable por Admin.
+● Admin puede cambiar estados: pendiente → aceptado/rechazado → enviado.
+● No se exponen claves o secretos en el repo; configuración separada/documentada
+en README.
+● La APK arranca, navega y cumple el flujo de demo sin caídas.
+10) Plan sugerido de trabajo (sin código)
+1. Definir alcance mínimo por vista y roles.
+2. Elegir backend (Xano recomendado) y preparar recursos
+(tablas/colecciones/servicios y almacenamiento de imágenes).
+3. Configurar Retrofit y capa de red (interceptores, manejo de errores).
+4. Armar pantallas base y navegación por rol.
+5. Implementar: catálogo → carrito → pago simulado → perfil.
+6. Implementar admin productos (con imágenes) → admin usuarios →
+pagos/órdenes.
+7. Pulido de UX, accesos por rol, validaciones, mensajes.
+8. Preparar README, APK y video.
+11) Reglas
+● Mantener buenas prácticas de seguridad (no exponer credenciales; variables de
+entorno/configuración).
+● Datos de prueba suficientes para una demo creíble (≥10 productos con imágenes).
+● El docente debe poder compilar y ejecutar siguiendo el README, sin pasos
+ocultos.
+12) Checklist de entrega
+● Login/Logout + ruteo por rol con SharedPreferences
+● Cliente: catálogo, carrito editable, pago simulado, solicitud de envío
+● Admin: CRUD de productos con múltiples imágenes
+● Admin: gestión básica de usuarios con bloqueo/desbloqueo
+● Admin: gestión de pagos/órdenes (pendiente → aceptar/rechazar → enviado)
+● Retrofit + ViewBinding + RecyclerView en uso real
+● Ícono app, estados de UI y validaciones

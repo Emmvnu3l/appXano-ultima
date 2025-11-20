@@ -71,6 +71,18 @@ object RetrofitClient {
             .create(ProductService::class.java)
     }
 
+    fun createOrderService(context: Context): OrderService {
+        val tm = TokenManager(context)
+        return retrofit(ApiConfig.storeBaseUrl, authenticated = true, tokenManager = tm)
+            .create(OrderService::class.java)
+    }
+
+    fun createUserService(context: Context): UserService {
+        val tm = TokenManager(context)
+        return retrofit(ApiConfig.storeBaseUrl, authenticated = true, tokenManager = tm)
+            .create(UserService::class.java)
+    }
+
     fun createUploadService(context: Context): UploadService {
         // Servicio de subida de imágenes (requiere token). Comparte la misma baseUrl
         // que ProductService y añade el token en cada petición.

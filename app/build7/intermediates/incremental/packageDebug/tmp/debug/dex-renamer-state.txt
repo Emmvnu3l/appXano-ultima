@@ -1,13 +1,13 @@
-#Thu Oct 16 04:02:30 CLST 2025
-base.0=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
-base.1=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
-base.2=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
-base.3=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\2\\classes.dex
-base.4=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
-base.5=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\5\\classes.dex
-base.6=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
-base.7=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
-base.8=C\:\\Users\\emm.moreno\\Desktop\\appXano\\app\\build7\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes3.dex
+#Thu Nov 20 15:46:31 CLST 2025
+base.0=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
+base.1=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
+base.2=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex
+base.3=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\2\\classes.dex
+base.4=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\4\\classes.dex
+base.5=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\5\\classes.dex
+base.6=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
+base.7=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+base.8=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build7\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes3.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.2=1/classes.dex

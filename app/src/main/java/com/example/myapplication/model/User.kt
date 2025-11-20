@@ -7,11 +7,14 @@ data class User(
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String,
     @SerializedName("email") val email: String,
+    @SerializedName("avatar") val avatar: String?,
     @SerializedName("created_at") val createdAt: String?,
-    @SerializedName("first_name") val firstName: String? = null,
-    @SerializedName("last_name") val lastName: String? = null,
-    @SerializedName("role") val role: String? = null,
-    @SerializedName("status") val status: String? = null,
-    @SerializedName("shipping_address") val shippingAddress: String? = null,
-    @SerializedName("phone") val phone: String? = null
+    @SerializedName("blocked") val blocked: Boolean,
+    @SerializedName("role") val role: String?
 ) : Serializable
+
+data class UserUpdateRequest(
+    @SerializedName("name") val name: String?,
+    @SerializedName("email") val email: String?,
+    @SerializedName("avatar") val avatar: String?
+)

@@ -12,6 +12,7 @@ import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.ActivityMainBinding
 import com.example.myapplication.model.LoginRequest
+import com.example.myapplication.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,7 +47,7 @@ class MainActivity : AppCompatActivity() {
             val email = binding.etEmail.text?.toString()?.trim().orEmpty()
             val password = binding.etPassword.text?.toString()?.trim().orEmpty()
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Ingrese email y password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.msg_enter_email_password), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             doLogin(email, password)
@@ -68,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 val token = response.effectiveToken()
                 if (token.isNullOrEmpty()) {
-                    Toast.makeText(this@MainActivity, "Token no recibido", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, getString(R.string.msg_token_missing), Toast.LENGTH_SHORT).show()
                 } else {
                     tokenManager.saveAuth(
                         token,
@@ -94,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                     navigateToHome()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@MainActivity, "Login falló: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@MainActivity, getString(R.string.msg_login_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }
@@ -102,7 +103,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun navigateToHome() {
-        startActivity(Intent(this, HomeActivity::class.java))
+        val tm = TokenManager(this)
+        val dest = if (tm.isAdmin()) HomeActivity::class.java else LimitedHomeActivity::class.java
+        startActivity(Intent(this, dest))
         finish()
     }
 

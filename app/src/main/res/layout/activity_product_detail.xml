@@ -132,7 +132,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_weight="1"
-                        android:text="ADD"
+                        android:text="@string/label_add"
                         app:cornerRadius="24dp" />
                 </LinearLayout>
 
@@ -141,7 +141,7 @@
                     android:id="@+id/tvDetailsHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Details"
+                    android:text="@string/label_details"
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp" />
 
@@ -149,7 +149,7 @@
                     android:id="@+id/tvDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Descripción"
+                    android:text="@string/label_description"
                     android:ellipsize="end"
                     android:maxLines="3" />
 
@@ -157,7 +157,7 @@
                     android:id="@+id/tvMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="MORE"
+                    android:text="@string/label_more"
                     android:textStyle="bold"
                     android:textColor="@android:color/holo_blue_dark"
                     android:layout_marginTop="4dp" />
