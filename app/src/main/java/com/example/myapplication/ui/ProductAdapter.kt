@@ -14,6 +14,8 @@ import coil.load
 import com.example.myapplication.R
 import com.example.myapplication.model.Product
 import com.example.myapplication.ui.NavigationHelper
+import com.example.myapplication.api.ApiConfig
+import android.net.Uri
 
 /**
  * Adapter reestructurado con dos tipos de ítems:
@@ -119,9 +121,14 @@ class ProductAdapter(
         fun bind(p: Product) {
             name.text = p.name
             price.text = "$${p.price}"
-            val url = p.images?.firstOrNull()?.url
+            val raw = p.images?.firstOrNull()?.let { it.url ?: it.path }
+            val url = sanitizeImageUrl(raw)
             if (url != null) {
-                iv.load(url)
+                iv.load(url) {
+                    crossfade(true)
+                    placeholder(android.R.drawable.ic_menu_gallery)
+                    error(android.R.drawable.ic_menu_gallery)
+                }
             } else {
                 iv.setImageResource(android.R.drawable.ic_menu_gallery)
             }
@@ -156,6 +163,24 @@ class ProductAdapter(
             }
 
             itemView.setOnClickListener { onProductClick(p) }
+        }
+
+        private fun sanitizeImageUrl(s: String?): String? {
+            if (s.isNullOrBlank()) return null
+            var u = s.trim()
+            u = u.replace("`", "").replace("\"", "")
+            u = u.replace("\n", "").replace("\r", "").replace("\t", "")
+            if (u.startsWith("/")) {
+                val base = ApiConfig.storeBaseUrl
+                val parsed = Uri.parse(base)
+                val origin = (parsed.scheme ?: "https") + "://" + (parsed.host ?: "")
+                u = origin + u
+            }
+            if (!u.startsWith("http")) {
+                u = "https://" + u.trimStart('/')
+            }
+            u = u.replace(" ", "%20")
+            return u
         }
     }
 }

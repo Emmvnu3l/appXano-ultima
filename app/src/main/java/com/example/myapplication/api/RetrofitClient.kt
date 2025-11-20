@@ -71,6 +71,13 @@ object RetrofitClient {
             .create(ProductService::class.java)
     }
 
+    fun createProductServicePublic(context: Context): ProductService {
+        // Servicio de productos SIN token, para catálogos públicos.
+        val tm = TokenManager(context)
+        return retrofit(ApiConfig.storeBaseUrl, authenticated = false, tokenManager = tm)
+            .create(ProductService::class.java)
+    }
+
     fun createOrderService(context: Context): OrderService {
         val tm = TokenManager(context)
         return retrofit(ApiConfig.storeBaseUrl, authenticated = true, tokenManager = tm)

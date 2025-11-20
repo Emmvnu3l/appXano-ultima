@@ -1,0 +1,982 @@
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\EditUserDialog.kt:17: Warning: Use of LayoutInflater.from(Context) detected. Consider using layoutInflater instead [UseGetLayoutInflater from androidx.fragment]
+        binding = DialogEditUserBinding.inflate(LayoutInflater.from(requireContext()))
+                                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseGetLayoutInflater":
+   Using LayoutInflater.from(Context) can return a LayoutInflater             
+       that does not have the correct theme.
+
+   Vendor: Android Open Source Project
+   Identifier: androidx.fragment
+   Feedback: https://issuetracker.google.com/issues/new?component=460964
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\HomeActivity.kt:127: Error: onBackPressed is no longer called for back gestures; migrate to AndroidX's backward compatible OnBackPressedDispatcher [GestureBackNavigation]
+    override fun onBackPressed() {
+                 ~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\LimitedHomeActivity.kt:68: Error: onBackPressed is no longer called for back gestures; migrate to AndroidX's backward compatible OnBackPressedDispatcher [GestureBackNavigation]
+    override fun onBackPressed() {
+                 ~~~~~~~~~~~~~
+
+   Explanation for issues of type "GestureBackNavigation":
+   For apps targeting and running on Android 16+ (API 36+), predictive back
+   animations are enabled by default. A back gesture does not trigger
+   {Activity,Dialog}.onBackPressed, and does not dispatch
+   KeyEvent.KEYCODE_BACK.
+
+   Apps should migrate to AndroidX's backward compatible
+   OnBackPressedDispatcher.
+
+   This lint check does not consider per-activity opt-in/opt-out, so you may
+   need to suppress or baseline reported incidents if migrating per-activity.
+
+   https://developer.android.com/guide/navigation/custom-back/predictive-back-gesture
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CheckoutActivity.kt:64: Warning: Implicitly using the default locale is a common source of bugs: Use String.format(Locale, ...) instead [DefaultLocale]
+    private fun formatCurrency(value: Double): String = String.format("$%.2f", value)
+                                                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "DefaultLocale":
+   Calling String#toLowerCase() or #toUpperCase() without specifying an
+   explicit locale is a common source of bugs. The reason for that is that
+   those methods will use the current locale on the user's device, and even
+   though the code appears to work correctly when you are developing the app,
+   it will fail in some locales. For example, in the Turkish locale, the
+   uppercase replacement for i is not I.
+
+   If you want the methods to just perform ASCII replacement, for example to
+   convert an enum name, call String#toUpperCase(Locale.ROOT) instead. If you
+   really want to use the current locale, call
+   String#toUpperCase(Locale.getDefault()) instead.
+
+   https://developer.android.com/reference/java/util/Locale.html#default_locale
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_orders.xml:16: Warning: Duplicate id @+id/progress, defined or included multiple times in layout/fragment_orders.xml: [layout/fragment_orders.xml defines @+id/progress, layout/fragment_orders.xml => layout/view_state.xml defines @+id/progress] [DuplicateIncludedIds]
+            <include
+            ^
+    C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_orders.xml:28: Defined here
+    C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\view_state.xml:37: Defined here, included via layout/fragment_orders.xml => layout/view_state.xml defines @+id/progress
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_users.xml:23: Warning: Duplicate id @+id/progress, defined or included multiple times in layout/fragment_users.xml: [layout/fragment_users.xml defines @+id/progress, layout/fragment_users.xml => layout/view_state.xml defines @+id/progress] [DuplicateIncludedIds]
+            <include
+            ^
+    C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_users.xml:35: Defined here
+    C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\view_state.xml:37: Defined here, included via layout/fragment_users.xml => layout/view_state.xml defines @+id/progress
+
+   Explanation for issues of type "DuplicateIncludedIds":
+   It's okay for two independent layouts to use the same ids. However, if
+   layouts are combined with include tags, then the id's need to be unique
+   within any chain of included layouts, or Activity#findViewById() can return
+   an unexpected view.
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\UsersAdapter.kt:42: Warning: Use SwitchCompat from AppCompat or MaterialSwitch from Material library [UseSwitchCompatOrMaterialCode from androidx.appcompat]
+        private val swBlocked: Switch = itemView.findViewById(R.id.swBlocked)
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseSwitchCompatOrMaterialCode":
+   Use SwitchCompat from AppCompat or MaterialSwitch from Material library
+
+   Vendor: Android Open Source Project
+   Identifier: androidx.appcompat
+   Feedback: https://issuetracker.google.com/issues/new?component=460343
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_user.xml:40: Warning: Use SwitchCompat from AppCompat or MaterialSwitch from Material library [UseSwitchCompatOrMaterialXml from androidx.appcompat]
+    <Switch
+    ^
+
+   Explanation for issues of type "UseSwitchCompatOrMaterialXml":
+   Use SwitchCompat from AppCompat or MaterialSwitch from Material library
+
+   Vendor: Android Open Source Project
+   Identifier: androidx.appcompat
+   Feedback: https://issuetracker.google.com/issues/new?component=460343
+
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:14: Warning: A newer version of androidx.lifecycle:lifecycle-runtime-ktx than 2.8.6 is available: 2.10.0 [GradleDependency]
+lifecycleRuntimeKtx = "2.8.6"
+                      ~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:15: Warning: A newer version of androidx.recyclerview:recyclerview than 1.3.2 is available: 1.4.0 [GradleDependency]
+recyclerview = "1.3.2"
+               ~~~~~~~
+
+   Explanation for issues of type "GradleDependency":
+   This detector looks for usages of libraries where the version you are using
+   is not the current stable release. Using older versions is fine, and there
+   are cases where you deliberately want to stick with an older version.
+   However, you may simply not be aware that a more recent version is
+   available, and that is what this lint check helps find.
+
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:3: Warning: A newer version of org.jetbrains.kotlin.android than 2.0.21 is available: 2.2.21 [NewerVersionAvailable]
+kotlin = "2.0.21"
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:10: Warning: A newer version of com.squareup.retrofit2:retrofit than 2.11.0 is available: 3.0.0 [NewerVersionAvailable]
+retrofit = "2.11.0"
+           ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:11: Warning: A newer version of com.squareup.okhttp3:logging-interceptor than 4.12.0 is available: 5.3.2 [NewerVersionAvailable]
+okhttp = "4.12.0"
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:11: Warning: A newer version of com.squareup.okhttp3:okhttp than 4.12.0 is available: 5.3.2 [NewerVersionAvailable]
+okhttp = "4.12.0"
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:12: Warning: A newer version of com.squareup.retrofit2:converter-gson than 2.11.0 is available: 3.0.0 [NewerVersionAvailable]
+converterGson = "2.11.0"
+                ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:13: Warning: A newer version of org.jetbrains.kotlinx:kotlinx-coroutines-android than 1.9.0 is available: 1.10.2 [NewerVersionAvailable]
+coroutinesAndroid = "1.9.0"
+                    ~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\gradle\libs.versions.toml:16: Warning: A newer version of io.coil-kt:coil than 2.6.0 is available: 2.7.0 [NewerVersionAvailable]
+coil = "2.6.0"
+       ~~~~~~~
+
+   Explanation for issues of type "NewerVersionAvailable":
+   This detector checks with a central repository to see if there are newer
+   versions available for the dependencies used by this project. This is
+   similar to the GradleDependency check, which checks for newer versions
+   available in the Android SDK tools and libraries, but this works with any
+   MavenCentral dependency, and connects to the library every time, which
+   makes it more flexible but also much slower.
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CartAdapter.kt:22: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged()
+        ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:23: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged()
+        ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductAdapter.kt:46: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged()
+        ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductAdapter.kt:97: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+                notifyDataSetChanged()
+                ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductAdapter.kt:104: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+                    notifyDataSetChanged()
+                    ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\UsersAdapter.kt:23: Warning: It will always be more efficient to use more specific change events if you can. Rely on notifyDataSetChanged as a last resort. [NotifyDataSetChanged]
+        notifyDataSetChanged()
+        ~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "NotifyDataSetChanged":
+   The RecyclerView adapter's onNotifyDataSetChanged method does not specify
+   what about the data set has changed, forcing any observers to assume that
+   all existing items and structure may no longer be valid. `LayoutManager`s
+   will be forced to fully rebind and relayout all visible views.
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\view_state.xml:2: Warning: This <FrameLayout> can be replaced with a <merge> tag [MergeRootFrame]
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+^
+
+   Explanation for issues of type "MergeRootFrame":
+   If a <FrameLayout> is the root of a layout and does not provide background
+   or padding etc, it can often be replaced with a <merge> tag which is
+   slightly more efficient. Note that this depends on context, so make sure
+   you understand how the <merge> tag works before proceeding.
+
+   https://android-developers.googleblog.com/2009/03/android-layout-tricks-3-optimize-by.html
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:44: Warning: Set android:baselineAligned="false" on this element for better performance [DisableBaselineAlignment]
+            <LinearLayout
+             ~~~~~~~~~~~~
+
+   Explanation for issues of type "DisableBaselineAlignment":
+   When a LinearLayout is used to distribute the space proportionally between
+   nested layouts, the baseline alignment property should be turned off to
+   make the layout computation faster.
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\dialog_image_viewer.xml:5: Warning: Possible overdraw: Root element paints background #CC000000 with a theme that also paints a background (inferred theme is @style/Theme.MyApplication) [Overdraw]
+    android:background="#CC000000">
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "Overdraw":
+   If you set a background drawable on a root view, then you should use a
+   custom theme where the theme background is null. Otherwise, the theme
+   background will be painted first, only to have your custom background
+   completely cover it; this is called "overdraw".
+
+   NOTE: This detector relies on figuring out which layouts are associated
+   with which activities based on scanning the Java code, and it's currently
+   doing that using an inexact pattern matching algorithm. Therefore, it can
+   incorrectly conclude which activity the layout is associated with and then
+   wrongly complain that a background-theme is hidden.
+
+   If you want your custom background on multiple pages, then you should
+   consider making a custom theme with your custom background and just using
+   that theme instead of a root element background.
+
+   Of course it's possible that your custom drawable is translucent and you
+   want it to be mixed with the background. However, you will get better
+   performance if you pre-mix the background with your drawable and use that
+   resulting image or color as a custom theme background instead.
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:37: Warning: The resource R.string.cart_empty appears to be unused [UnusedResources]
+    <string name="cart_empty">Carrito vacío</string>
+            ~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:38: Warning: The resource R.string.checkout_title appears to be unused [UnusedResources]
+    <string name="checkout_title">Checkout</string>
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:46: Warning: The resource R.string.title_new_product appears to be unused [UnusedResources]
+    <string name="title_new_product">Nuevo producto</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:47: Warning: The resource R.string.hint_description appears to be unused [UnusedResources]
+    <string name="hint_description">Descripción</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:48: Warning: The resource R.string.hint_stock appears to be unused [UnusedResources]
+    <string name="hint_stock">Stock</string>
+            ~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:49: Warning: The resource R.string.hint_brand appears to be unused [UnusedResources]
+    <string name="hint_brand">Marca</string>
+            ~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:50: Warning: The resource R.string.hint_category appears to be unused [UnusedResources]
+    <string name="hint_category">Categoría</string>
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:51: Warning: The resource R.string.label_select_images appears to be unused [UnusedResources]
+    <string name="label_select_images">Seleccionar imágenes</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:52: Warning: The resource R.string.label_create_product appears to be unused [UnusedResources]
+    <string name="label_create_product">Crear producto</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:53: Warning: The resource R.string.title_edit_product appears to be unused [UnusedResources]
+    <string name="title_edit_product">Editar producto</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:54: Warning: The resource R.string.label_save_changes appears to be unused [UnusedResources]
+    <string name="label_save_changes">Guardar cambios</string>
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:55: Warning: The resource R.string.label_delete appears to be unused [UnusedResources]
+    <string name="label_delete">Eliminar</string>
+            ~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:56: Warning: The resource R.string.state_error appears to be unused [UnusedResources]
+    <string name="state_error">Error</string>
+            ~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\values\strings.xml:57: Warning: The resource R.string.action_retry appears to be unused [UnusedResources]
+    <string name="action_retry">Reintentar</string>
+            ~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UnusedResources":
+   Unused resources make applications larger and slow down builds.
+
+
+   The unused resource check can ignore tests. If you want to include
+   resources that are only referenced from tests, consider packaging them in a
+   test source set instead.
+
+   You can include test sources in the unused resource check by setting the
+   system property lint.unused-resources.include-tests =true, and to exclude
+   them (usually for performance reasons), use
+   lint.unused-resources.exclude-tests =true.
+   ,
+
+   Available options:
+
+   **skip-libraries** (default is true):
+   Whether the unused resource check should skip reporting unused resources in libraries.
+
+   Many libraries will declare resources that are part of the library surface; other modules depending on the library will also reference the resources. To avoid reporting all these resources as unused (in the context of a library), the unused resource check normally skips reporting unused resources in libraries. Instead, run the unused resource check on the consuming app module (along with `checkDependencies=true`).
+
+   However, there are cases where you want to check that all the resources declared in a library are used; in that case, you can disable the skip option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UnusedResources">
+           <option name="skip-libraries" value="true" />
+       </issue>
+   </lint>
+   ```
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:67: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+                <Button
+                 ~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:74: Warning: Buttons in button bars should be borderless; use style="?android:attr/buttonBarButtonStyle" (and ?android:attr/buttonBarStyle on the parent) [ButtonStyle]
+                <Button
+                 ~~~~~~
+
+   Explanation for issues of type "ButtonStyle":
+   Button bars typically use a borderless style for the buttons. Set the
+   style="?android:attr/buttonBarButtonStyle" attribute on each of the
+   buttons, and set style="?android:attr/buttonBarStyle" on the parent layout
+
+   https://d.android.com/r/studio-ui/designer/material/dialogs
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\dialog_edit_user.xml:8: Warning: This text field does not specify an inputType [TextFields]
+    <EditText
+     ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\dialog_edit_user.xml:14: Warning: This text field does not specify an inputType [TextFields]
+    <EditText
+     ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:27: Warning: This text field does not specify an inputType [TextFields]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:34: Warning: This text field does not specify an inputType [TextFields]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:57: Warning: This text field does not specify an inputType [TextFields]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:27: Warning: This text field does not specify an inputType [TextFields]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:34: Warning: This text field does not specify an inputType [TextFields]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:25: Warning: This text field does not specify an inputType [TextFields]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:32: Warning: This text field does not specify an inputType [TextFields]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:55: Warning: This text field does not specify an inputType [TextFields]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_users.xml:17: Warning: This text field does not specify an inputType [TextFields]
+            <EditText
+             ~~~~~~~~
+
+   Explanation for issues of type "TextFields":
+   Providing an inputType attribute on a text field improves usability because
+   depending on the data to be input, optimized keyboards can be shown to the
+   user (such as just digits and parentheses for a phone number). 
+
+   The lint detector also looks at the id of the view, and if the id offers a
+   hint of the purpose of the field (for example, the id contains the phrase
+   phone or email), then lint will also ensure that the inputType contains the
+   corresponding type attributes.
+
+   If you really want to keep the text field generic, you can suppress this
+   warning by setting inputType="text".
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_main.xml:45: Warning: Missing autofillHints attribute [Autofill]
+                <EditText
+                 ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_main.xml:53: Warning: Missing autofillHints attribute [Autofill]
+                <EditText
+                 ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:38: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:47: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:55: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:63: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:71: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:79: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:87: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\dialog_edit_user.xml:8: Warning: Missing autofillHints attribute [Autofill]
+    <EditText
+     ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\dialog_edit_user.xml:14: Warning: Missing autofillHints attribute [Autofill]
+    <EditText
+     ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:27: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:34: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:41: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:49: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:57: Warning: Missing autofillHints attribute [Autofill]
+        <EditText
+         ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:27: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:34: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:25: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:32: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:39: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:47: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:55: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_users.xml:17: Warning: Missing autofillHints attribute [Autofill]
+            <EditText
+             ~~~~~~~~
+
+   Explanation for issues of type "Autofill":
+   Specify an autofillHints attribute when targeting SDK version 26 or higher
+   or explicitly specify that the view is not important for autofill. Your app
+   can help an autofill service classify the data correctly by providing the
+   meaning of each view that could be autofillable, such as views representing
+   usernames, passwords, credit card fields, email addresses, etc.
+
+   The hints can have any value, but it is recommended to use predefined
+   values like 'username' for a username or 'creditCardNumber' for a credit
+   card number. For a list of all predefined autofill hint constants, see the
+   AUTOFILL_HINT_ constants in the View reference at
+   https://developer.android.com/reference/android/view/View.html.
+
+   You can mark a view unimportant for autofill by specifying an
+   importantForAutofill attribute on that view or a parent view. See
+   https://developer.android.com/reference/android/view/View.html#setImportant
+   ForAutofill(int).
+
+   https://developer.android.com/guide/topics/text/autofill.html
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\AddProductFragment.kt:160: Warning: Use the KTX extension property View.isVisible instead? [UseKtx]
+        if (binding.spCategory.visibility == View.VISIBLE && binding.spCategory.adapter?.count ?: 0 > 0) {
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CartManager.kt:34: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        prefs.edit().remove(KEY_CART).apply()
+        ~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CartManager.kt:56: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        prefs.edit().putString(KEY_CART, serialized).apply()
+        ~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:64: Warning: Use the KTX extension function String.toColorInt instead? [UseKtx]
+            "pendiente" -> Color.parseColor("#FFA000")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:65: Warning: Use the KTX extension function String.toColorInt instead? [UseKtx]
+            "aceptado" -> Color.parseColor("#2E7D32")
+                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:66: Warning: Use the KTX extension function String.toColorInt instead? [UseKtx]
+            "rechazado" -> Color.parseColor("#C62828")
+                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:67: Warning: Use the KTX extension function String.toColorInt instead? [UseKtx]
+            "enviado" -> Color.parseColor("#1565C0")
+                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\api\TokenManager.kt:11: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        prefs.edit()
+        ~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\api\TokenManager.kt:34: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        prefs.edit().putString(KEY_ROLE, role).apply()
+        ~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\api\TokenManager.kt:45: Warning: Use the KTX extension function SharedPreferences.edit instead? [UseKtx]
+        prefs.edit().clear().apply()
+        ~~~~~~~~~~~~
+
+   Explanation for issues of type "UseKtx":
+   The Android KTX libraries decorates the Android platform SDK as well as
+   various libraries with more convenient extension functions available from
+   Kotlin, allowing you to use default parameters, named parameters, and
+   more.
+
+   Available options:
+
+   **remove-defaults** (default is true):
+   Whether to skip arguments that match the defaults provided by the extension.
+
+   Extensions often provide default values for some of the parameters. For example:
+   ```kotlin
+   fun Path.readLines(charset: Charset = Charsets.UTF_8): List<String> { return Files.readAllLines(this, charset) }
+   ```
+   This lint check will by default automatically omit parameters that match the default, so if your code was calling
+
+   ```kotlin
+   Files.readAllLines(file, Charset.UTF_8)
+   ```
+   lint would replace this with
+   ```kotlin
+   file.readLines()
+   ```
+   rather than
+
+   ```kotlin
+   file.readLines(Charset.UTF_8
+   ```
+   You can turn this behavior off using this option.
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="remove-defaults" value="true" />
+       </issue>
+   </lint>
+   ```
+
+   **require-present** (default is true):
+   Whether to only offer extensions already available.
+
+   This option lets you only have lint suggest extension replacements if those extensions are already available on the class path (in other words, you're already depending on the library containing the extension method.)
+
+   To configure this option, use a `lint.xml` file with an <option> like this:
+
+   ```xml
+   <lint>
+       <issue id="UseKtx">
+           <option name="require-present" value="true" />
+       </issue>
+   </lint>
+   ```
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\build.gradle.kts:65: Warning: Use version catalog instead [UseTomlInstead]
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "UseTomlInstead":
+   If your project is using a libs.versions.toml file, you should place all
+   Gradle dependencies in the TOML file. This lint check looks for version
+   declarations outside of the TOML file and suggests moving them (and in the
+   IDE, provides a quickfix to performing the operation automatically).
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_product_detail.xml:169: Warning: Missing contentDescription attribute on image [ContentDescription]
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_products.xml:34: Warning: Missing contentDescription attribute on image [ContentDescription]
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:129: Warning: Missing contentDescription attribute on image [ContentDescription]
+                <ImageView
+                 ~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:152: Warning: Missing contentDescription attribute on image [ContentDescription]
+                <ImageView
+                 ~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:175: Warning: Missing contentDescription attribute on image [ContentDescription]
+                <ImageView
+                 ~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:198: Warning: Missing contentDescription attribute on image [ContentDescription]
+                <ImageView
+                 ~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:221: Warning: Missing contentDescription attribute on image [ContentDescription]
+                <ImageView
+                 ~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_product.xml:16: Warning: Missing contentDescription attribute on image [ContentDescription]
+        <ImageView
+         ~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_user.xml:8: Warning: Missing contentDescription attribute on image [ContentDescription]
+    <ImageView
+     ~~~~~~~~~
+
+   Explanation for issues of type "ContentDescription":
+   Non-textual widgets like ImageViews and ImageButtons should use the
+   contentDescription attribute to specify a textual description of the widget
+   such that screen readers and other accessibility tools can adequately
+   describe the user interface.
+
+   Note that elements in application screens that are purely decorative and do
+   not provide any content or enable a user action should not have
+   accessibility content descriptions. In this case, set their descriptions to
+   @null. If your app's minSdkVersion is 16 or higher, you can instead set
+   these graphical elements' android:importantForAccessibility attributes to
+   no.
+
+   Note that for text fields, you should not set both the hint and the
+   contentDescription attributes since the hint will never be shown. Just set
+   the hint.
+
+   https://developer.android.com/guide/topics/ui/accessibility/apps#special-cases
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\AddProductFragment.kt:159: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        binding.tvImagesStatus.text = "Sin imágenes"
+                                       ~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CartAdapter.kt:50: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            price.text = "$${p.price}"
+                         ~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CartAdapter.kt:51: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+            qty.text = quantity.toString()
+                       ~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CheckoutActivity.kt:58: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+                binding.tvTotal.text = "$0.00"
+                                       ~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CheckoutActivity.kt:58: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                binding.tvTotal.text = "$0.00"
+                                         ~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\CreateCategoryFragment.kt:110: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        binding.tvImageStatus.text = "Sin imagen"
+                                      ~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\EditProductFragment.kt:41: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+            binding.etPrice.setText(p.price.toString())
+                                    ~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\HomeFragment.kt:25: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+        binding.tvWelcome.text = "Bienvenido!"
+                                  ~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:47: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            tvId.text = "#${o.id}"
+                        ~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:48: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            tvClient.text = "Cliente: ${o.userId ?: "-"}"
+                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:48: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+            tvClient.text = "Cliente: ${o.userId ?: "-"}"
+                             ~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\OrdersAdapter.kt:49: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            tvTotal.text = "$${o.total}"
+                           ~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductAdapter.kt:122: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            price.text = "$${p.price}"
+                         ~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductAdapter.kt:136: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+            tvQty.text = qty.toString()
+                         ~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductAdapter.kt:142: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+                tvQty.text = next.toString()
+                             ~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductAdapter.kt:148: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+                tvQty.text = next.toString()
+                             ~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductDetailActivity.kt:62: Warning: Do not concatenate text displayed with setText. Use resource string with placeholders. [SetTextI18n]
+            binding.tvPrice.text = "$${product.price}"
+                                   ~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductDetailActivity.kt:86: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+        binding.tvQuantity.text = quantity.toString()
+                                  ~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductDetailActivity.kt:91: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+            binding.tvQuantity.text = next.toString()
+                                      ~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProductDetailActivity.kt:96: Warning: Number formatting does not take into account locale settings. Consider using String.format instead. [SetTextI18n]
+            binding.tvQuantity.text = next.toString()
+                                      ~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProfileFragment.kt:45: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                binding.tvPurchases.text = "02"
+                                            ~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProfileFragment.kt:46: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                binding.tvPoints.text = "200"
+                                         ~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\java\com\example\myapplication\ui\ProfileFragment.kt:47: Warning: String literal in setText can not be translated. Use Android resources instead. [SetTextI18n]
+                binding.tvCoupons.text = "01"
+                                          ~~
+
+   Explanation for issues of type "SetTextI18n":
+   When calling TextView#setText
+   * Never call Number#toString() to format numbers; it will not handle
+   fraction separators and locale-specific digits properly. Consider using
+   String#format with proper format specifications (%d or %f) instead.
+   * Do not pass a string literal (e.g. "Hello") to display text. Hardcoded
+   text can not be properly translated to other languages. Consider using
+   Android resource strings instead.
+   * Do not build messages by concatenating text chunks. Such messages can not
+   be properly translated.
+
+   https://developer.android.com/guide/topics/resources/localization.html
+
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:12: Warning: Hardcoded string "Checkout", should use @string resource [HardcodedText]
+        android:title="Checkout"
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:28: Warning: Hardcoded string "Resumen del carrito", should use @string resource [HardcodedText]
+                android:text="Resumen del carrito"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:35: Warning: Hardcoded string "Items", should use @string resource [HardcodedText]
+                android:text="Items" />
+                ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:51: Warning: Hardcoded string "Subtotal", should use @string resource [HardcodedText]
+                        android:text="Subtotal" />
+                        ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:56: Warning: Hardcoded string "$0.00", should use @string resource [HardcodedText]
+                        android:text="$0.00" />
+                        ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:67: Warning: Hardcoded string "Impuestos", should use @string resource [HardcodedText]
+                        android:text="Impuestos" />
+                        ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:72: Warning: Hardcoded string "$0.00", should use @string resource [HardcodedText]
+                        android:text="$0.00" />
+                        ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:83: Warning: Hardcoded string "Descuentos", should use @string resource [HardcodedText]
+                        android:text="Descuentos" />
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:88: Warning: Hardcoded string "$0.00", should use @string resource [HardcodedText]
+                        android:text="$0.00" />
+                        ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:100: Warning: Hardcoded string "Total", should use @string resource [HardcodedText]
+                        android:text="Total" />
+                        ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:106: Warning: Hardcoded string "$0.00", should use @string resource [HardcodedText]
+                        android:text="$0.00" />
+                        ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:114: Warning: Hardcoded string "Confirmar pago (simulado)", should use @string resource [HardcodedText]
+                android:text="Confirmar pago (simulado)" />
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_checkout.xml:120: Warning: Hardcoded string "Solicitar envío", should use @string resource [HardcodedText]
+                android:text="Solicitar envío"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_logout.xml:38: Warning: Hardcoded string "Cerrar sesión", should use @string resource [HardcodedText]
+                android:text="Cerrar sesión" />
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_main.xml:23: Warning: Hardcoded string "Inicio", should use @string resource [HardcodedText]
+                android:title="Inicio" />
+                ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_main.xml:50: Warning: Hardcoded string "Email", should use @string resource [HardcodedText]
+                    android:hint="Email"
+                    ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_main.xml:58: Warning: Hardcoded string "Password", should use @string resource [HardcodedText]
+                    android:hint="Password"
+                    ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_main.xml:66: Warning: Hardcoded string "Login", should use @string resource [HardcodedText]
+                    android:text="Login" />
+                    ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_main.xml:74: Warning: Hardcoded string "Ir a Registro", should use @string resource [HardcodedText]
+                    android:text="Ir a Registro" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_product_detail.xml:52: Warning: Hardcoded string "Imagen del producto", should use @string resource [HardcodedText]
+                        android:contentDescription="Imagen del producto" />
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_product_detail.xml:114: Warning: Hardcoded string "1", should use @string resource [HardcodedText]
+                                android:text="1"
+                                ~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:17: Warning: Hardcoded string "Registro", should use @string resource [HardcodedText]
+                android:title="Registro" />
+                ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:42: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+            android:hint="Nombre"
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:51: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+            android:hint="Nombre"
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:59: Warning: Hardcoded string "Apellido", should use @string resource [HardcodedText]
+            android:hint="Apellido"
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:67: Warning: Hardcoded string "Correo electrónico", should use @string resource [HardcodedText]
+            android:hint="Correo electrónico"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:75: Warning: Hardcoded string "Contraseña", should use @string resource [HardcodedText]
+            android:hint="Contraseña"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:83: Warning: Hardcoded string "Teléfono", should use @string resource [HardcodedText]
+            android:hint="Teléfono"
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:91: Warning: Hardcoded string "Dirección de envío", should use @string resource [HardcodedText]
+            android:hint="Dirección de envío"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:106: Warning: Hardcoded string "Registrar", should use @string resource [HardcodedText]
+            android:text="Registrar"
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\activity_register.xml:120: Warning: Hardcoded string "Volver", should use @string resource [HardcodedText]
+            android:text="Volver"
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\dialog_edit_user.xml:12: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+        android:hint="Nombre" />
+        ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\dialog_edit_user.xml:18: Warning: Hardcoded string "Email", should use @string resource [HardcodedText]
+        android:hint="Email" />
+        ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:24: Warning: Hardcoded string "Nuevo producto", should use @string resource [HardcodedText]
+            android:title="Nuevo producto"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:31: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+            android:hint="Nombre"
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:38: Warning: Hardcoded string "Descripción", should use @string resource [HardcodedText]
+            android:hint="Descripción"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:45: Warning: Hardcoded string "Precio", should use @string resource [HardcodedText]
+            android:hint="Precio"
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:53: Warning: Hardcoded string "Stock", should use @string resource [HardcodedText]
+            android:hint="Stock"
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:61: Warning: Hardcoded string "Marca", should use @string resource [HardcodedText]
+            android:hint="Marca"
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:74: Warning: Hardcoded string "Sin imágenes", should use @string resource [HardcodedText]
+            android:text="Sin imágenes"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:81: Warning: Hardcoded string "Seleccionar imágenes", should use @string resource [HardcodedText]
+            android:text="Seleccionar imágenes"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_add_product.xml:88: Warning: Hardcoded string "Crear producto", should use @string resource [HardcodedText]
+            android:text="Crear producto"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_cart.xml:12: Warning: Hardcoded string "Carrito vacío", should use @string resource [HardcodedText]
+        android:text="Carrito vacío"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_cart.xml:33: Warning: Hardcoded string "Total: $0.00", should use @string resource [HardcodedText]
+            android:text="Total: $0.00"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_cart.xml:40: Warning: Hardcoded string "Pagar (simulado)", should use @string resource [HardcodedText]
+            android:text="Pagar (simulado)"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:24: Warning: Hardcoded string "Nueva categoría", should use @string resource [HardcodedText]
+                android:title="Nueva categoría"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:31: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+                android:hint="Nombre"
+                ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:38: Warning: Hardcoded string "Descripción", should use @string resource [HardcodedText]
+                android:hint="Descripción"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:45: Warning: Hardcoded string "Sin imagen", should use @string resource [HardcodedText]
+                android:text="Sin imagen"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:52: Warning: Hardcoded string "Seleccionar imagen", should use @string resource [HardcodedText]
+                android:text="Seleccionar imagen"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_create_category.xml:59: Warning: Hardcoded string "Crear categoría", should use @string resource [HardcodedText]
+                android:text="Crear categoría"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:22: Warning: Hardcoded string "Editar producto", should use @string resource [HardcodedText]
+                android:title="Editar producto"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:29: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+                android:hint="Nombre"
+                ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:36: Warning: Hardcoded string "Descripción", should use @string resource [HardcodedText]
+                android:hint="Descripción"
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:43: Warning: Hardcoded string "Precio", should use @string resource [HardcodedText]
+                android:hint="Precio"
+                ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:51: Warning: Hardcoded string "Stock", should use @string resource [HardcodedText]
+                android:hint="Stock"
+                ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:59: Warning: Hardcoded string "Marca", should use @string resource [HardcodedText]
+                android:hint="Marca"
+                ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:72: Warning: Hardcoded string "Guardar cambios", should use @string resource [HardcodedText]
+                    android:text="Guardar cambios" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_edit_product.xml:79: Warning: Hardcoded string "Eliminar", should use @string resource [HardcodedText]
+                    android:text="Eliminar" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_home.xml:12: Warning: Hardcoded string "Bienvenido!", should use @string resource [HardcodedText]
+        android:text="Bienvenido!"
+        ~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:22: Warning: Hardcoded string "Avatar", should use @string resource [HardcodedText]
+            android:contentDescription="Avatar" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:32: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+            android:text="Nombre" />
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:61: Warning: Hardcoded string "Compras", should use @string resource [HardcodedText]
+                        android:text="Compras"
+                        ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:68: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                        android:text="0"
+                        ~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:82: Warning: Hardcoded string "Puntos", should use @string resource [HardcodedText]
+                        android:text="Puntos"
+                        ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:89: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                        android:text="0"
+                        ~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:103: Warning: Hardcoded string "Total cupones", should use @string resource [HardcodedText]
+                        android:text="Total cupones"
+                        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:110: Warning: Hardcoded string "0", should use @string resource [HardcodedText]
+                        android:text="0"
+                        ~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:138: Warning: Hardcoded string "Nombre(s):", should use @string resource [HardcodedText]
+                    android:text="Nombre(s):" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:161: Warning: Hardcoded string "Apellidos:", should use @string resource [HardcodedText]
+                    android:text="Apellidos:" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:184: Warning: Hardcoded string "Email:", should use @string resource [HardcodedText]
+                    android:text="Email:" />
+                    ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:207: Warning: Hardcoded string "Dirección de envío:", should use @string resource [HardcodedText]
+                    android:text="Dirección de envío:" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_profile.xml:230: Warning: Hardcoded string "Teléfono:", should use @string resource [HardcodedText]
+                    android:text="Teléfono:" />
+                    ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\fragment_users.xml:21: Warning: Hardcoded string "Buscar por nombre o email", should use @string resource [HardcodedText]
+                android:hint="Buscar por nombre o email" />
+                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_cart.xml:19: Warning: Hardcoded string "Producto", should use @string resource [HardcodedText]
+            android:text="Producto" />
+            ~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_cart.xml:25: Warning: Hardcoded string "$0.00", should use @string resource [HardcodedText]
+            android:text="$0.00"
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_cart.xml:42: Warning: Hardcoded string "Disminuir", should use @string resource [HardcodedText]
+            android:contentDescription="Disminuir" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_cart.xml:48: Warning: Hardcoded string "1", should use @string resource [HardcodedText]
+            android:text="1"
+            ~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_cart.xml:58: Warning: Hardcoded string "Incrementar", should use @string resource [HardcodedText]
+            android:contentDescription="Incrementar" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_cart.xml:66: Warning: Hardcoded string "Eliminar", should use @string resource [HardcodedText]
+            android:contentDescription="Eliminar" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_fullscreen_image.xml:7: Warning: Hardcoded string "Imagen a pantalla completa", should use @string resource [HardcodedText]
+    android:contentDescription="Imagen a pantalla completa" />
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_order.xml:18: Warning: Hardcoded string "#0", should use @string resource [HardcodedText]
+            android:text="#0"
+            ~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_order.xml:26: Warning: Hardcoded string "Cliente", should use @string resource [HardcodedText]
+            android:text="Cliente" />
+            ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_order.xml:32: Warning: Hardcoded string "$0.00", should use @string resource [HardcodedText]
+            android:text="$0.00"
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_order.xml:48: Warning: Hardcoded string "pendiente", should use @string resource [HardcodedText]
+            android:text="pendiente" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_order.xml:56: Warning: Hardcoded string "Aceptar", should use @string resource [HardcodedText]
+            android:contentDescription="Aceptar" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_order.xml:64: Warning: Hardcoded string "Rechazar", should use @string resource [HardcodedText]
+            android:contentDescription="Rechazar" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_order.xml:72: Warning: Hardcoded string "Enviar", should use @string resource [HardcodedText]
+            android:contentDescription="Enviar" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_product.xml:65: Warning: Hardcoded string "1", should use @string resource [HardcodedText]
+                android:text="1"
+                ~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_products_header.xml:22: Warning: Hardcoded string "Buscar productos", should use @string resource [HardcodedText]
+            android:hint="Buscar productos"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_user.xml:25: Warning: Hardcoded string "Nombre", should use @string resource [HardcodedText]
+            android:text="Nombre" />
+            ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_user.xml:31: Warning: Hardcoded string "email@dominio.com", should use @string resource [HardcodedText]
+            android:text="email@dominio.com" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_user.xml:37: Warning: Hardcoded string "2024-01-01", should use @string resource [HardcodedText]
+            android:text="2024-01-01" />
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_user.xml:44: Warning: Hardcoded string "Bloqueado", should use @string resource [HardcodedText]
+        android:text="Bloqueado" />
+        ~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\item_user.xml:50: Warning: Hardcoded string "Editar", should use @string resource [HardcodedText]
+        android:text="Editar"
+        ~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\menu\menu_product_detail.xml:7: Warning: Hardcoded string "Editar", should use @string resource [HardcodedText]
+        android:title="Editar"
+        ~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\menu\nav_drawer_limited_menu.xml:16: Warning: Hardcoded string "Más", should use @string resource [HardcodedText]
+    <item android:title="Más">
+          ~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\menu\nav_drawer_menu.xml:20: Warning: Hardcoded string "Más", should use @string resource [HardcodedText]
+    <item android:title="Más">
+          ~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\view_state.xml:16: Warning: Hardcoded string "Error", should use @string resource [HardcodedText]
+            android:text="Error"
+            ~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\view_state.xml:24: Warning: Hardcoded string "Sin resultados", should use @string resource [HardcodedText]
+            android:text="Sin resultados"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C:\Users\emm.moreno\Documents\appXano-ultima\app\src\main\res\layout\view_state.xml:31: Warning: Hardcoded string "Reintentar", should use @string resource [HardcodedText]
+            android:text="Reintentar"
+            ~~~~~~~~~~~~~~~~~~~~~~~~~
+
+   Explanation for issues of type "HardcodedText":
+   Hardcoding text attributes directly in layout files is bad for several
+   reasons:
+
+   * When creating configuration variations (for example for landscape or
+   portrait) you have to repeat the actual text (and keep it up to date when
+   making changes)
+
+   * The application cannot be translated to other languages by just adding
+   new translations for existing string resources.
+
+   There are quickfixes to automatically extract this hardcoded string into a
+   resource lookup.
+
+2 errors, 219 warnings

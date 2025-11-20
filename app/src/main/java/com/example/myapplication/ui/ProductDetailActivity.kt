@@ -17,6 +17,8 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.example.myapplication.api.ApiConfig
+import android.net.Uri
 
 class ProductDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProductDetailBinding
@@ -60,10 +62,18 @@ class ProductDetailActivity : AppCompatActivity() {
             binding.tvName.text = product.name
             binding.tvPrice.text = "$${product.price}"
             binding.tvDescription.text = product.description ?: ""
-            val urls = product.images?.mapNotNull { it.url }.orEmpty()
-            val url = urls.firstOrNull()
-            if (url != null) binding.ivImage.load(url)
-            // Abrir visor al tocar la imagen
+            val urlsRaw = product.images?.mapNotNull { it.url ?: it.path }.orEmpty()
+            val urls = urlsRaw.mapNotNull { sanitizeImageUrl(it) }
+            val cover = urls.firstOrNull()
+            if (cover != null) {
+                binding.ivImage.load(cover) {
+                    crossfade(true)
+                    placeholder(android.R.drawable.ic_menu_gallery)
+                    error(android.R.drawable.ic_menu_gallery)
+                }
+            } else {
+                binding.ivImage.setImageResource(android.R.drawable.ic_menu_gallery)
+            }
             binding.ivImage.setOnClickListener {
                 if (urls.isNotEmpty()) {
                     ImageViewerDialogFragment.newInstance(urls, 0)
@@ -112,7 +122,26 @@ class ProductDetailActivity : AppCompatActivity() {
         // FAB edición (visual)
         binding.fabEdit.visibility = if (isAdmin) View.VISIBLE else View.GONE
         binding.fabEdit.setOnClickListener {
-            NavigationHelper.openAddProduct(this)
+            val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
+            if (p != null) NavigationHelper.openEditProduct(this, p)
         }
+    }
+
+    private fun sanitizeImageUrl(s: String?): String? {
+        if (s.isNullOrBlank()) return null
+        var u = s.trim()
+        u = u.replace("`", "").replace("\"", "")
+        u = u.replace("\n", "").replace("\r", "").replace("\t", "")
+        if (u.startsWith("/")) {
+            val base = ApiConfig.storeBaseUrl
+            val parsed = Uri.parse(base)
+            val origin = (parsed.scheme ?: "https") + "://" + (parsed.host ?: "")
+            u = origin + u
+        }
+        if (!u.startsWith("http")) {
+            u = "https://" + u.trimStart('/')
+        }
+        u = u.replace(" ", "%20")
+        return u
     }
 }

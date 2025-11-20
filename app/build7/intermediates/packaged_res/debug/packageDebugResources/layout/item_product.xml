@@ -28,13 +28,13 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginBottom="4dp"
-            android:text="Nombre" />
+            android:text="@string/label_name" />
 
         <TextView
             android:id="@+id/tvPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="$0.00"
+            android:text="@string/label_price"
             android:layout_marginBottom="8dp" />
 
         <LinearLayout
@@ -56,7 +56,7 @@
                 android:layout_height="36dp"
                 android:background="@android:color/transparent"
                 android:src="@android:drawable/ic_media_previous"
-                android:contentDescription="Disminuir" />
+                android:contentDescription="@string/label_decrease" />
 
             <TextView
                 android:id="@+id/tvQuantity"
@@ -72,7 +72,7 @@
                 android:layout_height="36dp"
                 android:background="@android:color/transparent"
                 android:src="@android:drawable/ic_media_next"
-                android:contentDescription="Incrementar" />
+                android:contentDescription="@string/label_increase" />
         </LinearLayout>
 
         <Button

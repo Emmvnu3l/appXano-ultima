@@ -12,29 +12,29 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 
 interface OrderService {
-    @POST("orders")
+    @POST("order")
     suspend fun createOrder(@Body request: CreateOrderRequest): Order
 
-    @GET("orders/{id}")
+    @GET("order/{id}")
     suspend fun getOrder(@Path("id") id: Int): Order
 
-    @GET("orders")
+    @GET("order")
     suspend fun listOrders(
         @Query("status") status: String?,
         @Query("page") page: Int?,
         @Query("pageSize") pageSize: Int?
     ): List<Order>
 
-    @PUT("orders/{id}/accept")
+    @PUT("order/{id}/accept")
     suspend fun accept(@Path("id") id: Int): Order
 
-    @PUT("orders/{id}/reject")
+    @PUT("order/{id}/reject")
     suspend fun reject(@Path("id") id: Int): Order
 
-    @PUT("orders/{id}/ship")
+    @PUT("order/{id}/ship")
     suspend fun ship(@Path("id") id: Int): Order
 
-    @PATCH("orders/{id}")
+    @PATCH("order/{id}")
     suspend fun updateStatus(
         @Path("id") id: Int,
         @Body request: UpdateOrderStatusRequest

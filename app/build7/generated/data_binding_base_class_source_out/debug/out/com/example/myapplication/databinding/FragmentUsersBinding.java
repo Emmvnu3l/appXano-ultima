@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -35,23 +34,14 @@ public final class FragmentUsersBinding implements ViewBinding {
   @NonNull
   public final SwipeRefreshLayout swipeRefresh;
 
-  @NonNull
-  public final TextView tvEmpty;
-
-  @NonNull
-  public final TextView tvError;
-
   private FragmentUsersBinding(@NonNull FrameLayout rootView, @NonNull EditText etSearch,
       @NonNull ProgressBar progress, @NonNull RecyclerView recycler,
-      @NonNull SwipeRefreshLayout swipeRefresh, @NonNull TextView tvEmpty,
-      @NonNull TextView tvError) {
+      @NonNull SwipeRefreshLayout swipeRefresh) {
     this.rootView = rootView;
     this.etSearch = etSearch;
     this.progress = progress;
     this.recycler = recycler;
     this.swipeRefresh = swipeRefresh;
-    this.tvEmpty = tvEmpty;
-    this.tvError = tvError;
   }
 
   @Override
@@ -105,20 +95,8 @@ public final class FragmentUsersBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvEmpty;
-      TextView tvEmpty = ViewBindings.findChildViewById(rootView, id);
-      if (tvEmpty == null) {
-        break missingId;
-      }
-
-      id = R.id.tvError;
-      TextView tvError = ViewBindings.findChildViewById(rootView, id);
-      if (tvError == null) {
-        break missingId;
-      }
-
       return new FragmentUsersBinding((FrameLayout) rootView, etSearch, progress, recycler,
-          swipeRefresh, tvEmpty, tvError);
+          swipeRefresh);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

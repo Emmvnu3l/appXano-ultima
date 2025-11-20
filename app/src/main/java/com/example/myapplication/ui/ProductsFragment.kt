@@ -10,12 +10,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.myapplication.R
 import com.example.myapplication.api.RetrofitClient
+import com.example.myapplication.api.NetworkError
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.FragmentProductsBinding
 import com.example.myapplication.model.Product
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import com.example.myapplication.ui.StateUi
 
 class ProductsFragment : Fragment() {
     private var _binding: FragmentProductsBinding? = null
@@ -77,7 +80,7 @@ class ProductsFragment : Fragment() {
         binding.recycler.adapter = adapter
 
         binding.swipeRefresh.setOnRefreshListener { loadProducts() }
-        binding.btnRetry.setOnClickListener { loadProducts() }
+        binding.state.btnRetry.setOnClickListener { loadProducts() }
 
         val tm = TokenManager(requireContext())
         if (tm.isAdmin()) {
@@ -92,40 +95,45 @@ class ProductsFragment : Fragment() {
     }
 
     private fun setLoading(loading: Boolean) {
-        // Mostrar solo el spinner centrado cuando loading=true; ocultar el contenido
-        binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
-        binding.swipeRefresh.visibility = if (loading) View.GONE else View.VISIBLE
+        if (loading) StateUi.showLoading(binding.state) else StateUi.hide(binding.state)
         binding.fabAdd.visibility = if (loading) View.GONE else View.VISIBLE
-        // Ocultar mensajes de error al iniciar una nueva carga
-        binding.tvError.visibility = View.GONE
         if (!loading) binding.swipeRefresh.isRefreshing = false
     }
 
     private fun showError(message: String) {
-        binding.tvError.text = message
-        binding.tvError.visibility = View.VISIBLE
+        StateUi.showError(binding.state, message)
         binding.swipeRefresh.isRefreshing = false
     }
 
     private fun showEmpty() {
-        binding.tvError.text = getString(R.string.state_empty)
-        binding.tvError.visibility = View.VISIBLE
+        StateUi.showEmpty(binding.state)
         binding.swipeRefresh.isRefreshing = false
     }
 
     private fun hideError() {
-        binding.tvError.visibility = View.GONE
+        binding.state.tvError.visibility = View.GONE
     }
 
     private fun loadProducts() {
         setLoading(true)
         lifecycleScope.launch {
             try {
-                val service = RetrofitClient.createProductService(requireContext())
-                val products = withContext(Dispatchers.IO) { service.getProducts() }
+                val authed = RetrofitClient.createProductService(requireContext())
+                val products = withContext(Dispatchers.IO) { authed.getProducts() }
                 onProductsLoaded(products)
             } catch (e: Exception) {
-                showError(getString(R.string.msg_products_error, e.message ?: ""))
+                val fallback = (e is HttpException && e.code() == 401)
+                if (fallback) {
+                    try {
+                        val publicSvc = RetrofitClient.createProductServicePublic(requireContext())
+                        val products = withContext(Dispatchers.IO) { publicSvc.getProducts() }
+                        onProductsLoaded(products)
+                    } catch (e2: Exception) {
+                        showError(getString(R.string.msg_products_error, NetworkError.message(e2)))
+                    }
+                } else {
+                    showError(getString(R.string.msg_products_error, NetworkError.message(e)))
+                }
             } finally {
                 setLoading(false)
             }
