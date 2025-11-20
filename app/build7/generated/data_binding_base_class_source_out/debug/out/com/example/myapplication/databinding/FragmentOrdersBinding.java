@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,21 +30,12 @@ public final class FragmentOrdersBinding implements ViewBinding {
   @NonNull
   public final SwipeRefreshLayout swipeRefresh;
 
-  @NonNull
-  public final TextView tvEmpty;
-
-  @NonNull
-  public final TextView tvError;
-
   private FragmentOrdersBinding(@NonNull FrameLayout rootView, @NonNull ProgressBar progress,
-      @NonNull RecyclerView recycler, @NonNull SwipeRefreshLayout swipeRefresh,
-      @NonNull TextView tvEmpty, @NonNull TextView tvError) {
+      @NonNull RecyclerView recycler, @NonNull SwipeRefreshLayout swipeRefresh) {
     this.rootView = rootView;
     this.progress = progress;
     this.recycler = recycler;
     this.swipeRefresh = swipeRefresh;
-    this.tvEmpty = tvEmpty;
-    this.tvError = tvError;
   }
 
   @Override
@@ -93,20 +83,7 @@ public final class FragmentOrdersBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvEmpty;
-      TextView tvEmpty = ViewBindings.findChildViewById(rootView, id);
-      if (tvEmpty == null) {
-        break missingId;
-      }
-
-      id = R.id.tvError;
-      TextView tvError = ViewBindings.findChildViewById(rootView, id);
-      if (tvError == null) {
-        break missingId;
-      }
-
-      return new FragmentOrdersBinding((FrameLayout) rootView, progress, recycler, swipeRefresh,
-          tvEmpty, tvError);
+      return new FragmentOrdersBinding((FrameLayout) rootView, progress, recycler, swipeRefresh);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

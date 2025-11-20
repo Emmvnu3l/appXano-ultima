@@ -59,6 +59,13 @@ class HomeActivity : AppCompatActivity() {
                 replaceFragment(AddProductFragment())
                 binding.navView.setCheckedItem(R.id.nav_add_product)
             }
+            intent.getBooleanExtra("open_edit_product", false) -> {
+                val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
+                if (p != null) {
+                    replaceFragment(EditProductFragment.newInstance(p))
+                    binding.navView.setCheckedItem(R.id.nav_add_product)
+                }
+            }
             intent.getBooleanExtra("open_orders", false) -> {
                 replaceFragment(OrdersFragment())
                 binding.navView.setCheckedItem(R.id.nav_orders)

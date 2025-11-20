@@ -4,10 +4,7 @@ package com.example.myapplication.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,13 +22,7 @@ public final class FragmentProductsBinding implements ViewBinding {
   private final FrameLayout rootView;
 
   @NonNull
-  public final Button btnRetry;
-
-  @NonNull
   public final FloatingActionButton fabAdd;
-
-  @NonNull
-  public final ProgressBar progress;
 
   @NonNull
   public final RecyclerView recycler;
@@ -39,20 +30,13 @@ public final class FragmentProductsBinding implements ViewBinding {
   @NonNull
   public final SwipeRefreshLayout swipeRefresh;
 
-  @NonNull
-  public final TextView tvError;
-
-  private FragmentProductsBinding(@NonNull FrameLayout rootView, @NonNull Button btnRetry,
-      @NonNull FloatingActionButton fabAdd, @NonNull ProgressBar progress,
-      @NonNull RecyclerView recycler, @NonNull SwipeRefreshLayout swipeRefresh,
-      @NonNull TextView tvError) {
+  private FragmentProductsBinding(@NonNull FrameLayout rootView,
+      @NonNull FloatingActionButton fabAdd, @NonNull RecyclerView recycler,
+      @NonNull SwipeRefreshLayout swipeRefresh) {
     this.rootView = rootView;
-    this.btnRetry = btnRetry;
     this.fabAdd = fabAdd;
-    this.progress = progress;
     this.recycler = recycler;
     this.swipeRefresh = swipeRefresh;
-    this.tvError = tvError;
   }
 
   @Override
@@ -82,21 +66,9 @@ public final class FragmentProductsBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.btnRetry;
-      Button btnRetry = ViewBindings.findChildViewById(rootView, id);
-      if (btnRetry == null) {
-        break missingId;
-      }
-
       id = R.id.fabAdd;
       FloatingActionButton fabAdd = ViewBindings.findChildViewById(rootView, id);
       if (fabAdd == null) {
-        break missingId;
-      }
-
-      id = R.id.progress;
-      ProgressBar progress = ViewBindings.findChildViewById(rootView, id);
-      if (progress == null) {
         break missingId;
       }
 
@@ -112,14 +84,7 @@ public final class FragmentProductsBinding implements ViewBinding {
         break missingId;
       }
 
-      id = R.id.tvError;
-      TextView tvError = ViewBindings.findChildViewById(rootView, id);
-      if (tvError == null) {
-        break missingId;
-      }
-
-      return new FragmentProductsBinding((FrameLayout) rootView, btnRetry, fabAdd, progress,
-          recycler, swipeRefresh, tvError);
+      return new FragmentProductsBinding((FrameLayout) rootView, fabAdd, recycler, swipeRefresh);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

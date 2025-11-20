@@ -10,6 +10,8 @@ import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import com.example.myapplication.R
 import android.widget.ImageView
+import com.example.myapplication.api.ApiConfig
+import android.net.Uri
 
 class ImageViewerDialogFragment : DialogFragment() {
     // DialogFragment a pantalla completa para visualizar una lista de imágenes (URLs)
@@ -67,10 +69,35 @@ class ImageViewerDialogFragment : DialogFragment() {
     }
 
     private class ImageViewHolder(private val imageView: ImageView) : RecyclerView.ViewHolder(imageView) {
-        // Bind simple: Coil resuelve caché/red y dibuja la imagen.
-        // Puedes añadir placeholders o crossfade si lo deseas.
         fun bind(url: String) {
-            imageView.load(url)
+            val u = sanitizeImageUrl(url)
+            if (u != null) {
+                imageView.load(u) {
+                    crossfade(true)
+                    placeholder(android.R.drawable.ic_menu_gallery)
+                    error(android.R.drawable.ic_menu_gallery)
+                }
+            } else {
+                imageView.setImageResource(android.R.drawable.ic_menu_gallery)
+            }
+        }
+
+        private fun sanitizeImageUrl(s: String?): String? {
+            if (s.isNullOrBlank()) return null
+            var u = s.trim()
+            u = u.replace("`", "").replace("\"", "")
+            u = u.replace("\n", "").replace("\r", "").replace("\t", "")
+            if (u.startsWith("/")) {
+                val base = ApiConfig.storeBaseUrl
+                val parsed = Uri.parse(base)
+                val origin = (parsed.scheme ?: "https") + "://" + (parsed.host ?: "")
+                u = origin + u
+            }
+            if (!u.startsWith("http")) {
+                u = "https://" + u.trimStart('/')
+            }
+            u = u.replace(" ", "%20")
+            return u
         }
     }
 

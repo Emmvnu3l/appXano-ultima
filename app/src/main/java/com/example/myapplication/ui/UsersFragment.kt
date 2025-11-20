@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myapplication.api.RetrofitClient
+import com.example.myapplication.ui.StateUi
 import com.example.myapplication.databinding.FragmentUsersBinding
 import com.example.myapplication.model.User
 import kotlinx.coroutines.Dispatchers
@@ -81,7 +82,7 @@ class UsersFragment : Fragment() {
 
     private fun setLoading(loading: Boolean) {
         this.loading = loading
-        binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
+        if (loading) StateUi.showLoading(binding.state) else StateUi.hide(binding.state)
         binding.swipeRefresh.isRefreshing = false
     }
 
@@ -107,10 +108,10 @@ class UsersFragment : Fragment() {
                 }
                 if (list.isEmpty()) endReached = true else page = targetPage
                 adapter.setData(list, append)
-                binding.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
+                binding.state.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
             } catch (e: Exception) {
-                binding.tvError.visibility = View.VISIBLE
-                binding.tvError.text = "Error cargando usuarios: ${e.message}"
+                binding.state.tvError.visibility = View.VISIBLE
+                binding.state.tvError.text = com.example.myapplication.api.NetworkError.message(e)
             } finally {
                 setLoading(false)
             }
@@ -134,8 +135,8 @@ class UsersFragment : Fragment() {
                 val service = RetrofitClient.createUserService(requireContext())
                 withContext(Dispatchers.IO) { if (checked) service.block(u.id) else service.unblock(u.id) }
             } catch (e: Exception) {
-                binding.tvError.visibility = View.VISIBLE
-                binding.tvError.text = "Acción fallida: ${e.message}"
+                binding.state.tvError.visibility = View.VISIBLE
+                binding.state.tvError.text = com.example.myapplication.api.NetworkError.message(e)
             } finally {
                 setLoading(false)
                 refresh()
@@ -153,8 +154,8 @@ class UsersFragment : Fragment() {
                     val service = RetrofitClient.createUserService(requireContext())
                     withContext(Dispatchers.IO) { service.update(u.id, req) }
                 } catch (e: Exception) {
-                    binding.tvError.visibility = View.VISIBLE
-                    binding.tvError.text = "Edición fallida: ${e.message}"
+                    binding.state.tvError.visibility = View.VISIBLE
+                    binding.state.tvError.text = com.example.myapplication.api.NetworkError.message(e)
                 } finally {
                     setLoading(false)
                     refresh()

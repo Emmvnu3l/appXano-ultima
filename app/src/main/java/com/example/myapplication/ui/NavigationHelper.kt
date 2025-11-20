@@ -76,4 +76,17 @@ object NavigationHelper {
             context.startActivity(intent)
         }
     }
+
+    fun openEditProduct(context: Context, product: com.example.myapplication.model.Product) {
+        if (context is HomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, EditProductFragment.newInstance(product))
+                .commit()
+        } else {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.putExtra("open_edit_product", true)
+            intent.putExtra("product", product)
+            context.startActivity(intent)
+        }
+    }
 }

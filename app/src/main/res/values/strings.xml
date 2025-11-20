@@ -38,4 +38,21 @@
     <string name="checkout_title">Checkout</string>
     <string name="menu_orders">Órdenes</string>
     <string name="menu_users">Usuarios</string>
+    <string name="title_product_detail">Detalle de producto</string>
+    <string name="label_name">Nombre</string>
+    <string name="label_price">Precio</string>
+    <string name="label_decrease">Disminuir</string>
+    <string name="label_increase">Incrementar</string>
+    <string name="title_new_product">Nuevo producto</string>
+    <string name="hint_description">Descripción</string>
+    <string name="hint_stock">Stock</string>
+    <string name="hint_brand">Marca</string>
+    <string name="hint_category">Categoría</string>
+    <string name="label_select_images">Seleccionar imágenes</string>
+    <string name="label_create_product">Crear producto</string>
+    <string name="title_edit_product">Editar producto</string>
+    <string name="label_save_changes">Guardar cambios</string>
+    <string name="label_delete">Eliminar</string>
+    <string name="state_error">Error</string>
+    <string name="action_retry">Reintentar</string>
 </resources>
