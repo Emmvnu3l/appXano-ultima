@@ -143,11 +143,16 @@ class ProductAdapter(
             }
 
             val added = addedToCart.contains(p.id)
-            btnCart.text = if (added) "Añadido" else "Añadir al carrito"
+            btnCart.text = if (added) itemView.context.getString(com.example.myapplication.R.string.label_added) else itemView.context.getString(com.example.myapplication.R.string.label_add_to_cart)
             btnCart.isEnabled = !added
             btnCart.setOnClickListener {
                 val ctx = itemView.context
-                NavigationHelper.openAddProduct(ctx)
+                val cm = CartManager(ctx)
+                val q = quantities[p.id] ?: 1
+                cm.add(p.id, q)
+                addedToCart.add(p.id)
+                btnCart.text = ctx.getString(com.example.myapplication.R.string.label_added)
+                btnCart.isEnabled = false
             }
 
             itemView.setOnClickListener { onProductClick(p) }

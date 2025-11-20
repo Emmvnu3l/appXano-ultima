@@ -88,7 +88,12 @@ class ProductDetailActivity : AppCompatActivity() {
         }
 
         binding.btnAddToCart.setOnClickListener {
-            NavigationHelper.openAddProduct(this)
+            val cm = CartManager(this)
+            val q = quantity
+            val product = intent.getSerializableExtra("product") as? Product
+            if (product != null) {
+                cm.add(product.id, q)
+            }
         }
 
         // Mostrar/ocultar más detalles
@@ -97,14 +102,15 @@ class ProductDetailActivity : AppCompatActivity() {
             expanded = !expanded
             if (expanded) {
                 binding.tvDescription.maxLines = Integer.MAX_VALUE
-                binding.tvMore.text = "LESS"
+                binding.tvMore.text = getString(R.string.label_less)
             } else {
                 binding.tvDescription.maxLines = 3
-                binding.tvMore.text = "MORE"
+                binding.tvMore.text = getString(R.string.label_more)
             }
         }
 
         // FAB edición (visual)
+        binding.fabEdit.visibility = if (isAdmin) View.VISIBLE else View.GONE
         binding.fabEdit.setOnClickListener {
             NavigationHelper.openAddProduct(this)
         }

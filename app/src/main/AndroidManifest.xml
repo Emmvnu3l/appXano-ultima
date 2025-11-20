@@ -16,6 +16,8 @@
         <activity android:name=".ui.RegisterActivity" />
         <activity android:name=".ui.ProductDetailActivity" />
         <activity android:name=".ui.LogoutActivity" />
+        <activity android:name=".ui.LimitedHomeActivity" />
+        <activity android:name=".ui.CheckoutActivity" />
         <activity android:name=".ui.HomeActivity" />
         <activity android:name=".ui.MainActivity"
             android:exported="true">

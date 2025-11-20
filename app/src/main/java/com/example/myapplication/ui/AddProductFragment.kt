@@ -37,7 +37,7 @@ class AddProductFragment : Fragment() {
     private val pickImages = registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris ->
         // Selector de múltiples imágenes: guarda los Uri seleccionados y actualiza el estado en UI.
         selectedUris = uris ?: emptyList()
-        binding.tvImagesStatus.text = "Imágenes seleccionadas: ${selectedUris.size}"
+        binding.tvImagesStatus.text = getString(com.example.myapplication.R.string.msg_images_selected, selectedUris.size)
     }
 
     override fun onCreateView(
@@ -91,7 +91,7 @@ class AddProductFragment : Fragment() {
                 binding.spCategory.isEnabled = true
                 binding.btnCreate.isEnabled = true
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error cargando categorías: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(com.example.myapplication.R.string.msg_categories_error, e.message ?: ""), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -110,7 +110,7 @@ class AddProductFragment : Fragment() {
         val brand = binding.etBrand.text?.toString()?.trim()
         val categoryId = categories.getOrNull(binding.spCategory.selectedItemPosition)?.id
         if (name.isEmpty() || price == null || categoryId == null) {
-            Toast.makeText(requireContext(), "Nombre, precio y categoría son obligatorios", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(com.example.myapplication.R.string.msg_required_fields), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -139,10 +139,10 @@ class AddProductFragment : Fragment() {
                     images = payloads
                 )
                 withContext(Dispatchers.IO) { productService.createProductFull(req) }
-                Toast.makeText(requireContext(), "Producto creado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(com.example.myapplication.R.string.msg_product_created), Toast.LENGTH_SHORT).show()
                 clearForm()
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Error creando producto: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(), getString(com.example.myapplication.R.string.msg_product_create_error, e.message ?: ""), Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }

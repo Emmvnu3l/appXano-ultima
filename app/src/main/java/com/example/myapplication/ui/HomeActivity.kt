@@ -21,6 +21,17 @@ class HomeActivity : AppCompatActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, true)
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val tm = com.example.myapplication.api.TokenManager(this)
+        val isAdmin = tm.isAdmin()
+        if (!isAdmin) {
+            // Fallback: si por cualquier motivo permanecemos en HomeActivity, restringir menú
+            val menu = binding.navView.menu
+            menu.removeItem(R.id.nav_home)
+            menu.removeItem(R.id.nav_add_product)
+            menu.removeItem(R.id.nav_create_category)
+            menu.removeItem(R.id.nav_orders)
+            menu.removeItem(R.id.nav_users)
+        }
 
         // Configurar Toolbar + Drawer toggle
         setSupportActionBar(binding.toolbar)
@@ -48,14 +59,26 @@ class HomeActivity : AppCompatActivity() {
                 replaceFragment(AddProductFragment())
                 binding.navView.setCheckedItem(R.id.nav_add_product)
             }
+            intent.getBooleanExtra("open_orders", false) -> {
+                replaceFragment(OrdersFragment())
+                binding.navView.setCheckedItem(R.id.nav_orders)
+            }
+            intent.getBooleanExtra("open_users", false) -> {
+                replaceFragment(UsersFragment())
+                binding.navView.setCheckedItem(R.id.nav_users)
+            }
             openProducts || !productsQuery.isNullOrEmpty() -> {
                 replaceFragment(ProductsFragment.newInstance(productsQuery))
                 binding.navView.setCheckedItem(R.id.nav_products)
             }
             else -> {
-                // Fragment por defecto
-                replaceFragment(HomeFragment())
-                binding.navView.setCheckedItem(R.id.nav_home)
+                if (isAdmin) {
+                    replaceFragment(HomeFragment())
+                    binding.navView.setCheckedItem(R.id.nav_home)
+                } else {
+                    replaceFragment(ProductsFragment.newInstance(null))
+                    binding.navView.setCheckedItem(R.id.nav_products)
+                }
             }
         }
 
@@ -66,8 +89,10 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_home -> replaceFragment(HomeFragment())
                 R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
-                R.id.nav_add_product -> replaceFragment(AddProductFragment())
-                R.id.nav_create_category -> replaceFragment(CreateCategoryFragment())
+                R.id.nav_add_product -> if (isAdmin) replaceFragment(AddProductFragment()) else false
+                R.id.nav_create_category -> if (isAdmin) replaceFragment(CreateCategoryFragment()) else false
+                R.id.nav_orders -> if (isAdmin) replaceFragment(OrdersFragment()) else false
+                R.id.nav_users -> if (isAdmin) replaceFragment(UsersFragment()) else false
                 R.id.nav_logout -> {
                     startActivity(android.content.Intent(this, LogoutActivity::class.java))
                     true

@@ -38,22 +38,19 @@ class ProfileFragment : Fragment() {
                 val service = RetrofitClient.createAuthServiceAuthenticated(requireContext())
                 val me = withContext(Dispatchers.IO) { service.me() }
 
-                // Encabezado con nombre
-                val headerName = listOfNotNull(me.firstName?.takeIf { it.isNotBlank() }, me.lastName?.takeIf { it.isNotBlank() })
-                    .takeIf { it.isNotEmpty() }?.joinToString(" ") ?: me.name
+                val headerName = me.name ?: ""
                 binding.tvHeaderName.text = headerName
 
-                // Métricos (por ahora placeholders; conectar a backend cuando estén disponibles)
+                // Métricos
                 binding.tvPurchases.text = "02"
                 binding.tvPoints.text = "200"
                 binding.tvCoupons.text = "01"
 
-                // Lista de datos
-                binding.tvFirstNameValue.text = me.firstName ?: ""
-                binding.tvLastNameValue.text = me.lastName ?: ""
+                binding.tvFirstNameValue.text = ""
+                binding.tvLastNameValue.text = ""
                 binding.tvEmailValue.text = me.email ?: ""
-                binding.tvShippingAddressValue.text = me.shippingAddress ?: ""
-                binding.tvPhoneValue.text = me.phone ?: ""
+                binding.tvShippingAddressValue.text = ""
+                binding.tvPhoneValue.text = ""
             } catch (e: Exception) {
                 // Fallback a datos locales si falla la consulta
                 val tm = TokenManager(requireContext())

@@ -32,6 +32,8 @@
         <activity android:name="com.example.myapplication.ui.RegisterActivity" />
         <activity android:name="com.example.myapplication.ui.ProductDetailActivity" />
         <activity android:name="com.example.myapplication.ui.LogoutActivity" />
+        <activity android:name="com.example.myapplication.ui.LimitedHomeActivity" />
+        <activity android:name="com.example.myapplication.ui.CheckoutActivity" />
         <activity android:name="com.example.myapplication.ui.HomeActivity" />
         <activity
             android:name="com.example.myapplication.ui.MainActivity"
