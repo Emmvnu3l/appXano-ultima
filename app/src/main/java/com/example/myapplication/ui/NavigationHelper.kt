@@ -36,10 +36,22 @@ object NavigationHelper {
     fun openCart(context: Context) {
         if (context is HomeActivity) {
             context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
                 .replace(R.id.fragmentContainer, CartFragment())
                 .commit()
         } else if (context is LimitedHomeActivity) {
             context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
                 .replace(R.id.fragmentContainer, CartFragment())
                 .commit()
         } else {

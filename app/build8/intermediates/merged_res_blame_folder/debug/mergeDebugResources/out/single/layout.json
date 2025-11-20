@@ -4,12 +4,12 @@
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_orders.xml"
     },
     {
-        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_fullscreen_image.xml",
-        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_fullscreen_image.xml"
-    },
-    {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_cart.xml",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_cart.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\item_fullscreen_image.xml",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_fullscreen_image.xml"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_checkout.xml",
@@ -32,16 +32,8 @@
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_logout.xml"
     },
     {
-        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/fragment_cart.xml",
-        "source": "com.example.myapplication.app-main-42:/layout/fragment_cart.xml"
-    },
-    {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\dialog_image_viewer.xml",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\dialog_image_viewer.xml"
-    },
-    {
-        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/fragment_users.xml",
-        "source": "com.example.myapplication.app-main-42:/layout/fragment_users.xml"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\activity_register.xml",
@@ -84,16 +76,16 @@
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_order.xml"
     },
     {
-        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/fragment_orders.xml",
-        "source": "com.example.myapplication.app-main-42:/layout/fragment_orders.xml"
-    },
-    {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\dialog_edit_user.xml",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\dialog_edit_user.xml"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_edit_product.xml",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\fragment_edit_product.xml"
+    },
+    {
+        "merged": "com.example.myapplication.app-mergeDebugResources-39:/layout/fragment_products.xml",
+        "source": "com.example.myapplication.app-main-42:/layout/fragment_products.xml"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-mergeDebugResources-39:\\layout\\fragment_home.xml",
