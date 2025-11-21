@@ -23,11 +23,11 @@
 
     <item android:title="Más">
         <menu>
+            <!-- Cambiado de Agregar Producto a Gestionar Productos -->
             <item
-                android:id="@+id/nav_add_product"
-                android:icon="@android:drawable/ic_input_add"
-                android:title="@string/menu_add_product" />
-            <!-- Cambiado de Crear Categoría a Gestionar Categorías -->
+                android:id="@+id/nav_manage_products"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="Gestionar Productos" />
             <item
                 android:id="@+id/nav_manage_categories"
                 android:icon="@android:drawable/ic_menu_manage"
