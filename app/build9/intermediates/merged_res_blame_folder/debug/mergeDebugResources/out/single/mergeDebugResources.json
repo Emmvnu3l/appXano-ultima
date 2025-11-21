@@ -16,12 +16,12 @@
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_home.xml"
     },
     {
-        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\xml_data_extraction_rules.xml.flat",
-        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\xml\\data_extraction_rules.xml"
-    },
-    {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\menu_nav_drawer_menu.xml.flat",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\menu\\nav_drawer_menu.xml"
+    },
+    {
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\xml_data_extraction_rules.xml.flat",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\xml\\data_extraction_rules.xml"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\drawable_ic_launcher_background.xml.flat",
@@ -68,6 +68,10 @@
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\view_state.xml"
     },
     {
+        "merged": "com.example.myapplication.app-debug-40:/layout_fragment_profile.xml.flat",
+        "source": "com.example.myapplication.app-main-42:/layout/fragment_profile.xml"
+    },
+    {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\layout_item_cart.xml.flat",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_cart.xml"
     },
@@ -80,16 +84,16 @@
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\drawable\\ic_user.xml"
     },
     {
-        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\mipmap-mdpi\\ic_launcher.webp"
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\xml_backup_rules.xml.flat",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\xml\\backup_rules.xml"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\layout_activity_product_detail.xml.flat",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\activity_product_detail.xml"
     },
     {
-        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\xml_backup_rules.xml.flat",
-        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\xml\\backup_rules.xml"
+        "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\mipmap-mdpi\\ic_launcher.webp"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\layout_activity_register.xml.flat",
@@ -128,20 +132,12 @@
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\item_user.xml"
     },
     {
-        "merged": "com.example.myapplication.app-debug-40:/layout_activity_limited_home.xml.flat",
-        "source": "com.example.myapplication.app-main-42:/layout/activity_limited_home.xml"
-    },
-    {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\mipmap-xxxhdpi_ic_launcher.webp.flat",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\mipmap-xxxhdpi\\ic_launcher.webp"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\layout_dialog_edit_user.xml.flat",
         "source": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-main-42:\\layout\\dialog_edit_user.xml"
-    },
-    {
-        "merged": "com.example.myapplication.app-debug-40:/layout_activity_home.xml.flat",
-        "source": "com.example.myapplication.app-main-42:/layout/activity_home.xml"
     },
     {
         "merged": "C:\\Users\\emm.moreno\\.gradle\\daemon\\8.13\\com.example.myapplication.app-debug-40:\\layout_activity_checkout.xml.flat",

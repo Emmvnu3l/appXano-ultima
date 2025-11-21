@@ -13,6 +13,8 @@ import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.FragmentProfileBinding
+import com.example.myapplication.model.User
+import com.example.myapplication.model.UserUpdateRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -20,6 +22,7 @@ import kotlinx.coroutines.withContext
 class ProfileFragment : Fragment() {
     private var _binding: FragmentProfileBinding? = null
     private val binding get() = _binding!!
+    private var currentUser: User? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,10 +36,14 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.btnCancel.setOnClickListener { restoreFields() }
+        binding.btnSave.setOnClickListener { submitUpdate() }
+
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createAuthServiceAuthenticated(requireContext())
                 val me = withContext(Dispatchers.IO) { service.me() }
+                currentUser = me
 
                 val headerName = me.name ?: ""
                 binding.tvHeaderName.text = headerName
@@ -46,11 +53,11 @@ class ProfileFragment : Fragment() {
                 binding.tvPoints.text = "200"
                 binding.tvCoupons.text = "01"
 
-                binding.tvFirstNameValue.text = ""
-                binding.tvLastNameValue.text = ""
+                binding.etFirstName.setText(me.firstName ?: "")
+                binding.etLastName.setText(me.lastName ?: "")
                 binding.tvEmailValue.text = me.email ?: ""
-                binding.tvShippingAddressValue.text = ""
-                binding.tvPhoneValue.text = ""
+                binding.etShippingAddress.setText(me.shippingAddress ?: "")
+                binding.etPhone.setText(me.phone ?: "")
             } catch (e: Exception) {
                 // Fallback a datos locales si falla la consulta
                 val tm = TokenManager(requireContext())
@@ -66,11 +73,11 @@ class ProfileFragment : Fragment() {
                 binding.tvPoints.text = "0"
                 binding.tvCoupons.text = "0"
 
-                binding.tvFirstNameValue.text = first
-                binding.tvLastNameValue.text = last
+                binding.etFirstName.setText(first)
+                binding.etLastName.setText(last)
                 binding.tvEmailValue.text = tm.getEmail().orEmpty()
-                binding.tvShippingAddressValue.text = ""
-                binding.tvPhoneValue.text = ""
+                binding.etShippingAddress.setText("")
+                binding.etPhone.setText("")
             }
         }
     }
@@ -78,5 +85,74 @@ class ProfileFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setLoading(loading: Boolean) {
+        binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
+        binding.btnSave.isEnabled = !loading
+        binding.btnCancel.isEnabled = !loading
+    }
+
+    private fun restoreFields() {
+        val u = currentUser
+        if (u != null) {
+            binding.etFirstName.setText(u.firstName ?: "")
+            binding.etLastName.setText(u.lastName ?: "")
+            binding.etShippingAddress.setText(u.shippingAddress ?: "")
+            binding.etPhone.setText(u.phone ?: "")
+        }
+    }
+
+    private fun submitUpdate() {
+        val tm = TokenManager(requireContext())
+        val id = tm.getUserId() ?: currentUser?.id
+        if (id == null) {
+            android.widget.Toast.makeText(requireContext(), "Usuario no identificado", android.widget.Toast.LENGTH_SHORT).show()
+            return
+        }
+        val req = UserUpdateRequest(
+            name = null,
+            email = null,
+            avatar = null,
+            blocked = null,
+            firstName = binding.etFirstName.text?.toString()?.trim().orEmpty().takeIf { it.isNotEmpty() },
+            lastName = binding.etLastName.text?.toString()?.trim().orEmpty().takeIf { it.isNotEmpty() },
+            role = null,
+            status = null,
+            shippingAddress = binding.etShippingAddress.text?.toString()?.trim().orEmpty().takeIf { it.isNotEmpty() },
+            phone = binding.etPhone.text?.toString()?.trim().orEmpty().takeIf { it.isNotEmpty() }
+        )
+        if (!validate(req)) return
+        setLoading(true)
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val svcPrimary = RetrofitClient.createUserService(requireContext())
+                val user = withContext(Dispatchers.IO) { svcPrimary.update(id, req) }
+                currentUser = user
+                android.widget.Toast.makeText(requireContext(), "Perfil actualizado", android.widget.Toast.LENGTH_SHORT).show()
+                restoreFields()
+            } catch (e: Exception) {
+                try {
+                    val svcAlt = RetrofitClient.createUserServiceAuth(requireContext())
+                    val user = withContext(Dispatchers.IO) { svcAlt.update(id, req) }
+                    currentUser = user
+                    android.widget.Toast.makeText(requireContext(), "Perfil actualizado", android.widget.Toast.LENGTH_SHORT).show()
+                    restoreFields()
+                } catch (e2: Exception) {
+                    android.widget.Toast.makeText(requireContext(), com.example.myapplication.api.NetworkError.message(e2), android.widget.Toast.LENGTH_LONG).show()
+                }
+            } finally {
+                setLoading(false)
+            }
+        }
+    }
+
+    private fun validate(req: UserUpdateRequest): Boolean {
+        val phone = req.phone?.filter { it.isDigit() } ?: ""
+        if (phone.isNotEmpty() && phone.length < 7) {
+            android.widget.Toast.makeText(requireContext(), "Teléfono inválido", android.widget.Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
     }
 }

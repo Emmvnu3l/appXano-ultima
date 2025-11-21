@@ -4,8 +4,11 @@ package com.example.myapplication.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,13 +26,34 @@ public final class FragmentProfileBinding implements ViewBinding {
   private final NestedScrollView rootView;
 
   @NonNull
+  public final Button btnCancel;
+
+  @NonNull
+  public final Button btnSave;
+
+  @NonNull
   public final MaterialCardView cardMetrics;
+
+  @NonNull
+  public final EditText etFirstName;
+
+  @NonNull
+  public final EditText etLastName;
+
+  @NonNull
+  public final EditText etPhone;
+
+  @NonNull
+  public final EditText etShippingAddress;
 
   @NonNull
   public final ImageView imgAvatar;
 
   @NonNull
   public final LinearLayout listProfileData;
+
+  @NonNull
+  public final ProgressBar progress;
 
   @NonNull
   public final TextView tvCoupons;
@@ -73,18 +97,27 @@ public final class FragmentProfileBinding implements ViewBinding {
   @NonNull
   public final TextView tvShippingAddressValue;
 
-  private FragmentProfileBinding(@NonNull NestedScrollView rootView,
-      @NonNull MaterialCardView cardMetrics, @NonNull ImageView imgAvatar,
-      @NonNull LinearLayout listProfileData, @NonNull TextView tvCoupons, @NonNull TextView tvEmail,
+  private FragmentProfileBinding(@NonNull NestedScrollView rootView, @NonNull Button btnCancel,
+      @NonNull Button btnSave, @NonNull MaterialCardView cardMetrics, @NonNull EditText etFirstName,
+      @NonNull EditText etLastName, @NonNull EditText etPhone, @NonNull EditText etShippingAddress,
+      @NonNull ImageView imgAvatar, @NonNull LinearLayout listProfileData,
+      @NonNull ProgressBar progress, @NonNull TextView tvCoupons, @NonNull TextView tvEmail,
       @NonNull TextView tvEmailValue, @NonNull TextView tvFirstName,
       @NonNull TextView tvFirstNameValue, @NonNull TextView tvHeaderName,
       @NonNull TextView tvLastName, @NonNull TextView tvLastNameValue, @NonNull TextView tvPhone,
       @NonNull TextView tvPhoneValue, @NonNull TextView tvPoints, @NonNull TextView tvPurchases,
       @NonNull TextView tvShippingAddress, @NonNull TextView tvShippingAddressValue) {
     this.rootView = rootView;
+    this.btnCancel = btnCancel;
+    this.btnSave = btnSave;
     this.cardMetrics = cardMetrics;
+    this.etFirstName = etFirstName;
+    this.etLastName = etLastName;
+    this.etPhone = etPhone;
+    this.etShippingAddress = etShippingAddress;
     this.imgAvatar = imgAvatar;
     this.listProfileData = listProfileData;
+    this.progress = progress;
     this.tvCoupons = tvCoupons;
     this.tvEmail = tvEmail;
     this.tvEmailValue = tvEmailValue;
@@ -128,9 +161,45 @@ public final class FragmentProfileBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnCancel;
+      Button btnCancel = ViewBindings.findChildViewById(rootView, id);
+      if (btnCancel == null) {
+        break missingId;
+      }
+
+      id = R.id.btnSave;
+      Button btnSave = ViewBindings.findChildViewById(rootView, id);
+      if (btnSave == null) {
+        break missingId;
+      }
+
       id = R.id.cardMetrics;
       MaterialCardView cardMetrics = ViewBindings.findChildViewById(rootView, id);
       if (cardMetrics == null) {
+        break missingId;
+      }
+
+      id = R.id.etFirstName;
+      EditText etFirstName = ViewBindings.findChildViewById(rootView, id);
+      if (etFirstName == null) {
+        break missingId;
+      }
+
+      id = R.id.etLastName;
+      EditText etLastName = ViewBindings.findChildViewById(rootView, id);
+      if (etLastName == null) {
+        break missingId;
+      }
+
+      id = R.id.etPhone;
+      EditText etPhone = ViewBindings.findChildViewById(rootView, id);
+      if (etPhone == null) {
+        break missingId;
+      }
+
+      id = R.id.etShippingAddress;
+      EditText etShippingAddress = ViewBindings.findChildViewById(rootView, id);
+      if (etShippingAddress == null) {
         break missingId;
       }
 
@@ -143,6 +212,12 @@ public final class FragmentProfileBinding implements ViewBinding {
       id = R.id.listProfileData;
       LinearLayout listProfileData = ViewBindings.findChildViewById(rootView, id);
       if (listProfileData == null) {
+        break missingId;
+      }
+
+      id = R.id.progress;
+      ProgressBar progress = ViewBindings.findChildViewById(rootView, id);
+      if (progress == null) {
         break missingId;
       }
 
@@ -230,10 +305,11 @@ public final class FragmentProfileBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentProfileBinding((NestedScrollView) rootView, cardMetrics, imgAvatar,
-          listProfileData, tvCoupons, tvEmail, tvEmailValue, tvFirstName, tvFirstNameValue,
-          tvHeaderName, tvLastName, tvLastNameValue, tvPhone, tvPhoneValue, tvPoints, tvPurchases,
-          tvShippingAddress, tvShippingAddressValue);
+      return new FragmentProfileBinding((NestedScrollView) rootView, btnCancel, btnSave,
+          cardMetrics, etFirstName, etLastName, etPhone, etShippingAddress, imgAvatar,
+          listProfileData, progress, tvCoupons, tvEmail, tvEmailValue, tvFirstName,
+          tvFirstNameValue, tvHeaderName, tvLastName, tvLastNameValue, tvPhone, tvPhoneValue,
+          tvPoints, tvPurchases, tvShippingAddress, tvShippingAddressValue);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

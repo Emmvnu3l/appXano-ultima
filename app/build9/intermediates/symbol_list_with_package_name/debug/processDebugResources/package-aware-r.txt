@@ -3768,6 +3768,7 @@ id btnAddToCart
 id btnApply
 id btnApplyFilters
 id btnBack
+id btnCancel
 id btnCheckout
 id btnCreate
 id btnDelete
