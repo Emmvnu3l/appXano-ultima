@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -53,13 +54,16 @@ public final class ActivityRegisterBinding implements ViewBinding {
   public final ProgressBar progress;
 
   @NonNull
+  public final Spinner spRole;
+
+  @NonNull
   public final MaterialToolbar toolbar;
 
   private ActivityRegisterBinding(@NonNull CoordinatorLayout rootView, @NonNull Button btnBack,
       @NonNull Button btnRegister, @NonNull EditText etEmail, @NonNull EditText etFirstName,
       @NonNull EditText etLastName, @NonNull EditText etName, @NonNull EditText etPassword,
       @NonNull EditText etPhone, @NonNull EditText etShippingAddress, @NonNull ProgressBar progress,
-      @NonNull MaterialToolbar toolbar) {
+      @NonNull Spinner spRole, @NonNull MaterialToolbar toolbar) {
     this.rootView = rootView;
     this.btnBack = btnBack;
     this.btnRegister = btnRegister;
@@ -71,6 +75,7 @@ public final class ActivityRegisterBinding implements ViewBinding {
     this.etPhone = etPhone;
     this.etShippingAddress = etShippingAddress;
     this.progress = progress;
+    this.spRole = spRole;
     this.toolbar = toolbar;
   }
 
@@ -161,6 +166,12 @@ public final class ActivityRegisterBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.spRole;
+      Spinner spRole = ViewBindings.findChildViewById(rootView, id);
+      if (spRole == null) {
+        break missingId;
+      }
+
       id = R.id.toolbar;
       MaterialToolbar toolbar = ViewBindings.findChildViewById(rootView, id);
       if (toolbar == null) {
@@ -169,7 +180,7 @@ public final class ActivityRegisterBinding implements ViewBinding {
 
       return new ActivityRegisterBinding((CoordinatorLayout) rootView, btnBack, btnRegister,
           etEmail, etFirstName, etLastName, etName, etPassword, etPhone, etShippingAddress,
-          progress, toolbar);
+          progress, spRole, toolbar);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

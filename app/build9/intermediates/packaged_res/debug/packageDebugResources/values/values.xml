@@ -64,7 +64,7 @@
     <string name="title_edit_product">Editar producto</string>
     <string name="title_new_product">Nuevo producto</string>
     <string name="title_product_detail">Detalle de producto</string>
-    <style name="Theme.MyApplication" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.MyApplication" parent="Theme.MaterialComponents.Light.NoActionBar">
         
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -76,6 +76,10 @@
         
         <item name="android:statusBarColor">?attr/colorSurface</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
+        
+        <item name="android:windowBackground">@color/white</item>
+        
+        <item name="android:forceDarkAllowed">false</item>
         
     </style>
 </resources>

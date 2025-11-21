@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.viewbinding.ViewBinding;
@@ -23,13 +24,39 @@ public final class DialogEditUserBinding implements ViewBinding {
   public final EditText etEmail;
 
   @NonNull
+  public final EditText etFirstName;
+
+  @NonNull
+  public final EditText etLastName;
+
+  @NonNull
   public final EditText etName;
 
+  @NonNull
+  public final EditText etPhone;
+
+  @NonNull
+  public final EditText etShippingAddress;
+
+  @NonNull
+  public final Spinner spRole;
+
+  @NonNull
+  public final Spinner spStatus;
+
   private DialogEditUserBinding(@NonNull LinearLayout rootView, @NonNull EditText etEmail,
-      @NonNull EditText etName) {
+      @NonNull EditText etFirstName, @NonNull EditText etLastName, @NonNull EditText etName,
+      @NonNull EditText etPhone, @NonNull EditText etShippingAddress, @NonNull Spinner spRole,
+      @NonNull Spinner spStatus) {
     this.rootView = rootView;
     this.etEmail = etEmail;
+    this.etFirstName = etFirstName;
+    this.etLastName = etLastName;
     this.etName = etName;
+    this.etPhone = etPhone;
+    this.etShippingAddress = etShippingAddress;
+    this.spRole = spRole;
+    this.spStatus = spStatus;
   }
 
   @Override
@@ -65,13 +92,50 @@ public final class DialogEditUserBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.etFirstName;
+      EditText etFirstName = ViewBindings.findChildViewById(rootView, id);
+      if (etFirstName == null) {
+        break missingId;
+      }
+
+      id = R.id.etLastName;
+      EditText etLastName = ViewBindings.findChildViewById(rootView, id);
+      if (etLastName == null) {
+        break missingId;
+      }
+
       id = R.id.etName;
       EditText etName = ViewBindings.findChildViewById(rootView, id);
       if (etName == null) {
         break missingId;
       }
 
-      return new DialogEditUserBinding((LinearLayout) rootView, etEmail, etName);
+      id = R.id.etPhone;
+      EditText etPhone = ViewBindings.findChildViewById(rootView, id);
+      if (etPhone == null) {
+        break missingId;
+      }
+
+      id = R.id.etShippingAddress;
+      EditText etShippingAddress = ViewBindings.findChildViewById(rootView, id);
+      if (etShippingAddress == null) {
+        break missingId;
+      }
+
+      id = R.id.spRole;
+      Spinner spRole = ViewBindings.findChildViewById(rootView, id);
+      if (spRole == null) {
+        break missingId;
+      }
+
+      id = R.id.spStatus;
+      Spinner spStatus = ViewBindings.findChildViewById(rootView, id);
+      if (spStatus == null) {
+        break missingId;
+      }
+
+      return new DialogEditUserBinding((LinearLayout) rootView, etEmail, etFirstName, etLastName,
+          etName, etPhone, etShippingAddress, spRole, spStatus);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

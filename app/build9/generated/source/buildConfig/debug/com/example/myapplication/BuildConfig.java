@@ -15,4 +15,6 @@ public final class BuildConfig {
   public static final String STORE_BASE_URL = "https://x8ki-letl-twmt.n7.xano.io/api:3BVxr_UT/";
   // Field from default config.
   public static final int TOKEN_TTL_SEC = 3600;
+  // Field from default config.
+  public static final String USER_BASE_URL = "https://x8ki-letl-twmt.n7.xano.io/api:xfq7gh7l/";
 }
