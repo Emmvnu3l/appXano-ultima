@@ -4,7 +4,8 @@ package com.example.myapplication.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,10 +19,19 @@ import java.lang.String;
 
 public final class FragmentOrdersBinding implements ViewBinding {
   @NonNull
-  private final FrameLayout rootView;
+  private final LinearLayout rootView;
+
+  @NonNull
+  public final LinearLayout filterBar;
 
   @NonNull
   public final RecyclerView recycler;
+
+  @NonNull
+  public final Spinner spSort;
+
+  @NonNull
+  public final Spinner spStatus;
 
   @NonNull
   public final ViewStateBinding state;
@@ -29,17 +39,21 @@ public final class FragmentOrdersBinding implements ViewBinding {
   @NonNull
   public final SwipeRefreshLayout swipeRefresh;
 
-  private FragmentOrdersBinding(@NonNull FrameLayout rootView, @NonNull RecyclerView recycler,
+  private FragmentOrdersBinding(@NonNull LinearLayout rootView, @NonNull LinearLayout filterBar,
+      @NonNull RecyclerView recycler, @NonNull Spinner spSort, @NonNull Spinner spStatus,
       @NonNull ViewStateBinding state, @NonNull SwipeRefreshLayout swipeRefresh) {
     this.rootView = rootView;
+    this.filterBar = filterBar;
     this.recycler = recycler;
+    this.spSort = spSort;
+    this.spStatus = spStatus;
     this.state = state;
     this.swipeRefresh = swipeRefresh;
   }
 
   @Override
   @NonNull
-  public FrameLayout getRoot() {
+  public LinearLayout getRoot() {
     return rootView;
   }
 
@@ -64,9 +78,27 @@ public final class FragmentOrdersBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.filterBar;
+      LinearLayout filterBar = ViewBindings.findChildViewById(rootView, id);
+      if (filterBar == null) {
+        break missingId;
+      }
+
       id = R.id.recycler;
       RecyclerView recycler = ViewBindings.findChildViewById(rootView, id);
       if (recycler == null) {
+        break missingId;
+      }
+
+      id = R.id.spSort;
+      Spinner spSort = ViewBindings.findChildViewById(rootView, id);
+      if (spSort == null) {
+        break missingId;
+      }
+
+      id = R.id.spStatus;
+      Spinner spStatus = ViewBindings.findChildViewById(rootView, id);
+      if (spStatus == null) {
         break missingId;
       }
 
@@ -83,8 +115,8 @@ public final class FragmentOrdersBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentOrdersBinding((FrameLayout) rootView, recycler, binding_state,
-          swipeRefresh);
+      return new FragmentOrdersBinding((LinearLayout) rootView, filterBar, recycler, spSort,
+          spStatus, binding_state, swipeRefresh);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -60,6 +60,7 @@ id etStock
 id fabAdd
 id fabContainer
 id fabEdit
+id filterBar
 id fragmentContainer
 id imgAvatar
 id ivImage
@@ -77,6 +78,8 @@ id pagerImages
 id progress
 id recycler
 id spCategory
+id spSort
+id spStatus
 id state
 id swBlocked
 id swipeRefresh

@@ -11,9 +11,11 @@ import com.example.myapplication.R
 import com.example.myapplication.model.Order
 
 class OrdersAdapter(
-    private val onAccept: (Order) -> Unit,
-    private val onReject: (Order) -> Unit,
-    private val onShip: (Order) -> Unit
+    private val onProcess: (Order) -> Unit,
+    private val onComplete: (Order) -> Unit,
+    private val onCancel: (Order) -> Unit,
+    private val onViewDetails: (Order) -> Unit,
+    private val isAdmin: Boolean
 ) : RecyclerView.Adapter<OrdersAdapter.VH>() {
     private val items: MutableList<Order> = mutableListOf()
 
@@ -50,21 +52,34 @@ class OrdersAdapter(
             tvStatus.text = o.status
             tvStatus.setTextColor(statusColor(o.status))
 
-            btnAccept.setOnClickListener { onAccept(o) }
-            btnReject.setOnClickListener { onReject(o) }
-            btnShip.setOnClickListener { onShip(o) }
+            itemView.setOnClickListener { onViewDetails(o) }
 
-            val isPending = o.status.equals("pendiente", ignoreCase = true)
-            btnAccept.visibility = if (isPending) View.VISIBLE else View.GONE
-            btnReject.visibility = if (isPending) View.VISIBLE else View.GONE
-            btnShip.visibility = if (o.status.equals("aceptado", true)) View.VISIBLE else View.GONE
+            if (!isAdmin) {
+                btnAccept.visibility = View.GONE
+                btnReject.visibility = View.GONE
+                btnShip.visibility = View.GONE
+                return
+            }
+
+            val st = o.status.lowercase()
+            val showProcess = st == "pendiente"
+            val showComplete = st == "en_proceso"
+            val showCancel = st == "pendiente" || st == "en_proceso"
+
+            btnAccept.visibility = if (showProcess) View.VISIBLE else View.GONE
+            btnReject.visibility = if (showCancel) View.VISIBLE else View.GONE
+            btnShip.visibility = if (showComplete) View.VISIBLE else View.GONE
+
+            btnAccept.setOnClickListener { onProcess(o) }
+            btnReject.setOnClickListener { onCancel(o) }
+            btnShip.setOnClickListener { onComplete(o) }
         }
 
         private fun statusColor(status: String): Int = when (status.lowercase()) {
             "pendiente" -> Color.parseColor("#FFA000")
-            "aceptado" -> Color.parseColor("#2E7D32")
-            "rechazado" -> Color.parseColor("#C62828")
-            "enviado" -> Color.parseColor("#1565C0")
+            "en_proceso" -> Color.parseColor("#1976D2")
+            "completada" -> Color.parseColor("#2E7D32")
+            "cancelada" -> Color.parseColor("#C62828")
             else -> Color.DKGRAY
         }
     }
