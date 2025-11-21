@@ -1,4 +1,4 @@
-#Fri Nov 21 12:21:39 CLST 2025
+#Fri Nov 21 15:20:46 CLST 2025
 base.0=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build9\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build9\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
 base.2=C\:\\Users\\emm.moreno\\Documents\\appXano-ultima\\app\\build9\\intermediates\\dex\\debug\\mergeProjectDexDebug\\1\\classes.dex

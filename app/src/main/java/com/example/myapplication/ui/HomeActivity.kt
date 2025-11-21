@@ -2,6 +2,7 @@ package com.example.myapplication.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.appcompat.content.res.AppCompatResources
@@ -79,7 +80,12 @@ class HomeActivity : AppCompatActivity() {
                 }
             }
             intent.getBooleanExtra("open_orders", false) -> {
-                replaceFragment(OrdersFragment())
+                val frag = OrdersFragment()
+                val args = android.os.Bundle()
+                val limit = intent.getIntExtra("orders_limit", -1)
+                if (limit > 0) args.putInt("limit", limit)
+                frag.arguments = args
+                replaceFragment(frag)
                 binding.navView.setCheckedItem(R.id.nav_orders)
             }
             intent.getBooleanExtra("open_users", false) -> {
@@ -124,6 +130,18 @@ class HomeActivity : AppCompatActivity() {
             }
             handled
         }
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
@@ -136,13 +154,7 @@ class HomeActivity : AppCompatActivity() {
         return true
     }
 
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
-    }
+    
 
     private fun configureToolbarForFragment(fragment: Fragment) {
         val childScreen = fragment is CreateCategoryFragment || fragment is AddProductFragment

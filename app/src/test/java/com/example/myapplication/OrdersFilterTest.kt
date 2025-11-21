@@ -18,7 +18,7 @@ class OrdersFilterTest {
     fun filterByStatusAndDate() {
         val a = Order(1, "pendiente", 0.0, emptyList(), 0, 1000L, 0)
         val b = Order(2, "confirmada", 0.0, emptyList(), 0, 2000L, 0)
-        val res = OrdersFragment.applyClientFilters(listOf(a, b), "pendiente", 500L, 1500L, null)
+        val res = OrdersFragment.applyClientFilters(listOf(a, b), "pendiente", 500L, 1500L, null, null, null, false)
         assertEquals(1, res.size)
         assertEquals(1, res.first().id)
     }

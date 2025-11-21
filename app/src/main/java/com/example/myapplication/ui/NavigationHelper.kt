@@ -65,14 +65,19 @@ object NavigationHelper {
         context.startActivity(Intent(context, CheckoutActivity::class.java))
     }
 
-    fun openOrders(context: Context) {
+    fun openOrders(context: Context, limit: Int? = null) {
         if (context is HomeActivity) {
+            val frag = OrdersFragment()
+            val args = android.os.Bundle()
+            if (limit != null) args.putInt("limit", limit)
+            frag.arguments = args
             context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, OrdersFragment())
+                .replace(R.id.fragmentContainer, frag)
                 .commit()
         } else {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("open_orders", true)
+            if (limit != null) intent.putExtra("orders_limit", limit)
             context.startActivity(intent)
         }
     }

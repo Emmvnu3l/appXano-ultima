@@ -40,6 +40,9 @@ public final class ItemOrderBinding implements ViewBinding {
   public final TextView tvClient;
 
   @NonNull
+  public final TextView tvDate;
+
+  @NonNull
   public final TextView tvId;
 
   @NonNull
@@ -50,8 +53,8 @@ public final class ItemOrderBinding implements ViewBinding {
 
   private ItemOrderBinding(@NonNull LinearLayout rootView, @NonNull ImageButton btnAccept,
       @NonNull ImageButton btnMore, @NonNull ImageButton btnReject, @NonNull ImageButton btnShip,
-      @NonNull CheckBox cbSelect, @NonNull TextView tvClient, @NonNull TextView tvId,
-      @NonNull TextView tvStatus, @NonNull TextView tvTotal) {
+      @NonNull CheckBox cbSelect, @NonNull TextView tvClient, @NonNull TextView tvDate,
+      @NonNull TextView tvId, @NonNull TextView tvStatus, @NonNull TextView tvTotal) {
     this.rootView = rootView;
     this.btnAccept = btnAccept;
     this.btnMore = btnMore;
@@ -59,6 +62,7 @@ public final class ItemOrderBinding implements ViewBinding {
     this.btnShip = btnShip;
     this.cbSelect = cbSelect;
     this.tvClient = tvClient;
+    this.tvDate = tvDate;
     this.tvId = tvId;
     this.tvStatus = tvStatus;
     this.tvTotal = tvTotal;
@@ -127,6 +131,12 @@ public final class ItemOrderBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tvDate;
+      TextView tvDate = ViewBindings.findChildViewById(rootView, id);
+      if (tvDate == null) {
+        break missingId;
+      }
+
       id = R.id.tvId;
       TextView tvId = ViewBindings.findChildViewById(rootView, id);
       if (tvId == null) {
@@ -146,7 +156,7 @@ public final class ItemOrderBinding implements ViewBinding {
       }
 
       return new ItemOrderBinding((LinearLayout) rootView, btnAccept, btnMore, btnReject, btnShip,
-          cbSelect, tvClient, tvId, tvStatus, tvTotal);
+          cbSelect, tvClient, tvDate, tvId, tvStatus, tvTotal);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

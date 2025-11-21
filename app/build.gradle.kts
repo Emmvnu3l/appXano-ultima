@@ -3,9 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
-// Evitamos bloqueos de R.jar en Windows usando un directorio de build alterno
-// Rotamos el directorio si está retenido por otro proceso
-buildDir = file("$rootDir/app/build9")
 
 android {
     namespace = "com.example.myapplication"

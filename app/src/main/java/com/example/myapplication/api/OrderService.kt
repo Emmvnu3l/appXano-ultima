@@ -27,6 +27,8 @@ interface OrderService {
     @GET("order")
     suspend fun listOrders(
         @Query("status") status: String?,
+        @Query("user_id") userId: Int?,
+        @Query("discount_code_id") discountCodeId: Int?,
         @Query("page") page: Int?,
         @Query("pageSize") pageSize: Int?,
         @Query("from") from: Long? = null,

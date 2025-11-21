@@ -42,6 +42,7 @@ class OrdersAdapter(
         private val tvClient: TextView = itemView.findViewById(R.id.tvClient)
         private val tvTotal: TextView = itemView.findViewById(R.id.tvTotal)
         private val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
+        private val tvDate: TextView = itemView.findViewById(R.id.tvDate)
         private val btnAccept: ImageButton = itemView.findViewById(R.id.btnAccept)
         private val btnReject: ImageButton = itemView.findViewById(R.id.btnReject)
         private val btnShip: ImageButton = itemView.findViewById(R.id.btnShip)
@@ -54,6 +55,8 @@ class OrdersAdapter(
             tvTotal.text = "$${o.total}"
             tvStatus.text = o.status
             tvStatus.setTextColor(android.graphics.Color.WHITE)
+            val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date(it)) } ?: "-"
+            tvDate.text = created
             val tint = when (o.status.lowercase()) {
                 "pendiente" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#616161"))
                 "en_proceso" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1976D2"))

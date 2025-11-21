@@ -50,6 +50,7 @@ class LimitedHomeActivity : AppCompatActivity() {
         binding.navView.setNavigationItemSelectedListener { item ->
             val handled = when (item.itemId) {
                 R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
+                R.id.nav_orders -> replaceFragment(OrdersFragment())
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
                 R.id.nav_logout -> {
                     startActivity(android.content.Intent(this, LogoutActivity::class.java))
