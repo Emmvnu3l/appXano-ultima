@@ -35,6 +35,7 @@ class ProfileFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
 
         binding.btnCancel.setOnClickListener { restoreFields() }
         binding.btnSave.setOnClickListener { submitUpdate() }

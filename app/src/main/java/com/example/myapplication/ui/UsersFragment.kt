@@ -50,6 +50,7 @@ class UsersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         val tm = TokenManager(requireContext())
         val isAdmin = tm.isAdmin()
         if (!isAdmin) {

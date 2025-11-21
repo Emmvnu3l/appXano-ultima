@@ -51,6 +51,7 @@ class AddProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         tokenManager = TokenManager(requireContext())
         // Ocultar el toolbar propio del fragmento para evitar doble flecha
         binding.toolbar.visibility = View.GONE

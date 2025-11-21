@@ -9,13 +9,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/white">
+    android:background="?android:colorBackground">
 
         <!-- Top bar: título de pantalla -->
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="?attr/colorSurface"
             android:elevation="4dp"
             android:fitsSystemWindows="true">
 
@@ -23,7 +23,8 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:title="Inicio" />
+                android:title="Inicio"
+                app:titleTextColor="?attr/colorOnSurface" />
 
         </com.google.android.material.appbar.AppBarLayout>
 
@@ -42,44 +43,58 @@
 
                 <Space
                     android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                    android:layout_height="40dp" />
 
-                <EditText
-                    android:id="@+id/etEmail"
-                    android:layout_width="280dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:hint="Email"
-                    android:inputType="textEmailAddress" />
+                    android:hint="Email">
+                    
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textEmailAddress"
+                        android:textColor="?android:textColorPrimary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="280dp"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp"
+                    android:layout_marginBottom="24dp"
                     android:hint="Password"
-                    android:inputType="textPassword" />
+                    app:endIconMode="password_toggle">
+                    
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPassword"
+                        android:textColor="?android:textColorPrimary" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Button
                     android:id="@+id/btnLogin"
-                    android:layout_width="280dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
+                    android:paddingVertical="12dp"
                     android:text="Login" />
 
                 <!-- Botón para ir a la actividad de registro -->
                 <Button
                     android:id="@+id/btnGoRegister"
-                    android:layout_width="280dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:paddingVertical="12dp"
                     android:text="Ir a Registro" />
 
                 <ProgressBar
                     android:id="@+id/progress"
-                    style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
-                    android:layout_width="280dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
@@ -90,6 +105,4 @@
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
-
-    
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

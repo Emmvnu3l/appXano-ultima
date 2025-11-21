@@ -35,6 +35,7 @@ class ProductAdapter(
     private var original: List<Product> = emptyList()
     private var filtered: List<Product> = emptyList()
     var initialQuery: String? = null
+    var categoryIdFilter: Int? = null
     private var query: String = ""
 
     // Estado simple de cantidades y productos añadidos (UI-only)
@@ -44,6 +45,7 @@ class ProductAdapter(
     fun setProducts(list: List<Product>) {
         original = list
         applyFilter()
+        // Eliminamos notifyDataSetChanged() global para evitar crashes durante layout
         notifyDataSetChanged()
     }
 
@@ -74,38 +76,65 @@ class ProductAdapter(
 
     private fun applyFilter() {
         val q = (initialQuery ?: query).trim()
-        filtered = if (q.isEmpty()) original else original.filter { p ->
-            val nameMatch = p.name.contains(q, ignoreCase = true)
-            val descMatch = p.description?.contains(q, ignoreCase = true) == true
-            nameMatch || descMatch
+        
+        filtered = original.filter { p ->
+            // 1. Filtro por categoría (si se especifica)
+            val catFilterMatch = categoryIdFilter?.let { it == p.category } ?: true
+            
+            // 2. Filtro por texto
+            val textMatch = if (q.isEmpty()) true else {
+                val nameMatch = p.name.contains(q, ignoreCase = true)
+                val descMatch = p.description?.contains(q, ignoreCase = true) == true
+                // Opcional: Búsqueda por ID de categoría como texto
+                val catMatch = p.category?.toString()?.contains(q, ignoreCase = true) == true
+                nameMatch || descMatch || catMatch
+            }
+            
+            catFilterMatch && textMatch
         }
         onResultsCountChanged(filtered.size)
     }
 
     inner class HeaderVH(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val et = itemView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etSearchHeader)
+        
+        private var isBinding = false
 
         fun bind() {
-            // Setear query inicial en el header la primera vez
-            if (!initialQuery.isNullOrEmpty()) {
-                et.setText(initialQuery)
-                query = initialQuery ?: ""
-                initialQuery = null // consumir para evitar reseteos
+            isBinding = true
+            
+            if (et.tag == null) {
+                et.tag = "configured"
+                
+                et.addTextChangedListener { text ->
+                    if (!isBinding) {
+                        val newQuery = text?.toString().orEmpty()
+                        if (query != newQuery) {
+                            query = newQuery
+                            initialQuery = null
+                            
+                            et.post {
+                                applyFilter()
+                                notifyDataSetChanged()
+                            }
+                        }
+                    }
+                }
+                
+                et.setOnEditorActionListener { _, actionId, _ ->
+                    if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                        et.clearFocus()
+                        true
+                    } else false
+                }
             }
-            et.addTextChangedListener { text ->
-                query = text?.toString().orEmpty()
-                applyFilter()
-                notifyDataSetChanged()
+            
+            val textToShow = initialQuery ?: query
+            if (et.text?.toString() != textToShow) {
+                 et.setText(textToShow)
             }
-            // Acción de teclado "Buscar"
-            et.setOnEditorActionListener { _, actionId, _ ->
-                if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
-                    query = et.text?.toString()?.trim().orEmpty()
-                    applyFilter()
-                    notifyDataSetChanged()
-                    true
-                } else false
-            }
+            
+            isBinding = false
         }
     }
 

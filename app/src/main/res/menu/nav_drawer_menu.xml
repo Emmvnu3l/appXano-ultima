@@ -7,6 +7,11 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
             android:title="@string/menu_home" />
+        <!-- Nuevo ítem para categorías -->
+        <item
+            android:id="@+id/nav_categories"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="Categorías" />
         <item
             android:id="@+id/nav_products"
             android:icon="@drawable/ic_store"
