@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import android.content.Intent
+import android.net.Uri
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.databinding.ActivityCheckoutBinding
 import com.example.myapplication.model.CreateOrderItem
@@ -96,16 +98,26 @@ class CheckoutActivity : AppCompatActivity() {
             return
         }
         val items = itemsMap.entries.map { CreateOrderItem(it.key, it.value) }
-        val total = 0.0
-        val request = CreateOrderRequest(items, total, status = "pendiente")
         setLoading(true)
         lifecycleScope.launch {
             try {
-                val service = RetrofitClient.createOrderService(this@CheckoutActivity)
-                val order = withContext(Dispatchers.IO) { service.createOrder(request) }
+                val productService = RetrofitClient.createProductService(this@CheckoutActivity)
+                val products = withContext(Dispatchers.IO) { productService.getProducts() }
+                val pricing = computePricing(itemsMap, products)
+                val request = CreateOrderRequest(items, pricing.total, status = "confirmada")
+                val orderService = RetrofitClient.createOrderService(this@CheckoutActivity)
+                val order = withContext(Dispatchers.IO) { orderService.checkout(request) }
                 currentOrder = order
-                Toast.makeText(this@CheckoutActivity, "Pago simulado registrado", Toast.LENGTH_SHORT).show()
+                cm.clear()
+                binding.tvItems.text = ""
+                binding.tvSubtotal.text = formatCurrency(0.0)
+                binding.tvTax.text = formatCurrency(0.0)
+                binding.tvDiscount.text = formatCurrency(0.0)
+                binding.tvTotal.text = formatCurrency(0.0)
+                binding.btnPay.isEnabled = false
                 binding.btnRequestShipping.isEnabled = true
+                Toast.makeText(this@CheckoutActivity, "Orden confirmada", Toast.LENGTH_SHORT).show()
+                sendReceiptEmail(order, pricing)
             } catch (e: Exception) {
                 Toast.makeText(this@CheckoutActivity, "Error creando orden: ${e.message}", Toast.LENGTH_LONG).show()
             } finally {
@@ -139,5 +151,29 @@ class CheckoutActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         cartManager.unregisterListener(prefsListener)
+    }
+
+    private fun sendReceiptEmail(order: Order, pricing: Pricing) {
+        val tm = com.example.myapplication.api.TokenManager(this)
+        val email = tm.getEmail()
+        val subject = "Comprobante de compra #${order.id}"
+        val body = buildString {
+            appendLine("Gracias por su compra")
+            appendLine("Orden: #${order.id}")
+            appendLine("Estado: ${order.status}")
+            appendLine("Subtotal: ${formatCurrency(pricing.subtotal)}")
+            appendLine("Descuento: ${formatCurrency(pricing.discount)}")
+            appendLine("Impuesto: ${formatCurrency(pricing.tax)}")
+            appendLine("Total: ${formatCurrency(pricing.total)}")
+        }
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+            data = Uri.parse("mailto:")
+            putExtra(Intent.EXTRA_EMAIL, arrayOf(email ?: ""))
+            putExtra(Intent.EXTRA_SUBJECT, subject)
+            putExtra(Intent.EXTRA_TEXT, body)
+        }
+        try {
+            startActivity(intent)
+        } catch (_: Exception) {}
     }
 }

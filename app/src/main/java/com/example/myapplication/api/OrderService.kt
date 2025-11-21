@@ -15,6 +15,9 @@ interface OrderService {
     @POST("order")
     suspend fun createOrder(@Body request: CreateOrderRequest): Order
 
+    @POST("order/checkout")
+    suspend fun checkout(@Body request: CreateOrderRequest): Order
+
     @GET("order/{id}")
     suspend fun getOrder(@Path("id") id: Int): Order
 
