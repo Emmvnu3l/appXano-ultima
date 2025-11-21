@@ -2,12 +2,18 @@ R_DEF: Internal format may change without notice
 local
 anim fade_in_300
 anim fade_out_300
+color badge_bg
+color badge_text
 color black
+color error
+color info
 color purple_200
 color purple_500
 color purple_700
+color success
 color teal_200
 color teal_700
+color warning
 color white
 drawable bg_badge
 drawable ic_arrow_back
@@ -30,6 +36,7 @@ id btnGoRegister
 id btnLogin
 id btnLogout
 id btnMinus
+id btnMore
 id btnNext
 id btnPay
 id btnPickImage
@@ -44,6 +51,7 @@ id btnRetry
 id btnSave
 id btnShip
 id cardMetrics
+id cbSelect
 id contentContainer
 id contentScroll
 id drawerLayout

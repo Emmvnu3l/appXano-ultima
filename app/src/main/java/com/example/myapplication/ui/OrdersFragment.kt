@@ -39,10 +39,10 @@ class OrdersFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val tm = com.example.myapplication.api.TokenManager(requireContext())
         adapter = OrdersAdapter(
-            onProcess = { confirmAndCall(it, "pasar a en proceso") { toProcess(it) } },
-            onComplete = { confirmAndCall(it, "marcar completada") { toComplete(it) } },
-            onCancel = { promptCancel(it) },
+            onChangeState = { o, target -> confirmAndCall(o, "cambiar a $target") { changeTo(o, target) } },
+            onCancelWithReason = { promptCancel(it) },
             onViewDetails = { showDetails(it) },
+            onSelectionChanged = { updateBulkUi(it) },
             isAdmin = tm.isAdmin()
         )
         binding.recycler.layoutManager = LinearLayoutManager(requireContext())
@@ -107,6 +107,7 @@ class OrdersFragment : Fragment() {
 
     private fun toProcess(o: Order) = changeState { RetrofitClient.createOrderService(requireContext()).updateStatus(o.id, com.example.myapplication.model.UpdateOrderStatusRequest("en_proceso")) }
     private fun toComplete(o: Order) = changeState { RetrofitClient.createOrderService(requireContext()).updateStatus(o.id, com.example.myapplication.model.UpdateOrderStatusRequest("completada")) }
+    private fun changeTo(o: Order, target: String) = changeState { RetrofitClient.createOrderService(requireContext()).updateStatus(o.id, com.example.myapplication.model.UpdateOrderStatusRequest(target)) }
 
     private fun changeState(block: suspend () -> Order) {
         setLoading(true)
@@ -182,6 +183,12 @@ class OrdersFragment : Fragment() {
             dateTo = parseDate(etTo.text?.toString())
             refresh()
         }
+
+        btnApply.setOnLongClickListener {
+            val target = currentStatusFilter ?: "en_proceso"
+            applyBulk(target)
+            true
+        }
     }
 
     companion object {
@@ -255,9 +262,51 @@ class OrdersFragment : Fragment() {
                     android.widget.Toast.makeText(requireContext(), "Motivo obligatorio", android.widget.Toast.LENGTH_LONG).show()
                 } else {
                     changeState { RetrofitClient.createOrderService(requireContext()).updateStatus(o.id, com.example.myapplication.model.UpdateOrderStatusRequest("cancelada", reason = reason, adminId = com.example.myapplication.api.TokenManager(requireContext()).getUserId())) }
+                    android.util.Log.i("Audit", "cancelada by ${com.example.myapplication.api.TokenManager(requireContext()).getUserId()} reason=$reason order=${o.id}")
                 }
             }
             .setNegativeButton("Volver", null)
+            .show()
+    }
+
+    private fun updateBulkUi(selected: Set<Int>) {
+        val btnApplyBulk = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnApply)
+        btnApplyBulk.isEnabled = selected.isNotEmpty()
+    }
+
+    private fun applyBulk(target: String) {
+        val ids = adapter.getSelectedIds()
+        if (ids.isEmpty()) return
+        val tm = com.example.myapplication.api.TokenManager(requireContext())
+        if (!tm.isAdmin()) {
+            android.widget.Toast.makeText(requireContext(), "Solo administradores", android.widget.Toast.LENGTH_LONG).show()
+            return
+        }
+        confirmAndCallSimple("Aplicar '$target' a ${ids.size} órdenes") {
+            setLoading(true)
+            viewLifecycleOwner.lifecycleScope.launch {
+                try {
+                    val service = RetrofitClient.createOrderService(requireContext())
+                    withContext(Dispatchers.IO) {
+                        ids.forEach { id -> service.updateStatus(id, com.example.myapplication.model.UpdateOrderStatusRequest(target, adminId = tm.getUserId())) }
+                    }
+                    android.util.Log.i("Audit", "bulk $target by ${tm.getUserId()} ids=$ids")
+                    refresh()
+                } catch (e: Exception) {
+                    StateUi.showError(binding.state, com.example.myapplication.api.NetworkError.message(e))
+                } finally {
+                    setLoading(false)
+                }
+            }
+        }
+    }
+
+    private fun confirmAndCallSimple(msg: String, fn: () -> Unit) {
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("Confirmar")
+            .setMessage(msg)
+            .setPositiveButton("Sí") { _, _ -> fn() }
+            .setNegativeButton("No", null)
             .show()
     }
 }
