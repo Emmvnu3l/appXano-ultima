@@ -3889,6 +3889,7 @@ id fill
 id fill_horizontal
 id fill_vertical
 id filled
+id filterBar
 id fitCenter
 id fitEnd
 id fitStart
@@ -4131,6 +4132,8 @@ id snap
 id snapMargins
 id south
 id spCategory
+id spSort
+id spStatus
 id spacer
 id special_effects_controller_view_tag
 id spline

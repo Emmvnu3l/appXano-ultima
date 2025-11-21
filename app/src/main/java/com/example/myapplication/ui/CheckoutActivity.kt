@@ -108,7 +108,7 @@ class CheckoutActivity : AppCompatActivity() {
                 val productService = RetrofitClient.createProductService(this@CheckoutActivity)
                 val products = withContext(Dispatchers.IO) { productService.getProducts() }
                 val pricing = computePricing(itemsMap, products)
-                val request = CreateOrderRequest(items, pricing.total, status = "confirmada")
+                val request = CreateOrderRequest(items, pricing.total, status = "pendiente")
                 val orderService = RetrofitClient.createOrderService(this@CheckoutActivity)
                 val order = try {
                     withContext(Dispatchers.IO) { orderService.createOrder(request) }
@@ -117,7 +117,7 @@ class CheckoutActivity : AppCompatActivity() {
                         val tm = com.example.myapplication.api.TokenManager(this@CheckoutActivity)
                         val raw = mutableMapOf<String, Any>(
                             "total" to pricing.total,
-                            "status" to "confirmada"
+                            "status" to "pendiente"
                         )
                         tm.getUserId()?.let { raw["user_id"] = it }
                         try {
