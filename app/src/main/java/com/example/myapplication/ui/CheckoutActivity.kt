@@ -108,18 +108,19 @@ class CheckoutActivity : AppCompatActivity() {
                 val productService = RetrofitClient.createProductService(this@CheckoutActivity)
                 val products = withContext(Dispatchers.IO) { productService.getProducts() }
                 val pricing = computePricing(itemsMap, products)
-                val request = CreateOrderRequest(items, pricing.total, status = "pendiente")
+                val tm = com.example.myapplication.api.TokenManager(this@CheckoutActivity)
+                val uid = tm.getUserId()
+                val request = CreateOrderRequest(items, pricing.total, status = "pendiente", userId = uid, discountCodeId = uid)
                 val orderService = RetrofitClient.createOrderService(this@CheckoutActivity)
                 val order = try {
                     withContext(Dispatchers.IO) { orderService.createOrder(request) }
                 } catch (e: HttpException) {
                     if (e.code() == 400) {
-                        val tm = com.example.myapplication.api.TokenManager(this@CheckoutActivity)
                         val raw = mutableMapOf<String, Any>(
                             "total" to pricing.total,
                             "status" to "pendiente"
                         )
-                        tm.getUserId()?.let { raw["user_id"] = it }
+                        uid?.let { raw["user_id"] = it; raw["discount_code_id"] = it }
                         try {
                             withContext(Dispatchers.IO) { orderService.createOrderRaw(raw) }
                         } catch (e2: HttpException) {

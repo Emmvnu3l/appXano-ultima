@@ -29,13 +29,25 @@ public final class FragmentOrdersBinding implements ViewBinding {
   public final Button btnApply;
 
   @NonNull
+  public final Button btnGoPage;
+
+  @NonNull
   public final Button btnNext;
 
   @NonNull
   public final Button btnPrev;
 
   @NonNull
+  public final EditText etAmountMax;
+
+  @NonNull
+  public final EditText etAmountMin;
+
+  @NonNull
   public final EditText etFrom;
+
+  @NonNull
+  public final EditText etPage;
 
   @NonNull
   public final EditText etTo;
@@ -71,16 +83,22 @@ public final class FragmentOrdersBinding implements ViewBinding {
   public final TextView tvPage;
 
   private FragmentOrdersBinding(@NonNull FrameLayout rootView, @NonNull Button btnApply,
-      @NonNull Button btnNext, @NonNull Button btnPrev, @NonNull EditText etFrom,
-      @NonNull EditText etTo, @NonNull LinearLayout filterBar, @NonNull LinearLayout pagerBar,
-      @NonNull RecyclerView recycler, @NonNull Spinner spPageSize, @NonNull Spinner spSort,
-      @NonNull Spinner spStatus, @NonNull Spinner spType, @NonNull ViewStateBinding state,
-      @NonNull SwipeRefreshLayout swipeRefresh, @NonNull TextView tvPage) {
+      @NonNull Button btnGoPage, @NonNull Button btnNext, @NonNull Button btnPrev,
+      @NonNull EditText etAmountMax, @NonNull EditText etAmountMin, @NonNull EditText etFrom,
+      @NonNull EditText etPage, @NonNull EditText etTo, @NonNull LinearLayout filterBar,
+      @NonNull LinearLayout pagerBar, @NonNull RecyclerView recycler, @NonNull Spinner spPageSize,
+      @NonNull Spinner spSort, @NonNull Spinner spStatus, @NonNull Spinner spType,
+      @NonNull ViewStateBinding state, @NonNull SwipeRefreshLayout swipeRefresh,
+      @NonNull TextView tvPage) {
     this.rootView = rootView;
     this.btnApply = btnApply;
+    this.btnGoPage = btnGoPage;
     this.btnNext = btnNext;
     this.btnPrev = btnPrev;
+    this.etAmountMax = etAmountMax;
+    this.etAmountMin = etAmountMin;
     this.etFrom = etFrom;
+    this.etPage = etPage;
     this.etTo = etTo;
     this.filterBar = filterBar;
     this.pagerBar = pagerBar;
@@ -127,6 +145,12 @@ public final class FragmentOrdersBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btnGoPage;
+      Button btnGoPage = ViewBindings.findChildViewById(rootView, id);
+      if (btnGoPage == null) {
+        break missingId;
+      }
+
       id = R.id.btnNext;
       Button btnNext = ViewBindings.findChildViewById(rootView, id);
       if (btnNext == null) {
@@ -139,9 +163,27 @@ public final class FragmentOrdersBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.etAmountMax;
+      EditText etAmountMax = ViewBindings.findChildViewById(rootView, id);
+      if (etAmountMax == null) {
+        break missingId;
+      }
+
+      id = R.id.etAmountMin;
+      EditText etAmountMin = ViewBindings.findChildViewById(rootView, id);
+      if (etAmountMin == null) {
+        break missingId;
+      }
+
       id = R.id.etFrom;
       EditText etFrom = ViewBindings.findChildViewById(rootView, id);
       if (etFrom == null) {
+        break missingId;
+      }
+
+      id = R.id.etPage;
+      EditText etPage = ViewBindings.findChildViewById(rootView, id);
+      if (etPage == null) {
         break missingId;
       }
 
@@ -212,9 +254,9 @@ public final class FragmentOrdersBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentOrdersBinding((FrameLayout) rootView, btnApply, btnNext, btnPrev, etFrom,
-          etTo, filterBar, pagerBar, recycler, spPageSize, spSort, spStatus, spType, binding_state,
-          swipeRefresh, tvPage);
+      return new FragmentOrdersBinding((FrameLayout) rootView, btnApply, btnGoPage, btnNext,
+          btnPrev, etAmountMax, etAmountMin, etFrom, etPage, etTo, filterBar, pagerBar, recycler,
+          spPageSize, spSort, spStatus, spType, binding_state, swipeRefresh, tvPage);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

@@ -53,6 +53,8 @@ class OrdersFragment : Fragment() {
         setupFilters()
         setupPager()
 
+        arguments?.getInt("limit")?.let { if (it > 0) pageSize = it }
+
         refresh()
     }
 
@@ -78,15 +80,23 @@ class OrdersFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createOrderService(requireContext())
-                val list = withContext(Dispatchers.IO) { service.listOrders(currentStatusFilter, targetPage, pageSize, dateFrom, dateTo, currentTypeFilter) }
-                val filtered = applyClientFilters(list, currentStatusFilter, dateFrom, dateTo, currentTypeFilter)
-                if (filtered.isEmpty()) {
-                    endReached = true
+                val tm = com.example.myapplication.api.TokenManager(requireContext())
+                val ownOnly = !tm.isAdmin()
+                val userIdParam = if (ownOnly) tm.getUserId() else null
+                val list = withContext(Dispatchers.IO) { service.listOrders(currentStatusFilter, userIdParam, userIdParam, null, null, dateFrom, dateTo, currentTypeFilter) }
+                val mine = if (ownOnly) filterByUserOrDiscount(list, tm.getUserId()) else list
+                val onlyValid = ownOnly && currentStatusFilter == null
+                val filtered = applyClientFilters(mine, currentStatusFilter, dateFrom, dateTo, currentTypeFilter, amountMin, amountMax, onlyValid)
+                totalCount = filtered.size
+                val sorted = sortOrders(filtered, currentSort)
+                val pageData = slicePage(sorted, targetPage, pageSize)
+                endReached = pageData.isEmpty() || (targetPage * pageSize) >= totalCount
+                if (pageData.isEmpty()) {
                     binding.state.tvEmpty.text = "Sin resultados con filtros"
                 } else page = targetPage
-                val sorted = sortOrders(filtered, currentSort)
-                adapter.setData(sorted, append)
+                adapter.setData(pageData, append = false)
                 binding.state.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
+                updatePagerUi()
             } catch (e: Exception) {
                 binding.state.tvError.visibility = View.VISIBLE
                 binding.state.tvError.text = com.example.myapplication.api.NetworkError.message(e)
@@ -113,7 +123,8 @@ class OrdersFragment : Fragment() {
         setLoading(true)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                withContext(Dispatchers.IO) { block() }
+                val updated = withContext(Dispatchers.IO) { block() }
+                appendHistory(updated.id, updated.status, null)
                 refresh()
             } catch (e: Exception) {
                 binding.state.tvError.visibility = View.VISIBLE
@@ -134,6 +145,9 @@ class OrdersFragment : Fragment() {
     private var dateFrom: Long? = null
     private var dateTo: Long? = null
     private var currentSort: String = "fecha_desc"
+    private var amountMin: Double? = null
+    private var amountMax: Double? = null
+    private var totalCount: Int = 0
 
     private fun setupFilters() {
         val statuses = listOf("todos", "pendiente", "confirmada", "enviado", "aceptado", "rechazado", "en_proceso", "completada", "cancelada")
@@ -147,6 +161,8 @@ class OrdersFragment : Fragment() {
         val spPageSize = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spPageSize)
         val etFrom = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etFrom)
         val etTo = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etTo)
+        val etAmountMin = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etAmountMin)
+        val etAmountMax = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etAmountMax)
         val btnApply = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnApply)
         spStatus.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, statuses)
         spSort.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, sortOptions)
@@ -181,6 +197,8 @@ class OrdersFragment : Fragment() {
         btnApply.setOnClickListener {
             dateFrom = parseDate(etFrom.text?.toString())
             dateTo = parseDate(etTo.text?.toString())
+            amountMin = etAmountMin.text?.toString()?.toDoubleOrNull()
+            amountMax = etAmountMax.text?.toString()?.toDoubleOrNull()
             refresh()
         }
 
@@ -198,14 +216,23 @@ class OrdersFragment : Fragment() {
             "estado_desc" -> list.sortedByDescending { it.status }
             else -> list.sortedByDescending { it.createdAt ?: 0L }
         }
-        fun applyClientFilters(list: List<Order>, status: String?, from: Long?, to: Long?, type: String?): List<Order> {
+        fun applyClientFilters(list: List<Order>, status: String?, from: Long?, to: Long?, type: String?, amountMin: Double?, amountMax: Double?, onlyValid: Boolean): List<Order> {
             return list.filter { o ->
                 val stOk = status?.let { o.status.equals(it, ignoreCase = true) } ?: true
                 val fromOk = from?.let { (o.createdAt ?: 0L) >= it } ?: true
                 val toOk = to?.let { (o.createdAt ?: 0L) <= it } ?: true
-                val typeOk = true
-                stOk && fromOk && toOk && typeOk
+                val amountMinOk = amountMin?.let { o.total >= it } ?: true
+                val amountMaxOk = amountMax?.let { o.total <= it } ?: true
+                val validStatusOk = if (onlyValid) {
+                    val valid = setOf("pendiente","confirmada","en_proceso","enviado","aceptado","completada")
+                    valid.contains(o.status.lowercase())
+                } else true
+                stOk && fromOk && toOk && amountMinOk && amountMaxOk && validStatusOk
             }
+        }
+        fun filterByUserOrDiscount(list: List<Order>, userId: Int?): List<Order> {
+            if (userId == null) return emptyList()
+            return list.filter { it.userId == userId || it.discountCodeId == userId }
         }
         fun parseDate(s: String?): Long? {
             if (s.isNullOrBlank()) return null
@@ -214,22 +241,36 @@ class OrdersFragment : Fragment() {
                 fmt.parse(s)?.time
             } catch (_: Exception) { null }
         }
+        fun slicePage(list: List<Order>, page: Int, pageSize: Int): List<Order> {
+            val start = (page - 1) * pageSize
+            if (start >= list.size || page <= 0) return emptyList()
+            val end = kotlin.math.min(start + pageSize, list.size)
+            return list.subList(start, end)
+        }
     }
 
     private fun setupPager() {
         val btnPrev = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnPrev)
         val btnNext = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnNext)
         val tvPage = binding.root.findViewById<android.widget.TextView>(com.example.myapplication.R.id.tvPage)
+        val etPage = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etPage)
+        val btnGo = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnGoPage)
         fun update() {
-            tvPage.text = "Página $page"
+            val maxPage = kotlin.math.max(1, (totalCount + pageSize - 1) / pageSize)
+            tvPage.text = "Página $page de $maxPage"
             btnPrev.isEnabled = page > 1
-            btnNext.isEnabled = !endReached
+            btnNext.isEnabled = page < maxPage
         }
         btnPrev.setOnClickListener {
             if (page > 1) fetch(page - 1, append = false)
         }
         btnNext.setOnClickListener {
-            if (!endReached) fetch(page + 1, append = true)
+            fetch(page + 1, append = false)
+        }
+        btnGo.setOnClickListener {
+            val num = etPage.text?.toString()?.toIntOrNull()
+            val maxPage = kotlin.math.max(1, (totalCount + pageSize - 1) / pageSize)
+            if (num != null && num in 1..maxPage) fetch(num, append = false)
         }
         update()
     }
@@ -243,6 +284,11 @@ class OrdersFragment : Fragment() {
         sb.appendLine("Creada: $created")
         sb.appendLine("Items:")
         o.items.orEmpty().forEach { sb.appendLine("• Producto ${it.productId} x${it.quantity} (${it.price ?: 0.0})") }
+        val hist = loadHistory(o.id)
+        if (hist.isNotEmpty()) {
+            sb.appendLine("\nHistorial de estado:")
+            hist.forEach { sb.appendLine("• $it") }
+        }
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Detalles de la orden")
             .setMessage(sb.toString())
@@ -261,7 +307,11 @@ class OrdersFragment : Fragment() {
                 if (reason.isNullOrEmpty()) {
                     android.widget.Toast.makeText(requireContext(), "Motivo obligatorio", android.widget.Toast.LENGTH_LONG).show()
                 } else {
-                    changeState { RetrofitClient.createOrderService(requireContext()).updateStatus(o.id, com.example.myapplication.model.UpdateOrderStatusRequest("cancelada", reason = reason, adminId = com.example.myapplication.api.TokenManager(requireContext()).getUserId())) }
+                    changeState {
+                        val res = RetrofitClient.createOrderService(requireContext()).updateStatus(o.id, com.example.myapplication.model.UpdateOrderStatusRequest("cancelada", reason = reason, adminId = com.example.myapplication.api.TokenManager(requireContext()).getUserId()))
+                        appendHistory(res.id, "cancelada", reason)
+                        res
+                    }
                     android.util.Log.i("Audit", "cancelada by ${com.example.myapplication.api.TokenManager(requireContext()).getUserId()} reason=$reason order=${o.id}")
                 }
             }
@@ -308,5 +358,35 @@ class OrdersFragment : Fragment() {
             .setPositiveButton("Sí") { _, _ -> fn() }
             .setNegativeButton("No", null)
             .show()
+    }
+
+    private fun updatePagerUi() {
+        val tvPage = binding.root.findViewById<android.widget.TextView>(com.example.myapplication.R.id.tvPage)
+        val btnPrev = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnPrev)
+        val btnNext = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnNext)
+        val maxPage = kotlin.math.max(1, (totalCount + pageSize - 1) / pageSize)
+        tvPage.text = "Página $page de $maxPage"
+        btnPrev.isEnabled = page > 1
+        btnNext.isEnabled = page < maxPage
+    }
+
+    private fun appendHistory(orderId: Int, status: String, comment: String?) {
+        try {
+            val prefs = requireContext().getSharedPreferences("orders_history", android.content.Context.MODE_PRIVATE)
+            val ts = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
+            val line = "$ts - $status" + (comment?.let { " - $it" } ?: "")
+            val key = "order_$orderId"
+            val cur = prefs.getString(key, "") ?: ""
+            val newVal = if (cur.isBlank()) line else (cur + "\n" + line)
+            prefs.edit().putString(key, newVal).apply()
+        } catch (_: Exception) {}
+    }
+
+    private fun loadHistory(orderId: Int): List<String> {
+        return try {
+            val prefs = requireContext().getSharedPreferences("orders_history", android.content.Context.MODE_PRIVATE)
+            val s = prefs.getString("order_$orderId", "") ?: ""
+            s.lines().filter { it.isNotBlank() }
+        } catch (_: Exception) { emptyList() }
     }
 }
