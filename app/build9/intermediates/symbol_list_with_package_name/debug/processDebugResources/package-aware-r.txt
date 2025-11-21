@@ -3759,6 +3759,7 @@ id bounceEnd
 id bounceStart
 id btnAccept
 id btnAddToCart
+id btnApply
 id btnBack
 id btnCheckout
 id btnCreate
@@ -3768,10 +3769,12 @@ id btnGoRegister
 id btnLogin
 id btnLogout
 id btnMinus
+id btnNext
 id btnPay
 id btnPickImage
 id btnPickImages
 id btnPlus
+id btnPrev
 id btnRegister
 id btnReject
 id btnRemove
@@ -3869,6 +3872,7 @@ id etBrand
 id etDescription
 id etEmail
 id etFirstName
+id etFrom
 id etLastName
 id etName
 id etPassword
@@ -3878,6 +3882,7 @@ id etSearch
 id etSearchHeader
 id etShippingAddress
 id etStock
+id etTo
 id exitUntilCollapsed
 id expand_activities_button
 id expanded_menu
@@ -4061,6 +4066,7 @@ id outline
 id outward
 id overshoot
 id packed
+id pagerBar
 id pagerImages
 id parallax
 id parent
@@ -4132,8 +4138,10 @@ id snap
 id snapMargins
 id south
 id spCategory
+id spPageSize
 id spSort
 id spStatus
+id spType
 id spacer
 id special_effects_controller_view_tag
 id spline
@@ -4237,6 +4245,7 @@ id tvLastName
 id tvLastNameValue
 id tvMore
 id tvName
+id tvPage
 id tvPhone
 id tvPhoneValue
 id tvPoints

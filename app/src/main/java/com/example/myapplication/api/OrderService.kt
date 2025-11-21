@@ -28,7 +28,10 @@ interface OrderService {
     suspend fun listOrders(
         @Query("status") status: String?,
         @Query("page") page: Int?,
-        @Query("pageSize") pageSize: Int?
+        @Query("pageSize") pageSize: Int?,
+        @Query("from") from: Long? = null,
+        @Query("to") to: Long? = null,
+        @Query("type") type: String? = null
     ): List<Order>
 
     @PUT("order/{id}/accept")

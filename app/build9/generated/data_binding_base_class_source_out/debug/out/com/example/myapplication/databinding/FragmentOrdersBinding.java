@@ -4,9 +4,12 @@ package com.example.myapplication.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,10 +26,31 @@ public final class FragmentOrdersBinding implements ViewBinding {
   private final FrameLayout rootView;
 
   @NonNull
+  public final Button btnApply;
+
+  @NonNull
+  public final Button btnNext;
+
+  @NonNull
+  public final Button btnPrev;
+
+  @NonNull
+  public final EditText etFrom;
+
+  @NonNull
+  public final EditText etTo;
+
+  @NonNull
   public final LinearLayout filterBar;
 
   @NonNull
+  public final LinearLayout pagerBar;
+
+  @NonNull
   public final RecyclerView recycler;
+
+  @NonNull
+  public final Spinner spPageSize;
 
   @NonNull
   public final Spinner spSort;
@@ -35,21 +59,39 @@ public final class FragmentOrdersBinding implements ViewBinding {
   public final Spinner spStatus;
 
   @NonNull
+  public final Spinner spType;
+
+  @NonNull
   public final ViewStateBinding state;
 
   @NonNull
   public final SwipeRefreshLayout swipeRefresh;
 
-  private FragmentOrdersBinding(@NonNull FrameLayout rootView, @NonNull LinearLayout filterBar,
-      @NonNull RecyclerView recycler, @NonNull Spinner spSort, @NonNull Spinner spStatus,
-      @NonNull ViewStateBinding state, @NonNull SwipeRefreshLayout swipeRefresh) {
+  @NonNull
+  public final TextView tvPage;
+
+  private FragmentOrdersBinding(@NonNull FrameLayout rootView, @NonNull Button btnApply,
+      @NonNull Button btnNext, @NonNull Button btnPrev, @NonNull EditText etFrom,
+      @NonNull EditText etTo, @NonNull LinearLayout filterBar, @NonNull LinearLayout pagerBar,
+      @NonNull RecyclerView recycler, @NonNull Spinner spPageSize, @NonNull Spinner spSort,
+      @NonNull Spinner spStatus, @NonNull Spinner spType, @NonNull ViewStateBinding state,
+      @NonNull SwipeRefreshLayout swipeRefresh, @NonNull TextView tvPage) {
     this.rootView = rootView;
+    this.btnApply = btnApply;
+    this.btnNext = btnNext;
+    this.btnPrev = btnPrev;
+    this.etFrom = etFrom;
+    this.etTo = etTo;
     this.filterBar = filterBar;
+    this.pagerBar = pagerBar;
     this.recycler = recycler;
+    this.spPageSize = spPageSize;
     this.spSort = spSort;
     this.spStatus = spStatus;
+    this.spType = spType;
     this.state = state;
     this.swipeRefresh = swipeRefresh;
+    this.tvPage = tvPage;
   }
 
   @Override
@@ -79,15 +121,57 @@ public final class FragmentOrdersBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnApply;
+      Button btnApply = ViewBindings.findChildViewById(rootView, id);
+      if (btnApply == null) {
+        break missingId;
+      }
+
+      id = R.id.btnNext;
+      Button btnNext = ViewBindings.findChildViewById(rootView, id);
+      if (btnNext == null) {
+        break missingId;
+      }
+
+      id = R.id.btnPrev;
+      Button btnPrev = ViewBindings.findChildViewById(rootView, id);
+      if (btnPrev == null) {
+        break missingId;
+      }
+
+      id = R.id.etFrom;
+      EditText etFrom = ViewBindings.findChildViewById(rootView, id);
+      if (etFrom == null) {
+        break missingId;
+      }
+
+      id = R.id.etTo;
+      EditText etTo = ViewBindings.findChildViewById(rootView, id);
+      if (etTo == null) {
+        break missingId;
+      }
+
       id = R.id.filterBar;
       LinearLayout filterBar = ViewBindings.findChildViewById(rootView, id);
       if (filterBar == null) {
         break missingId;
       }
 
+      id = R.id.pagerBar;
+      LinearLayout pagerBar = ViewBindings.findChildViewById(rootView, id);
+      if (pagerBar == null) {
+        break missingId;
+      }
+
       id = R.id.recycler;
       RecyclerView recycler = ViewBindings.findChildViewById(rootView, id);
       if (recycler == null) {
+        break missingId;
+      }
+
+      id = R.id.spPageSize;
+      Spinner spPageSize = ViewBindings.findChildViewById(rootView, id);
+      if (spPageSize == null) {
         break missingId;
       }
 
@@ -100,6 +184,12 @@ public final class FragmentOrdersBinding implements ViewBinding {
       id = R.id.spStatus;
       Spinner spStatus = ViewBindings.findChildViewById(rootView, id);
       if (spStatus == null) {
+        break missingId;
+      }
+
+      id = R.id.spType;
+      Spinner spType = ViewBindings.findChildViewById(rootView, id);
+      if (spType == null) {
         break missingId;
       }
 
@@ -116,8 +206,15 @@ public final class FragmentOrdersBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentOrdersBinding((FrameLayout) rootView, filterBar, recycler, spSort,
-          spStatus, binding_state, swipeRefresh);
+      id = R.id.tvPage;
+      TextView tvPage = ViewBindings.findChildViewById(rootView, id);
+      if (tvPage == null) {
+        break missingId;
+      }
+
+      return new FragmentOrdersBinding((FrameLayout) rootView, btnApply, btnNext, btnPrev, etFrom,
+          etTo, filterBar, pagerBar, recycler, spPageSize, spSort, spStatus, spType, binding_state,
+          swipeRefresh, tvPage);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
