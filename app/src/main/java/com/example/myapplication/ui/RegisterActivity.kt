@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
+import android.widget.ArrayAdapter
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.ActivityRegisterBinding
@@ -34,6 +35,18 @@ class RegisterActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { finish() }
+
+        val tm = TokenManager(this)
+        val isAdmin = tm.isAdmin()
+        if (isAdmin) {
+            binding.spRole.visibility = View.VISIBLE
+            val roles = listOf("user", "admin")
+            val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, roles)
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            binding.spRole.adapter = adapter
+        } else {
+            binding.spRole.visibility = View.GONE
+        }
 
         binding.btnRegister.setOnClickListener { submitRegister() }
         // Al pulsar "Registrar", validamos y enviamos los datos al endpoint /auth/signup.
@@ -73,13 +86,18 @@ class RegisterActivity : AppCompatActivity() {
             return
         }
 
+        val selectedRole = if (TokenManager(this).isAdmin()) {
+            val pos = binding.spRole.selectedItemPosition
+            if (pos >= 0) binding.spRole.selectedItem.toString() else "user"
+        } else "user"
+
         val request = SignupRequest(
             name = name,
             email = email,
             password = password,
             first_name = firstName,
             last_name = lastName,
-            role = "user",
+            role = selectedRole,
             status = "activo",
             shipping_address = shippingAddress,
             phone = phone
@@ -88,23 +106,32 @@ class RegisterActivity : AppCompatActivity() {
         setLoading(true)
         lifecycleScope.launch {
             try {
-                // Creamos el servicio de auth SIN token (login/signup). El context es this@RegisterActivity.
-                val service = RetrofitClient.createAuthService(this@RegisterActivity)
-                val response = withContext(Dispatchers.IO) { service.signup(request) }
-                val token = response.effectiveToken()
-                if (token.isNullOrEmpty()) {
-                    Toast.makeText(this@RegisterActivity, getString(R.string.msg_token_missing), Toast.LENGTH_SHORT).show()
+                val tm = TokenManager(this@RegisterActivity)
+                val isAdmin = tm.isAdmin()
+                val service = if (isAdmin) {
+                    RetrofitClient.createAuthServiceAuthenticated(this@RegisterActivity)
                 } else {
-                    val tm = TokenManager(this@RegisterActivity)
-                    tm.saveAuth(
-                        token,
-                        response.user?.name,
-                        response.user?.email,
-                        response.user?.id,
-                        response.user?.role
-                    )
+                    RetrofitClient.createAuthService(this@RegisterActivity)
+                }
+                val response = withContext(Dispatchers.IO) { service.signup(request) }
+                if (isAdmin) {
                     Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_success), Toast.LENGTH_SHORT).show()
                     finish()
+                } else {
+                    val token = response.effectiveToken()
+                    if (token.isNullOrEmpty()) {
+                        Toast.makeText(this@RegisterActivity, getString(R.string.msg_token_missing), Toast.LENGTH_SHORT).show()
+                    } else {
+                        tm.saveAuth(
+                            token,
+                            response.user?.name,
+                            response.user?.email,
+                            response.user?.id,
+                            response.user?.role
+                        )
+                        Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_success), Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
                 }
             } catch (e: Exception) {
                 Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_failed, e.message ?: ""), Toast.LENGTH_LONG).show()

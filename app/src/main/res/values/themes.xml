@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MyApplication" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.MyApplication" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
@@ -12,6 +12,10 @@
         <!-- Status/navigation bar colors: look tradicional, sin transparencia. -->
         <item name="android:statusBarColor">?attr/colorSurface</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
+        <!-- Fondo de ventana y splash para evitar pantalla negra durante el arranque -->
+        <item name="android:windowBackground">@color/white</item>
+        
+        <item name="android:forceDarkAllowed">false</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>

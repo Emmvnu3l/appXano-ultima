@@ -17,10 +17,22 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Opción 3: desactivar edge-to-edge para evitar solapamientos con barras del sistema.
         WindowCompat.setDecorFitsSystemWindows(window, true)
-        binding = ActivityHomeBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        try {
+            binding = ActivityHomeBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+        } catch (t: Throwable) {
+            android.util.Log.e("HomeActivity", "init failed", t)
+            val tv = android.widget.TextView(this).apply {
+                text = t.localizedMessage ?: "Error"
+                setBackgroundColor(android.graphics.Color.WHITE)
+                setTextColor(android.graphics.Color.RED)
+                textSize = 16f
+                gravity = android.view.Gravity.CENTER
+            }
+            setContentView(tv)
+            return
+        }
         val tm = com.example.myapplication.api.TokenManager(this)
         val isAdmin = tm.isAdmin()
         if (!isAdmin) {

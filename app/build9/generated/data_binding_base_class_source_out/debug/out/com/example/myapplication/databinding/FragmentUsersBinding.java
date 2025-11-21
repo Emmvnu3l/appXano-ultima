@@ -4,8 +4,13 @@ package com.example.myapplication.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,10 +27,46 @@ public final class FragmentUsersBinding implements ViewBinding {
   private final FrameLayout rootView;
 
   @NonNull
-  public final EditText etSearch;
+  public final Button btnApplyFilters;
+
+  @NonNull
+  public final Button btnGoPage;
+
+  @NonNull
+  public final Button btnNext;
+
+  @NonNull
+  public final Button btnPrev;
+
+  @NonNull
+  public final Button btnToggleFilters;
+
+  @NonNull
+  public final EditText etEmailFilter;
+
+  @NonNull
+  public final EditText etNameFilter;
+
+  @NonNull
+  public final EditText etPage;
+
+  @NonNull
+  public final AutoCompleteTextView etSearch;
+
+  @NonNull
+  public final LinearLayout filtersPanel;
+
+  @NonNull
+  public final LinearLayout pagerBar;
 
   @NonNull
   public final RecyclerView recycler;
+
+  @NonNull
+  public final Spinner spPageSize;
+
+  @NonNull
+  public final Spinner spStatusFilter;
 
   @NonNull
   public final ViewStateBinding state;
@@ -33,14 +74,44 @@ public final class FragmentUsersBinding implements ViewBinding {
   @NonNull
   public final SwipeRefreshLayout swipeRefresh;
 
-  private FragmentUsersBinding(@NonNull FrameLayout rootView, @NonNull EditText etSearch,
-      @NonNull RecyclerView recycler, @NonNull ViewStateBinding state,
-      @NonNull SwipeRefreshLayout swipeRefresh) {
+  @NonNull
+  public final TextView tvPages;
+
+  @NonNull
+  public final TextView tvRange;
+
+  @NonNull
+  public final TextView tvTotal;
+
+  private FragmentUsersBinding(@NonNull FrameLayout rootView, @NonNull Button btnApplyFilters,
+      @NonNull Button btnGoPage, @NonNull Button btnNext, @NonNull Button btnPrev,
+      @NonNull Button btnToggleFilters, @NonNull EditText etEmailFilter,
+      @NonNull EditText etNameFilter, @NonNull EditText etPage,
+      @NonNull AutoCompleteTextView etSearch, @NonNull LinearLayout filtersPanel,
+      @NonNull LinearLayout pagerBar, @NonNull RecyclerView recycler, @NonNull Spinner spPageSize,
+      @NonNull Spinner spStatusFilter, @NonNull ViewStateBinding state,
+      @NonNull SwipeRefreshLayout swipeRefresh, @NonNull TextView tvPages,
+      @NonNull TextView tvRange, @NonNull TextView tvTotal) {
     this.rootView = rootView;
+    this.btnApplyFilters = btnApplyFilters;
+    this.btnGoPage = btnGoPage;
+    this.btnNext = btnNext;
+    this.btnPrev = btnPrev;
+    this.btnToggleFilters = btnToggleFilters;
+    this.etEmailFilter = etEmailFilter;
+    this.etNameFilter = etNameFilter;
+    this.etPage = etPage;
     this.etSearch = etSearch;
+    this.filtersPanel = filtersPanel;
+    this.pagerBar = pagerBar;
     this.recycler = recycler;
+    this.spPageSize = spPageSize;
+    this.spStatusFilter = spStatusFilter;
     this.state = state;
     this.swipeRefresh = swipeRefresh;
+    this.tvPages = tvPages;
+    this.tvRange = tvRange;
+    this.tvTotal = tvTotal;
   }
 
   @Override
@@ -70,15 +141,87 @@ public final class FragmentUsersBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.btnApplyFilters;
+      Button btnApplyFilters = ViewBindings.findChildViewById(rootView, id);
+      if (btnApplyFilters == null) {
+        break missingId;
+      }
+
+      id = R.id.btnGoPage;
+      Button btnGoPage = ViewBindings.findChildViewById(rootView, id);
+      if (btnGoPage == null) {
+        break missingId;
+      }
+
+      id = R.id.btnNext;
+      Button btnNext = ViewBindings.findChildViewById(rootView, id);
+      if (btnNext == null) {
+        break missingId;
+      }
+
+      id = R.id.btnPrev;
+      Button btnPrev = ViewBindings.findChildViewById(rootView, id);
+      if (btnPrev == null) {
+        break missingId;
+      }
+
+      id = R.id.btnToggleFilters;
+      Button btnToggleFilters = ViewBindings.findChildViewById(rootView, id);
+      if (btnToggleFilters == null) {
+        break missingId;
+      }
+
+      id = R.id.etEmailFilter;
+      EditText etEmailFilter = ViewBindings.findChildViewById(rootView, id);
+      if (etEmailFilter == null) {
+        break missingId;
+      }
+
+      id = R.id.etNameFilter;
+      EditText etNameFilter = ViewBindings.findChildViewById(rootView, id);
+      if (etNameFilter == null) {
+        break missingId;
+      }
+
+      id = R.id.etPage;
+      EditText etPage = ViewBindings.findChildViewById(rootView, id);
+      if (etPage == null) {
+        break missingId;
+      }
+
       id = R.id.etSearch;
-      EditText etSearch = ViewBindings.findChildViewById(rootView, id);
+      AutoCompleteTextView etSearch = ViewBindings.findChildViewById(rootView, id);
       if (etSearch == null) {
+        break missingId;
+      }
+
+      id = R.id.filtersPanel;
+      LinearLayout filtersPanel = ViewBindings.findChildViewById(rootView, id);
+      if (filtersPanel == null) {
+        break missingId;
+      }
+
+      id = R.id.pagerBar;
+      LinearLayout pagerBar = ViewBindings.findChildViewById(rootView, id);
+      if (pagerBar == null) {
         break missingId;
       }
 
       id = R.id.recycler;
       RecyclerView recycler = ViewBindings.findChildViewById(rootView, id);
       if (recycler == null) {
+        break missingId;
+      }
+
+      id = R.id.spPageSize;
+      Spinner spPageSize = ViewBindings.findChildViewById(rootView, id);
+      if (spPageSize == null) {
+        break missingId;
+      }
+
+      id = R.id.spStatusFilter;
+      Spinner spStatusFilter = ViewBindings.findChildViewById(rootView, id);
+      if (spStatusFilter == null) {
         break missingId;
       }
 
@@ -95,8 +238,28 @@ public final class FragmentUsersBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentUsersBinding((FrameLayout) rootView, etSearch, recycler, binding_state,
-          swipeRefresh);
+      id = R.id.tvPages;
+      TextView tvPages = ViewBindings.findChildViewById(rootView, id);
+      if (tvPages == null) {
+        break missingId;
+      }
+
+      id = R.id.tvRange;
+      TextView tvRange = ViewBindings.findChildViewById(rootView, id);
+      if (tvRange == null) {
+        break missingId;
+      }
+
+      id = R.id.tvTotal;
+      TextView tvTotal = ViewBindings.findChildViewById(rootView, id);
+      if (tvTotal == null) {
+        break missingId;
+      }
+
+      return new FragmentUsersBinding((FrameLayout) rootView, btnApplyFilters, btnGoPage, btnNext,
+          btnPrev, btnToggleFilters, etEmailFilter, etNameFilter, etPage, etSearch, filtersPanel,
+          pagerBar, recycler, spPageSize, spStatusFilter, binding_state, swipeRefresh, tvPages,
+          tvRange, tvTotal);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

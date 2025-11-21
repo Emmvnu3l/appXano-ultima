@@ -86,7 +86,13 @@ object RetrofitClient {
 
     fun createUserService(context: Context): UserService {
         val tm = TokenManager(context)
-        return retrofit(ApiConfig.storeBaseUrl, authenticated = true, tokenManager = tm)
+        return retrofit(ApiConfig.userBaseUrl, authenticated = true, tokenManager = tm)
+            .create(UserService::class.java)
+    }
+
+    fun createUserServiceAuth(context: Context): UserService {
+        val tm = TokenManager(context)
+        return retrofit(ApiConfig.authBaseUrl, authenticated = true, tokenManager = tm)
             .create(UserService::class.java)
     }
 

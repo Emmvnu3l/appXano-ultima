@@ -13,7 +13,8 @@ import com.example.myapplication.model.User
 
 class UsersAdapter(
     private val onToggleBlocked: (User, Boolean) -> Unit,
-    private val onEdit: (User) -> Unit
+    private val onEdit: (User) -> Unit,
+    private val onView: (User) -> Unit
 ) : RecyclerView.Adapter<UsersAdapter.VH>() {
     private val items: MutableList<User> = mutableListOf()
 
@@ -46,10 +47,12 @@ class UsersAdapter(
             // avatar: placeholder
             name.text = u.name
             email.text = u.email
-            created.text = u.createdAt ?: ""
+            val createdText = u.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd").format(java.util.Date(it)) } ?: ""
+            created.text = createdText
             swBlocked.isChecked = u.blocked
             swBlocked.setOnCheckedChangeListener { _, checked -> onToggleBlocked(u, checked) }
             btnEdit.setOnClickListener { onEdit(u) }
+            itemView.setOnClickListener { onView(u) }
         }
     }
 }
