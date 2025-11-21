@@ -4,6 +4,7 @@ package com.example.myapplication.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -24,10 +25,16 @@ public final class ItemOrderBinding implements ViewBinding {
   public final ImageButton btnAccept;
 
   @NonNull
+  public final ImageButton btnMore;
+
+  @NonNull
   public final ImageButton btnReject;
 
   @NonNull
   public final ImageButton btnShip;
+
+  @NonNull
+  public final CheckBox cbSelect;
 
   @NonNull
   public final TextView tvClient;
@@ -42,12 +49,15 @@ public final class ItemOrderBinding implements ViewBinding {
   public final TextView tvTotal;
 
   private ItemOrderBinding(@NonNull LinearLayout rootView, @NonNull ImageButton btnAccept,
-      @NonNull ImageButton btnReject, @NonNull ImageButton btnShip, @NonNull TextView tvClient,
-      @NonNull TextView tvId, @NonNull TextView tvStatus, @NonNull TextView tvTotal) {
+      @NonNull ImageButton btnMore, @NonNull ImageButton btnReject, @NonNull ImageButton btnShip,
+      @NonNull CheckBox cbSelect, @NonNull TextView tvClient, @NonNull TextView tvId,
+      @NonNull TextView tvStatus, @NonNull TextView tvTotal) {
     this.rootView = rootView;
     this.btnAccept = btnAccept;
+    this.btnMore = btnMore;
     this.btnReject = btnReject;
     this.btnShip = btnShip;
+    this.cbSelect = cbSelect;
     this.tvClient = tvClient;
     this.tvId = tvId;
     this.tvStatus = tvStatus;
@@ -87,6 +97,12 @@ public final class ItemOrderBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.btnMore;
+      ImageButton btnMore = ViewBindings.findChildViewById(rootView, id);
+      if (btnMore == null) {
+        break missingId;
+      }
+
       id = R.id.btnReject;
       ImageButton btnReject = ViewBindings.findChildViewById(rootView, id);
       if (btnReject == null) {
@@ -96,6 +112,12 @@ public final class ItemOrderBinding implements ViewBinding {
       id = R.id.btnShip;
       ImageButton btnShip = ViewBindings.findChildViewById(rootView, id);
       if (btnShip == null) {
+        break missingId;
+      }
+
+      id = R.id.cbSelect;
+      CheckBox cbSelect = ViewBindings.findChildViewById(rootView, id);
+      if (cbSelect == null) {
         break missingId;
       }
 
@@ -123,8 +145,8 @@ public final class ItemOrderBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ItemOrderBinding((LinearLayout) rootView, btnAccept, btnReject, btnShip, tvClient,
-          tvId, tvStatus, tvTotal);
+      return new ItemOrderBinding((LinearLayout) rootView, btnAccept, btnMore, btnReject, btnShip,
+          cbSelect, tvClient, tvId, tvStatus, tvTotal);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

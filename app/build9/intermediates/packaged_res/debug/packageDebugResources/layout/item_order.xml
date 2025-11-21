@@ -11,6 +11,11 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
+        <CheckBox
+            android:id="@+id/cbSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
         <TextView
             android:id="@+id/tvId"
             android:layout_width="wrap_content"
@@ -42,10 +47,12 @@
 
         <TextView
             android:id="@+id/tvStatus"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="pendiente" />
+            android:text="pendiente"
+            android:padding="6dp"
+            android:background="@drawable/bg_badge"
+            android:textColor="#FFFFFF" />
 
         <ImageButton
             android:id="@+id/btnAccept"
@@ -53,7 +60,9 @@
             android:layout_height="36dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/checkbox_on_background"
-            android:contentDescription="Aceptar" />
+            android:contentDescription="En proceso"
+            android:tooltipText="En proceso"
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
 
         <ImageButton
             android:id="@+id/btnReject"
@@ -61,7 +70,9 @@
             android:layout_height="36dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_delete"
-            android:contentDescription="Rechazar" />
+            android:contentDescription="Cancelar"
+            android:tooltipText="Cancelar"
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
 
         <ImageButton
             android:id="@+id/btnShip"
@@ -69,7 +80,17 @@
             android:layout_height="36dp"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_menu_send"
-            android:contentDescription="Enviar" />
+            android:contentDescription="Completada"
+            android:tooltipText="Completada"
+            android:foreground="?attr/selectableItemBackgroundBorderless" />
+
+        <ImageButton
+            android:id="@+id/btnMore"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_menu_more"
+            android:tooltipText="Cambiar estado" />
     </LinearLayout>
 
 </LinearLayout>

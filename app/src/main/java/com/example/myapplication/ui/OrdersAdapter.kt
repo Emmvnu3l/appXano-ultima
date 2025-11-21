@@ -11,13 +11,14 @@ import com.example.myapplication.R
 import com.example.myapplication.model.Order
 
 class OrdersAdapter(
-    private val onProcess: (Order) -> Unit,
-    private val onComplete: (Order) -> Unit,
-    private val onCancel: (Order) -> Unit,
+    private val onChangeState: (Order, String) -> Unit,
+    private val onCancelWithReason: (Order) -> Unit,
     private val onViewDetails: (Order) -> Unit,
+    private val onSelectionChanged: (Set<Int>) -> Unit,
     private val isAdmin: Boolean
 ) : RecyclerView.Adapter<OrdersAdapter.VH>() {
     private val items: MutableList<Order> = mutableListOf()
+    private val selected: MutableSet<Int> = mutableSetOf()
 
     fun setData(list: List<Order>, append: Boolean) {
         if (!append) items.clear()
@@ -44,20 +45,42 @@ class OrdersAdapter(
         private val btnAccept: ImageButton = itemView.findViewById(R.id.btnAccept)
         private val btnReject: ImageButton = itemView.findViewById(R.id.btnReject)
         private val btnShip: ImageButton = itemView.findViewById(R.id.btnShip)
+        private val btnMore: ImageButton = itemView.findViewById(R.id.btnMore)
+        private val cbSelect: android.widget.CheckBox = itemView.findViewById(R.id.cbSelect)
 
         fun bind(o: Order) {
             tvId.text = "#${o.id}"
             tvClient.text = "Cliente: ${o.userId ?: "-"}"
             tvTotal.text = "$${o.total}"
             tvStatus.text = o.status
-            tvStatus.setTextColor(statusColor(o.status))
+            tvStatus.setTextColor(android.graphics.Color.WHITE)
+            val tint = when (o.status.lowercase()) {
+                "pendiente" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#616161"))
+                "en_proceso" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1976D2"))
+                "completada" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2E7D32"))
+                "cancelada" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#C62828"))
+                "confirmada" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2E7D32"))
+                "enviado" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1565C0"))
+                "aceptado" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#2E7D32"))
+                "rechazado" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#C62828"))
+                else -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#616161"))
+            }
+            androidx.core.view.ViewCompat.setBackgroundTintList(tvStatus, tint)
 
             itemView.setOnClickListener { onViewDetails(o) }
+
+            cbSelect.setOnCheckedChangeListener(null)
+            cbSelect.isChecked = selected.contains(o.id)
+            cbSelect.setOnCheckedChangeListener { _, checked ->
+                if (checked) selected.add(o.id) else selected.remove(o.id)
+                onSelectionChanged(selected)
+            }
 
             if (!isAdmin) {
                 btnAccept.visibility = View.GONE
                 btnReject.visibility = View.GONE
                 btnShip.visibility = View.GONE
+                btnMore.visibility = View.GONE
                 return
             }
 
@@ -70,21 +93,29 @@ class OrdersAdapter(
             btnReject.visibility = if (showCancel) View.VISIBLE else View.GONE
             btnShip.visibility = if (showComplete) View.VISIBLE else View.GONE
 
-            btnAccept.setOnClickListener { onProcess(o) }
-            btnReject.setOnClickListener { onCancel(o) }
-            btnShip.setOnClickListener { onComplete(o) }
+            btnAccept.setOnClickListener { onChangeState(o, "en_proceso") }
+            btnReject.setOnClickListener { onCancelWithReason(o) }
+            btnShip.setOnClickListener { onChangeState(o, "completada") }
+
+            btnMore.visibility = View.VISIBLE
+            btnMore.setOnClickListener { v ->
+                val menu = android.widget.PopupMenu(v.context, v)
+                val options = mutableListOf<String>()
+                if (showProcess) options.add("en_proceso")
+                if (showComplete) options.add("completada")
+                if (showCancel) options.add("cancelada")
+                options.forEachIndexed { idx, opt -> menu.menu.add(0, idx, idx, opt) }
+                menu.setOnMenuItemClickListener { mi ->
+                    val opt = options[mi.itemId]
+                    if (opt == "cancelada") onCancelWithReason(o) else onChangeState(o, opt)
+                    true
+                }
+                menu.show()
+            }
         }
 
-        private fun statusColor(status: String): Int = when (status.lowercase()) {
-            "pendiente" -> Color.parseColor("#FFA000")
-            "en_proceso" -> Color.parseColor("#1976D2")
-            "completada" -> Color.parseColor("#2E7D32")
-            "cancelada" -> Color.parseColor("#C62828")
-            "confirmada" -> Color.parseColor("#2E7D32")
-            "aceptado" -> Color.parseColor("#2E7D32")
-            "rechazado" -> Color.parseColor("#C62828")
-            "enviado" -> Color.parseColor("#1565C0")
-            else -> Color.DKGRAY
-        }
+        private fun statusColor(status: String): Int = Color.DKGRAY
     }
+
+    fun getSelectedIds(): Set<Int> = selected
 }
