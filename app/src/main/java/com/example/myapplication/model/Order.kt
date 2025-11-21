@@ -7,7 +7,7 @@ data class Order(
     @SerializedName("id") val id: Int,
     @SerializedName("status") val status: String,
     @SerializedName("total") val total: Double,
-    @SerializedName("items") val items: List<OrderItem>,
+    @SerializedName("items") val items: List<OrderItem>? = emptyList(),
     @SerializedName("user_id") val userId: Int?,
     @SerializedName("created_at") val createdAt: Long? = null,
     @SerializedName("discount_code_id") val discountCodeId: Int? = null
