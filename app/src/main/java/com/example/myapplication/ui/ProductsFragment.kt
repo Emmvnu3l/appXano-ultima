@@ -28,25 +28,67 @@ class ProductsFragment : Fragment() {
     private var _binding: FragmentProductsBinding? = null
     private val binding get() = _binding!!
     private lateinit var adapter: ProductAdapter
-    // Comentario: query inicial opcional para filtrar productos por nombre/descr.
     private var initialQuery: String? = null
+    private var initialCategoryId: Int? = null
     private var cartPrefsListener: android.content.SharedPreferences.OnSharedPreferenceChangeListener? = null
 
     companion object {
-        // Comentario: permite crear el fragment con un query predefinido.
-        fun newInstance(query: String?): ProductsFragment {
+        fun newInstance(query: String?, categoryId: Int? = null): ProductsFragment {
             val f = ProductsFragment()
             val args = Bundle()
             args.putString("query", query)
+            if (categoryId != null) args.putInt("category_id", categoryId)
             f.arguments = args
             return f
+        }
+
+        fun normalize(s: String?): String {
+            if (s.isNullOrBlank()) return ""
+            val n = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+            return n.replace("[\\p{InCombiningDiacriticalMarks}]".toRegex(), "")
+                .lowercase()
+                .replace("'", "")
+                .replace("\"", "")
+                .replace("`", "")
+                .trim()
+        }
+
+        fun filterProducts(
+            original: List<com.example.myapplication.model.Product>,
+            query: String,
+            categoryIdFilter: Int?,
+            categoryNames: Map<Int, String>
+        ): List<com.example.myapplication.model.Product> {
+            val normQ = normalize(query)
+            val tokens = normQ.split(" ").filter { it.isNotBlank() }
+
+            val exactCategoryId = categoryNames.entries.firstOrNull { normalize(it.value) == normQ }?.key
+
+            return original.filter { p ->
+                val catFilterMatch = categoryIdFilter?.let { it == p.category } ?: true
+                if (!catFilterMatch) return@filter false
+
+                if (normQ.isEmpty()) return@filter true
+
+                val nameNorm = normalize(p.name)
+                val descNorm = normalize(p.description)
+                val catNameNorm = p.category?.let { normalize(categoryNames[it]) }
+
+                val tokenMatch = tokens.any { t ->
+                    nameNorm.contains(t) || (descNorm?.contains(t) == true) || (catNameNorm?.contains(t) == true)
+                }
+
+                val exactCatMatch = exactCategoryId != null && exactCategoryId == p.category
+
+                tokenMatch || exactCatMatch
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Comentario: recupera el query pasado por argumentos.
         initialQuery = arguments?.getString("query")
+        initialCategoryId = if (arguments?.containsKey("category_id") == true) arguments?.getInt("category_id") else null
     }
 
     override fun onCreateView(
@@ -84,6 +126,7 @@ class ProductsFragment : Fragment() {
         }
         binding.recycler.layoutManager = glm
         binding.recycler.adapter = adapter
+        initialCategoryId?.let { adapter.categoryIdFilter = it }
 
         binding.swipeRefresh.setOnRefreshListener { loadProducts() }
         binding.state.btnRetry.setOnClickListener { loadProducts() }
@@ -106,6 +149,7 @@ class ProductsFragment : Fragment() {
         cm.registerListener(cartPrefsListener!!)
 
         loadProducts()
+        loadCategoriesMap()
     }
 
     private fun setLoading(loading: Boolean) {
@@ -120,6 +164,15 @@ class ProductsFragment : Fragment() {
     }
 
     private fun showEmpty() {
+        val msg = when {
+            adapter.categoryIdFilter != null && !initialQuery.isNullOrBlank() -> "Sin resultados en la categoría \"${initialQuery}\""
+            adapter.categoryIdFilter != null -> "Sin resultados en esta categoría"
+            !initialQuery.isNullOrBlank() -> "Sin resultados para \"${initialQuery}\""
+            else -> null
+        }
+        if (msg != null) {
+            binding.state.tvEmpty.text = msg
+        }
         StateUi.showEmpty(binding.state)
         binding.swipeRefresh.isRefreshing = false
     }
@@ -176,20 +229,23 @@ class ProductsFragment : Fragment() {
     }
 
     private fun onProductsLoaded(list: List<Product>) {
-        // Pasamos el query inicial al adapter para que lo aplique y muestre en el header
         adapter.initialQuery = initialQuery
-        // Filtrado previo por categoría si viene en initialQuery y no es una búsqueda normal
-        // Asumimos que si initialQuery coincide con una categoría, filtramos por category_id o similar, 
-        // pero como Product no tiene category_id explícito fácil, filtramos por category string si existe.
-        // Si initialQuery no es null, ProductAdapter ya lo filtra por texto.
-        // Para soportar filtrado exacto de categoría, idealmente Product debería tener un campo category_id.
-        // Aquí confiamos en el filtro de texto del adapter por ahora.
-        
         adapter.setProducts(list)
         if (list.isEmpty()) {
             showEmpty()
         } else {
             hideError()
+        }
+    }
+
+    private fun loadCategoriesMap() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val service = RetrofitClient.createCategoryService(requireContext())
+                val categories = withContext(Dispatchers.IO) { service.getCategories() }
+                val map = categories.associate { it.id to it.name }
+                adapter.setCategoryNames(map)
+            } catch (_: Exception) { }
         }
     }
 

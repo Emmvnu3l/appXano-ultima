@@ -34,8 +34,7 @@ class CategoriesFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         adapter = CategoriesAdapter { category ->
-            // Navegar a lista de productos filtrada
-            val fragment = ProductsFragment.newInstance(category.name)
+            val fragment = ProductsFragment.newInstance(category.name, category.id)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .addToBackStack(null)
