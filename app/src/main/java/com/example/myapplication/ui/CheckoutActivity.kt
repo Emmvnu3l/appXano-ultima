@@ -9,11 +9,15 @@ import androidx.lifecycle.lifecycleScope
 import android.content.Intent
 import android.net.Uri
 import com.example.myapplication.api.RetrofitClient
+import com.example.myapplication.model.UpdateProductRequest
+import com.example.myapplication.model.ImagePayload
 import com.example.myapplication.databinding.ActivityCheckoutBinding
 import com.example.myapplication.model.CreateOrderItem
 import com.example.myapplication.model.CreateOrderRequest
 import com.example.myapplication.model.Order
 import com.example.myapplication.model.UpdateOrderStatusRequest
+import com.example.myapplication.api.NetworkError
+import retrofit2.HttpException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -106,7 +110,23 @@ class CheckoutActivity : AppCompatActivity() {
                 val pricing = computePricing(itemsMap, products)
                 val request = CreateOrderRequest(items, pricing.total, status = "confirmada")
                 val orderService = RetrofitClient.createOrderService(this@CheckoutActivity)
-                val order = withContext(Dispatchers.IO) { orderService.checkout(request) }
+                val order = try {
+                    withContext(Dispatchers.IO) { orderService.createOrder(request) }
+                } catch (e: HttpException) {
+                    if (e.code() == 400) {
+                        val tm = com.example.myapplication.api.TokenManager(this@CheckoutActivity)
+                        val raw = mutableMapOf<String, Any>(
+                            "total" to pricing.total,
+                            "status" to "confirmada"
+                        )
+                        tm.getUserId()?.let { raw["user_id"] = it }
+                        try {
+                            withContext(Dispatchers.IO) { orderService.createOrderRaw(raw) }
+                        } catch (e2: HttpException) {
+                            throw e2
+                        }
+                    } else throw e
+                }
                 currentOrder = order
                 cm.clear()
                 binding.tvItems.text = ""
@@ -117,9 +137,28 @@ class CheckoutActivity : AppCompatActivity() {
                 binding.btnPay.isEnabled = false
                 binding.btnRequestShipping.isEnabled = true
                 Toast.makeText(this@CheckoutActivity, "Orden confirmada", Toast.LENGTH_SHORT).show()
-                sendReceiptEmail(order, pricing)
+                for ((pid, qty) in itemsMap) {
+                    val p = products.find { it.id == pid } ?: continue
+                    val newStock = ((p.stock ?: 0) - qty).coerceAtLeast(0)
+                    val imagesPayload = (p.images ?: emptyList()).map {
+                        val path = it.path ?: (it.url ?: "")
+                        val name = (it.path ?: it.url)?.substringAfterLast('/')
+                        ImagePayload(access = "public", path = path, name = name, type = "image", size = it.size, mime = it.mime, meta = emptyMap())
+                    }
+                    val req = UpdateProductRequest(
+                        name = p.name,
+                        description = p.description,
+                        price = p.price,
+                        stock = newStock,
+                        brand = p.brand,
+                        category = p.category,
+                        images = imagesPayload
+                    )
+                    withContext(Dispatchers.IO) { productService.patchProduct(pid, req) }
+                }
+                
             } catch (e: Exception) {
-                Toast.makeText(this@CheckoutActivity, "Error creando orden: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this@CheckoutActivity, "Error creando orden: ${NetworkError.message(e)}", Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }

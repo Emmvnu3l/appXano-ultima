@@ -15,6 +15,9 @@ interface OrderService {
     @POST("order")
     suspend fun createOrder(@Body request: CreateOrderRequest): Order
 
+    @POST("order")
+    suspend fun createOrderRaw(@Body body: Map<String, @JvmSuppressWildcards Any>): Order
+
     @POST("order/checkout")
     suspend fun checkout(@Body request: CreateOrderRequest): Order
 
