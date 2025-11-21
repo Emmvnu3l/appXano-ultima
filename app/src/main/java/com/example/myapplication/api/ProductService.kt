@@ -9,6 +9,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.PATCH
 import retrofit2.http.DELETE
 import retrofit2.http.Path
 
@@ -23,6 +24,12 @@ interface ProductService {
 
     @PUT("product/{id}")
     suspend fun updateProduct(@Path("id") id: Int, @Body request: UpdateProductRequest): Product
+
+    @PATCH("product/{id}")
+    suspend fun patchProduct(@Path("id") id: Int, @Body request: UpdateProductRequest): Product
+
+    @GET("product/{id}")
+    suspend fun getProduct(@Path("id") id: Int): Product
 
     @DELETE("product/{id}")
     suspend fun deleteProduct(@Path("id") id: Int): Unit

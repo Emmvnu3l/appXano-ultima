@@ -8,5 +8,6 @@ data class UpdateProductRequest(
     @SerializedName("price") val price: Double?,
     @SerializedName("stock") val stock: Int?,
     @SerializedName("brand") val brand: String?,
-    @SerializedName("category") val category: Int?
+    @SerializedName("category") val category: Int?,
+    @SerializedName("images") val images: List<ImagePayload>? = null
 )
