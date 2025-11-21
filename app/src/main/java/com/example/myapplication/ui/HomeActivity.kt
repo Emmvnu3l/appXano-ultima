@@ -40,7 +40,7 @@ class HomeActivity : AppCompatActivity() {
             // Fallback: si por cualquier motivo permanecemos en HomeActivity, restringir menú
             val menu = binding.navView.menu
             menu.removeItem(R.id.nav_home)
-            menu.removeItem(R.id.nav_add_product)
+            menu.removeItem(R.id.nav_manage_products)
             menu.removeItem(R.id.nav_manage_categories)
             menu.removeItem(R.id.nav_orders)
             menu.removeItem(R.id.nav_users)
@@ -66,17 +66,15 @@ class HomeActivity : AppCompatActivity() {
         when {
             openCreateCategory -> {
                 replaceFragment(CreateCategoryFragment())
-                // binding.navView.setCheckedItem(R.id.nav_manage_categories) // Podríamos marcar este
             }
             openAddProduct -> {
                 replaceFragment(AddProductFragment())
-                binding.navView.setCheckedItem(R.id.nav_add_product)
+                // No marcamos nada específico o quizás products
             }
             intent.getBooleanExtra("open_edit_product", false) -> {
                 val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
                 if (p != null) {
                     replaceFragment(EditProductFragment.newInstance(p))
-                    binding.navView.setCheckedItem(R.id.nav_add_product)
                 }
             }
             intent.getBooleanExtra("open_orders", false) -> {
@@ -109,7 +107,7 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
                 R.id.nav_categories -> replaceFragment(CategoriesFragment())
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
-                R.id.nav_add_product -> if (isAdmin) replaceFragment(AddProductFragment()) else false
+                R.id.nav_manage_products -> if (isAdmin) replaceFragment(ProductManagementFragment()) else false
                 R.id.nav_manage_categories -> if (isAdmin) replaceFragment(CategoryManagementFragment()) else false
                 R.id.nav_orders -> if (isAdmin) replaceFragment(OrdersFragment()) else false
                 R.id.nav_users -> if (isAdmin) replaceFragment(UsersFragment()) else false
@@ -156,33 +154,27 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun configureToolbarForFragment(fragment: Fragment) {
-        val childScreen = fragment is CreateCategoryFragment || fragment is AddProductFragment || fragment is CategoryManagementFragment
+        val childScreen = fragment is CreateCategoryFragment || fragment is AddProductFragment || fragment is EditProductFragment
         if (childScreen) {
             toggle.isDrawerIndicatorEnabled = false
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             binding.toolbar.navigationIcon = AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back)
             binding.toolbar.setNavigationOnClickListener {
-                if (fragment is CategoryManagementFragment) {
-                     // Si estamos en gestión, volver a categorías estándar o home?
-                     // Lo lógico es volver a abrir el drawer o ir a home.
-                     // Como se comporta como pantalla principal del menú, debería abrir drawer.
-                     // PERO si la tratamos como "childScreen" muestra flecha atrás.
-                     // Si queremos que sea una pantalla principal del menú, NO debe ser childScreen.
-                     // Voy a quitarla de childScreen para que tenga Hamburger.
-                     // UPDATE: Si el usuario navega desde "Más", quizás prefiera Hamburger.
-                     // Dejemos Hamburger.
+                // Volver según el contexto. Si es Edit/Add product, volver a ProductManagement
+                if (fragment is AddProductFragment || fragment is EditProductFragment) {
+                     replaceFragment(ProductManagementFragment())
+                     binding.navView.setCheckedItem(R.id.nav_manage_products)
+                     restoreHamburger()
+                } else if (fragment is CreateCategoryFragment) {
+                     replaceFragment(CategoryManagementFragment())
+                     binding.navView.setCheckedItem(R.id.nav_manage_categories)
                      restoreHamburger()
                 } else {
                     replaceFragment(CategoriesFragment()) 
                     binding.navView.setCheckedItem(R.id.nav_categories)
                     restoreHamburger()
                 }
-            }
-            // Corrección sobre la marcha: Si es CategoryManagementFragment y se accede desde menú, 
-            // debería tener Hamburger, no back arrow.
-            if (fragment is CategoryManagementFragment) {
-                 restoreHamburger()
             }
         } else {
             restoreHamburger()

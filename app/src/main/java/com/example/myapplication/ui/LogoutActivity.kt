@@ -56,11 +56,7 @@ class LogoutActivity : AppCompatActivity() {
                     finish()
                     true
                 }
-                R.id.nav_add_product -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
-                    true
-                }
+                // Eliminado nav_add_product ya que fue reemplazado y esta activity es genérica
                 R.id.nav_logout -> {
                     // Nos mantenemos en esta pantalla
                     binding.drawerLayout.closeDrawers()
