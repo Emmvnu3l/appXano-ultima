@@ -4,6 +4,7 @@ package com.example.myapplication.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import androidx.annotation.NonNull;
@@ -19,7 +20,7 @@ import java.lang.String;
 
 public final class FragmentOrdersBinding implements ViewBinding {
   @NonNull
-  private final LinearLayout rootView;
+  private final FrameLayout rootView;
 
   @NonNull
   public final LinearLayout filterBar;
@@ -39,7 +40,7 @@ public final class FragmentOrdersBinding implements ViewBinding {
   @NonNull
   public final SwipeRefreshLayout swipeRefresh;
 
-  private FragmentOrdersBinding(@NonNull LinearLayout rootView, @NonNull LinearLayout filterBar,
+  private FragmentOrdersBinding(@NonNull FrameLayout rootView, @NonNull LinearLayout filterBar,
       @NonNull RecyclerView recycler, @NonNull Spinner spSort, @NonNull Spinner spStatus,
       @NonNull ViewStateBinding state, @NonNull SwipeRefreshLayout swipeRefresh) {
     this.rootView = rootView;
@@ -53,7 +54,7 @@ public final class FragmentOrdersBinding implements ViewBinding {
 
   @Override
   @NonNull
-  public LinearLayout getRoot() {
+  public FrameLayout getRoot() {
     return rootView;
   }
 
@@ -115,7 +116,7 @@ public final class FragmentOrdersBinding implements ViewBinding {
         break missingId;
       }
 
-      return new FragmentOrdersBinding((LinearLayout) rootView, filterBar, recycler, spSort,
+      return new FragmentOrdersBinding((FrameLayout) rootView, filterBar, recycler, spSort,
           spStatus, binding_state, swipeRefresh);
     }
     String missingId = rootView.getResources().getResourceName(id);

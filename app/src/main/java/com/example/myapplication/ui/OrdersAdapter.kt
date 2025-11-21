@@ -80,6 +80,10 @@ class OrdersAdapter(
             "en_proceso" -> Color.parseColor("#1976D2")
             "completada" -> Color.parseColor("#2E7D32")
             "cancelada" -> Color.parseColor("#C62828")
+            "confirmada" -> Color.parseColor("#2E7D32")
+            "aceptado" -> Color.parseColor("#2E7D32")
+            "rechazado" -> Color.parseColor("#C62828")
+            "enviado" -> Color.parseColor("#1565C0")
             else -> Color.DKGRAY
         }
     }

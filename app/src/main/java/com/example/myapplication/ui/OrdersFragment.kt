@@ -91,10 +91,9 @@ class OrdersFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createOrderService(requireContext())
-                val list = withContext(Dispatchers.IO) { service.listOrders(currentStatusFilter, targetPage, 10) }
-                val sorted = sortOrders(list)
-                if (sorted.isEmpty()) endReached = true else page = targetPage
-                adapter.setData(sorted, append)
+                val list = withContext(Dispatchers.IO) { service.listOrders(null, targetPage, 10) }
+                if (list.isEmpty()) endReached = true else page = targetPage
+                adapter.setData(list, append)
                 binding.state.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
             } catch (e: Exception) {
                 binding.state.tvError.visibility = View.VISIBLE
@@ -141,7 +140,7 @@ class OrdersFragment : Fragment() {
     private var currentSort: String = "fecha_desc"
 
     private fun setupFilters() {
-        val statuses = listOf("todos", "pendiente", "en_proceso", "completada", "cancelada")
+        val statuses = listOf("todos", "pendiente", "confirmada", "enviado", "aceptado", "rechazado", "en_proceso", "completada", "cancelada")
         val sortOptions = listOf("fecha_desc", "fecha_asc", "estado_asc", "estado_desc")
 
         val spStatus = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spStatus)
@@ -179,7 +178,7 @@ class OrdersFragment : Fragment() {
         val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) } ?: "-"
         sb.appendLine("Creada: $created")
         sb.appendLine("Items:")
-        o.items.forEach { sb.appendLine("• Producto ${it.productId} x${it.quantity} (${it.price ?: 0.0})") }
+        o.items.orEmpty().forEach { sb.appendLine("• Producto ${it.productId} x${it.quantity} (${it.price ?: 0.0})") }
         androidx.appcompat.app.AlertDialog.Builder(requireContext())
             .setTitle("Detalles de la orden")
             .setMessage(sb.toString())
