@@ -138,10 +138,20 @@
                     android:text="Nombre(s):" />
                 <TextView
                     android:id="@+id/tvFirstNameValue"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="" />
+                    android:layout_weight="1"
+                    android:text=""
+                    android:visibility="gone" />
+                <EditText
+                    android:id="@+id/etFirstName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:hint="Nombre(s)"
+                    android:inputType="textPersonName" />
             </LinearLayout>
 
             <LinearLayout
@@ -161,10 +171,20 @@
                     android:text="Apellidos:" />
                 <TextView
                     android:id="@+id/tvLastNameValue"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="" />
+                    android:layout_weight="1"
+                    android:text=""
+                    android:visibility="gone" />
+                <EditText
+                    android:id="@+id/etLastName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:hint="Apellidos"
+                    android:inputType="textPersonName" />
             </LinearLayout>
 
             <LinearLayout
@@ -207,10 +227,20 @@
                     android:text="Dirección de envío:" />
                 <TextView
                     android:id="@+id/tvShippingAddressValue"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="" />
+                    android:layout_weight="1"
+                    android:text=""
+                    android:visibility="gone" />
+                <EditText
+                    android:id="@+id/etShippingAddress"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:hint="Dirección"
+                    android:inputType="textPostalAddress" />
             </LinearLayout>
 
             <LinearLayout
@@ -230,12 +260,51 @@
                     android:text="Teléfono:" />
                 <TextView
                     android:id="@+id/tvPhoneValue"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="" />
+                    android:layout_weight="1"
+                    android:text=""
+                    android:visibility="gone" />
+                <EditText
+                    android:id="@+id/etPhone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:hint="Teléfono"
+                    android:inputType="phone" />
             </LinearLayout>
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="end"
+            android:layout_marginTop="16dp">
+            <Button
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cancelar" />
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="wrap_content" />
+            <Button
+                android:id="@+id/btnSave"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Guardar" />
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:layout_marginTop="12dp" />
 
     </LinearLayout>
 
