@@ -37,6 +37,7 @@ class ProductAdapter(
     var initialQuery: String? = null
     var categoryIdFilter: Int? = null
     private var query: String = ""
+    private var categoryNames: Map<Int, String> = emptyMap()
 
     // Estado simple de cantidades y productos añadidos (UI-only)
     private val quantities = mutableMapOf<Int, Int>()
@@ -46,6 +47,12 @@ class ProductAdapter(
         original = list
         applyFilter()
         // Eliminamos notifyDataSetChanged() global para evitar crashes durante layout
+        notifyDataSetChanged()
+    }
+
+    fun setCategoryNames(map: Map<Int, String>) {
+        categoryNames = map
+        applyFilter()
         notifyDataSetChanged()
     }
 
@@ -76,23 +83,19 @@ class ProductAdapter(
 
     private fun applyFilter() {
         val q = (initialQuery ?: query).trim()
-        
-        filtered = original.filter { p ->
-            // 1. Filtro por categoría (si se especifica)
-            val catFilterMatch = categoryIdFilter?.let { it == p.category } ?: true
-            
-            // 2. Filtro por texto
-            val textMatch = if (q.isEmpty()) true else {
-                val nameMatch = p.name.contains(q, ignoreCase = true)
-                val descMatch = p.description?.contains(q, ignoreCase = true) == true
-                // Opcional: Búsqueda por ID de categoría como texto
-                val catMatch = p.category?.toString()?.contains(q, ignoreCase = true) == true
-                nameMatch || descMatch || catMatch
-            }
-            
-            catFilterMatch && textMatch
-        }
+        filtered = ProductsFragment.filterProducts(original, q, categoryIdFilter, categoryNames)
         onResultsCountChanged(filtered.size)
+    }
+
+    private fun normalize(s: String?): String {
+        if (s.isNullOrBlank()) return ""
+        val n = java.text.Normalizer.normalize(s, java.text.Normalizer.Form.NFD)
+        return n.replace("[\\p{InCombiningDiacriticalMarks}]".toRegex(), "")
+            .lowercase()
+            .replace("'", "")
+            .replace("\"", "")
+            .replace("`", "")
+            .trim()
     }
 
     inner class HeaderVH(itemView: View) : RecyclerView.ViewHolder(itemView) {

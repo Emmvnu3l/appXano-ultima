@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
+// buildDir = file("${rootDir}/app/build10")
+
 
 android {
     namespace = "com.example.myapplication"
