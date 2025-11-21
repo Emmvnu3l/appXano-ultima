@@ -41,7 +41,7 @@ class HomeActivity : AppCompatActivity() {
             val menu = binding.navView.menu
             menu.removeItem(R.id.nav_home)
             menu.removeItem(R.id.nav_add_product)
-            menu.removeItem(R.id.nav_create_category)
+            menu.removeItem(R.id.nav_manage_categories)
             menu.removeItem(R.id.nav_orders)
             menu.removeItem(R.id.nav_users)
         }
@@ -66,7 +66,7 @@ class HomeActivity : AppCompatActivity() {
         when {
             openCreateCategory -> {
                 replaceFragment(CreateCategoryFragment())
-                binding.navView.setCheckedItem(R.id.nav_create_category)
+                // binding.navView.setCheckedItem(R.id.nav_manage_categories) // Podríamos marcar este
             }
             openAddProduct -> {
                 replaceFragment(AddProductFragment())
@@ -110,7 +110,7 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_categories -> replaceFragment(CategoriesFragment())
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
                 R.id.nav_add_product -> if (isAdmin) replaceFragment(AddProductFragment()) else false
-                R.id.nav_create_category -> if (isAdmin) replaceFragment(CreateCategoryFragment()) else false
+                R.id.nav_manage_categories -> if (isAdmin) replaceFragment(CategoryManagementFragment()) else false
                 R.id.nav_orders -> if (isAdmin) replaceFragment(OrdersFragment()) else false
                 R.id.nav_users -> if (isAdmin) replaceFragment(UsersFragment()) else false
                 R.id.nav_logout -> {
@@ -156,16 +156,33 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun configureToolbarForFragment(fragment: Fragment) {
-        val childScreen = fragment is CreateCategoryFragment || fragment is AddProductFragment
+        val childScreen = fragment is CreateCategoryFragment || fragment is AddProductFragment || fragment is CategoryManagementFragment
         if (childScreen) {
             toggle.isDrawerIndicatorEnabled = false
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             binding.toolbar.navigationIcon = AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back)
             binding.toolbar.setNavigationOnClickListener {
-                replaceFragment(CategoriesFragment()) // Volver a categorías por defecto
-                binding.navView.setCheckedItem(R.id.nav_categories)
-                restoreHamburger()
+                if (fragment is CategoryManagementFragment) {
+                     // Si estamos en gestión, volver a categorías estándar o home?
+                     // Lo lógico es volver a abrir el drawer o ir a home.
+                     // Como se comporta como pantalla principal del menú, debería abrir drawer.
+                     // PERO si la tratamos como "childScreen" muestra flecha atrás.
+                     // Si queremos que sea una pantalla principal del menú, NO debe ser childScreen.
+                     // Voy a quitarla de childScreen para que tenga Hamburger.
+                     // UPDATE: Si el usuario navega desde "Más", quizás prefiera Hamburger.
+                     // Dejemos Hamburger.
+                     restoreHamburger()
+                } else {
+                    replaceFragment(CategoriesFragment()) 
+                    binding.navView.setCheckedItem(R.id.nav_categories)
+                    restoreHamburger()
+                }
+            }
+            // Corrección sobre la marcha: Si es CategoryManagementFragment y se accede desde menú, 
+            // debería tener Hamburger, no back arrow.
+            if (fragment is CategoryManagementFragment) {
+                 restoreHamburger()
             }
         } else {
             restoreHamburger()
