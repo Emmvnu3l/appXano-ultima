@@ -51,12 +51,17 @@ class OrdersAdapter(
 
         fun bind(o: Order) {
             tvId.text = "#${o.id}"
+            tvId.setTextColor(Color.BLACK)
             tvClient.text = "Cliente: ${o.userId ?: "-"}"
+            tvClient.setTextColor(Color.BLACK)
             tvTotal.text = "$${o.total}"
+            tvTotal.setTextColor(Color.BLACK)
             tvStatus.text = o.status
             tvStatus.setTextColor(android.graphics.Color.WHITE)
             val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date(it)) } ?: "-"
             tvDate.text = created
+            tvDate.setTextColor(Color.BLACK)
+
             val tint = when (o.status.lowercase()) {
                 "pendiente" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#616161"))
                 "en_proceso" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#1976D2"))

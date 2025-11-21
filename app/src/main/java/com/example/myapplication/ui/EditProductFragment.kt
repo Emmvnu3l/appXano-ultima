@@ -33,6 +33,7 @@ class EditProductFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         binding.toolbar.setNavigationOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
         val p = product
         if (p != null) {

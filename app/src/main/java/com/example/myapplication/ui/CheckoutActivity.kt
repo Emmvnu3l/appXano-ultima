@@ -17,6 +17,7 @@ import com.example.myapplication.model.CreateOrderRequest
 import com.example.myapplication.model.Order
 import com.example.myapplication.model.UpdateOrderStatusRequest
 import com.example.myapplication.api.NetworkError
+import com.example.myapplication.api.TokenManager
 import retrofit2.HttpException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -108,7 +109,7 @@ class CheckoutActivity : AppCompatActivity() {
                 val productService = RetrofitClient.createProductService(this@CheckoutActivity)
                 val products = withContext(Dispatchers.IO) { productService.getProducts() }
                 val pricing = computePricing(itemsMap, products)
-                val tm = com.example.myapplication.api.TokenManager(this@CheckoutActivity)
+                val tm = TokenManager(this@CheckoutActivity)
                 val uid = tm.getUserId()
                 val request = CreateOrderRequest(items, pricing.total, status = "pendiente", userId = uid, discountCodeId = uid)
                 val orderService = RetrofitClient.createOrderService(this@CheckoutActivity)
@@ -137,7 +138,9 @@ class CheckoutActivity : AppCompatActivity() {
                 binding.tvTotal.text = formatCurrency(0.0)
                 binding.btnPay.isEnabled = false
                 binding.btnRequestShipping.isEnabled = true
-                Toast.makeText(this@CheckoutActivity, "Orden confirmada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@CheckoutActivity, "Compra existosa", Toast.LENGTH_SHORT).show()
+                
+                // Actualizar stock en segundo plano (o esperar si es crítico)
                 for ((pid, qty) in itemsMap) {
                     val p = products.find { it.id == pid } ?: continue
                     val newStock = ((p.stock ?: 0) - qty).coerceAtLeast(0)
@@ -155,8 +158,20 @@ class CheckoutActivity : AppCompatActivity() {
                         category = p.category,
                         images = imagesPayload
                     )
-                    withContext(Dispatchers.IO) { productService.patchProduct(pid, req) }
+                    try {
+                        withContext(Dispatchers.IO) { productService.patchProduct(pid, req) }
+                    } catch(e: Exception) {
+                        // Log or ignore stock update failure if necessary
+                    }
                 }
+                
+                // Redirigir al Home correspondiente
+                val dest = if (tm.isAdmin()) HomeActivity::class.java else LimitedHomeActivity::class.java
+                val intent = Intent(this@CheckoutActivity, dest)
+                // Limpiar back stack para evitar volver al checkout
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
                 
             } catch (e: Exception) {
                 Toast.makeText(this@CheckoutActivity, "Error creando orden: ${NetworkError.message(e)}", Toast.LENGTH_LONG).show()
@@ -167,6 +182,8 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun requestShipping() {
+        // Ya no debería ser necesario si redirigimos inmediatamente después del pago, 
+        // pero lo mantenemos por si acaso la lógica cambia o si falla la redirección.
         val order = currentOrder ?: return
         setLoading(true)
         lifecycleScope.launch {
@@ -194,7 +211,7 @@ class CheckoutActivity : AppCompatActivity() {
     }
 
     private fun sendReceiptEmail(order: Order, pricing: Pricing) {
-        val tm = com.example.myapplication.api.TokenManager(this)
+        val tm = TokenManager(this)
         val email = tm.getEmail()
         val subject = "Comprobante de compra #${order.id}"
         val body = buildString {

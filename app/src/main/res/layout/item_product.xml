@@ -5,7 +5,9 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardUseCompatPadding="true"
-    app:cardCornerRadius="12dp">
+    app:cardCornerRadius="12dp"
+    app:cardBackgroundColor="?attr/colorSurface"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +21,8 @@
             android:layout_height="160dp"
             android:layout_marginBottom="8dp"
             android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery" />
+            android:src="@android:drawable/ic_menu_gallery"
+            android:contentDescription="@string/label_name" />
 
         <TextView
             android:id="@+id/tvName"
@@ -28,14 +31,16 @@
             android:textStyle="bold"
             android:textSize="16sp"
             android:layout_marginBottom="4dp"
-            android:text="@string/label_name" />
+            android:text="@string/label_name"
+            android:textColor="?android:textColorPrimary"/>
 
         <TextView
             android:id="@+id/tvPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_price"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:textColor="?attr/colorSecondary"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -48,15 +53,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/label_quantity"
-                android:layout_marginEnd="8dp" />
+                android:layout_marginEnd="8dp"
+                android:textColor="?android:textColorSecondary"/>
 
             <ImageButton
                 android:id="@+id/btnMinus"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_media_previous"
-                android:contentDescription="@string/label_decrease" />
+                android:contentDescription="@string/label_decrease"
+                app:tint="?attr/colorControlNormal"/>
 
             <TextView
                 android:id="@+id/tvQuantity"
@@ -64,22 +71,25 @@
                 android:layout_height="wrap_content"
                 android:text="1"
                 android:textStyle="bold"
-                android:layout_marginHorizontal="8dp" />
+                android:layout_marginHorizontal="8dp"
+                android:textColor="?android:textColorPrimary"/>
 
             <ImageButton
                 android:id="@+id/btnPlus"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_media_next"
-                android:contentDescription="@string/label_increase" />
+                android:contentDescription="@string/label_increase"
+                app:tint="?attr/colorControlNormal"/>
         </LinearLayout>
 
         <Button
             android:id="@+id/btnAddToCart"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/label_add_to_cart" />
+            android:text="@string/label_add_to_cart"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
 
     </LinearLayout>
 

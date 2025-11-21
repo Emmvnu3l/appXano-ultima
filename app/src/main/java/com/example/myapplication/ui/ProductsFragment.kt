@@ -60,6 +60,7 @@ class ProductsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         adapter = ProductAdapter(
             onProductClick = { product ->
                 val intent = Intent(requireContext(), ProductDetailActivity::class.java)
@@ -177,6 +178,13 @@ class ProductsFragment : Fragment() {
     private fun onProductsLoaded(list: List<Product>) {
         // Pasamos el query inicial al adapter para que lo aplique y muestre en el header
         adapter.initialQuery = initialQuery
+        // Filtrado previo por categoría si viene en initialQuery y no es una búsqueda normal
+        // Asumimos que si initialQuery coincide con una categoría, filtramos por category_id o similar, 
+        // pero como Product no tiene category_id explícito fácil, filtramos por category string si existe.
+        // Si initialQuery no es null, ProductAdapter ya lo filtra por texto.
+        // Para soportar filtrado exacto de categoría, idealmente Product debería tener un campo category_id.
+        // Aquí confiamos en el filtro de texto del adapter por ahora.
+        
         adapter.setProducts(list)
         if (list.isEmpty()) {
             showEmpty()

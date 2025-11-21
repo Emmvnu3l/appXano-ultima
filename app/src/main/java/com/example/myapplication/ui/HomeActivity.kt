@@ -97,22 +97,17 @@ class HomeActivity : AppCompatActivity() {
                 binding.navView.setCheckedItem(R.id.nav_products)
             }
             else -> {
-                if (isAdmin) {
-                    replaceFragment(HomeFragment())
-                    binding.navView.setCheckedItem(R.id.nav_home)
-                } else {
-                    replaceFragment(ProductsFragment.newInstance(null))
-                    binding.navView.setCheckedItem(R.id.nav_products)
-                }
+                // Cambiado: ahora la vista por defecto es CategoriesFragment
+                replaceFragment(CategoriesFragment())
+                binding.navView.setCheckedItem(R.id.nav_categories)
             }
         }
 
         binding.navView.setNavigationItemSelectedListener { item ->
-            // El menú lateral (NavigationView) infla @menu/nav_drawer_menu y aquí resolvemos cada item.
-            // Al seleccionar, se reemplaza el Fragment y se marca el ítem activo.
             val handled = when (item.itemId) {
                 R.id.nav_home -> replaceFragment(HomeFragment())
                 R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
+                R.id.nav_categories -> replaceFragment(CategoriesFragment())
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
                 R.id.nav_add_product -> if (isAdmin) replaceFragment(AddProductFragment()) else false
                 R.id.nav_create_category -> if (isAdmin) replaceFragment(CreateCategoryFragment()) else false
@@ -136,17 +131,23 @@ class HomeActivity : AppCompatActivity() {
                 if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                 } else {
-                    isEnabled = false
-                    onBackPressedDispatcher.onBackPressed()
-                    isEnabled = true
+                    // Si hay fragments en la pila, volver atrás
+                    if (supportFragmentManager.backStackEntryCount > 0) {
+                        supportFragmentManager.popBackStack()
+                    } else {
+                        isEnabled = false
+                        onBackPressedDispatcher.onBackPressed()
+                        isEnabled = true
+                    }
                 }
             }
         })
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
-        // Usamos el contenedor FragmentContainerView (id: fragmentContainer)
-        // Reemplazos sin back stack son adecuados para destinos top-level del Drawer
+        // Limpiar back stack al cambiar de sección principal del menú
+        supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+        
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
@@ -154,20 +155,16 @@ class HomeActivity : AppCompatActivity() {
         return true
     }
 
-    
-
     private fun configureToolbarForFragment(fragment: Fragment) {
         val childScreen = fragment is CreateCategoryFragment || fragment is AddProductFragment
         if (childScreen) {
-            // Mostrar flecha atrás y bloquear el drawer
             toggle.isDrawerIndicatorEnabled = false
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             binding.toolbar.navigationIcon = AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back)
             binding.toolbar.setNavigationOnClickListener {
-                // Volver al Home y restaurar el menú
-                replaceFragment(HomeFragment())
-                binding.navView.setCheckedItem(R.id.nav_home)
+                replaceFragment(CategoriesFragment()) // Volver a categorías por defecto
+                binding.navView.setCheckedItem(R.id.nav_categories)
                 restoreHamburger()
             }
         } else {
@@ -179,10 +176,8 @@ class HomeActivity : AppCompatActivity() {
         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         toggle.isDrawerIndicatorEnabled = true
         supportActionBar?.setDisplayHomeAsUpEnabled(false)
-        // Limpiar cualquier icono manual previo; el toggle aplicará el indicador
         binding.toolbar.navigationIcon = null
         toggle.syncState()
-        // Asegurar que el click abra el Drawer en modo hamburguesa
         binding.toolbar.setNavigationOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }

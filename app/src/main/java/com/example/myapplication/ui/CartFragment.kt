@@ -31,6 +31,7 @@ class CartFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         adapter = CartAdapter(
             onQuantityChanged = { productId, quantity ->
                 CartManager(requireContext()).update(productId, quantity)

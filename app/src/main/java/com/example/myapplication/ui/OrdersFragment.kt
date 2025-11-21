@@ -37,6 +37,7 @@ class OrdersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         val tm = com.example.myapplication.api.TokenManager(requireContext())
         adapter = OrdersAdapter(
             onChangeState = { o, target -> confirmAndCall(o, "cambiar a $target") { changeTo(o, target) } },

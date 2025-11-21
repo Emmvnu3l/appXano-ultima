@@ -4,6 +4,8 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.widget.ArrayAdapter
+import android.graphics.drawable.ColorDrawable
+import android.graphics.Color
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.example.myapplication.databinding.DialogEditUserBinding
@@ -35,7 +37,7 @@ class EditUserDialog : DialogFragment() {
         binding.spStatus.setSelection(statusIndex)
         binding.etShippingAddress.setText(user.shippingAddress ?: "")
         binding.etPhone.setText(user.phone ?: "")
-        return AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext())
             .setTitle("Editar usuario")
             .setView(binding.root)
             .setPositiveButton("Guardar") { _, _ ->
@@ -55,6 +57,8 @@ class EditUserDialog : DialogFragment() {
             }
             .setNegativeButton("Cancelar", null)
             .create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        return dialog
     }
 
     companion object {

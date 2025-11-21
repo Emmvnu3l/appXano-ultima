@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    android:background="@color/white">
+    android:background="?android:colorBackground">
 
     <!-- Contenido principal con Toolbar -->
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
-        android:background="@color/white">
+        android:fitsSystemWindows="true">
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
@@ -25,19 +24,20 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:title=""
-                app:titleCentered="true" />
+                android:title="AppXano"
+                app:titleTextColor="?attr/colorOnSurface"
+                app:titleCentered="true"
+                app:navigationIconTint="?attr/colorOnSurface"/>
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Contenedor de fragments migrado a FragmentContainerView
-             Mejora compatibilidad con APIs modernas y evita pitfalls del antiguo FrameLayout -->
+        <!-- Contenedor de fragments migrado a FragmentContainerView -->
         <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:background="@color/white" />
+            android:background="?android:colorBackground" />
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
@@ -47,6 +47,10 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        android:background="?attr/colorSurface"
+        app:itemTextColor="?attr/colorOnSurface"
+        app:itemIconTint="?attr/colorOnSurface"
+        app:headerLayout="@layout/nav_header"
         app:menu="@menu/nav_drawer_menu"
         app:itemIconSize="24dp"/>
 
