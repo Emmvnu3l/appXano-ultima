@@ -7,7 +7,6 @@
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
             android:title="@string/menu_home" />
-        <!-- Nuevo ítem para categorías -->
         <item
             android:id="@+id/nav_categories"
             android:icon="@android:drawable/ic_menu_sort_by_size"
@@ -28,10 +27,11 @@
                 android:id="@+id/nav_add_product"
                 android:icon="@android:drawable/ic_input_add"
                 android:title="@string/menu_add_product" />
+            <!-- Cambiado de Crear Categoría a Gestionar Categorías -->
             <item
-                android:id="@+id/nav_create_category"
-                android:icon="@android:drawable/ic_menu_add"
-                android:title="@string/menu_create_category" />
+                android:id="@+id/nav_manage_categories"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="Gestionar Categorías" />
             <item
                 android:id="@+id/nav_orders"
                 android:icon="@android:drawable/ic_menu_send"

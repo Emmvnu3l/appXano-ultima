@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.myapplication.R
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.FragmentProfileBinding
@@ -39,6 +40,13 @@ class ProfileFragment : Fragment() {
 
         binding.btnCancel.setOnClickListener { restoreFields() }
         binding.btnSave.setOnClickListener { submitUpdate() }
+        
+        binding.btnManageCategories.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainer, CategoryManagementFragment())
+                .addToBackStack(null)
+                .commit()
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
@@ -59,6 +67,14 @@ class ProfileFragment : Fragment() {
                 binding.tvEmailValue.text = me.email ?: ""
                 binding.etShippingAddress.setText(me.shippingAddress ?: "")
                 binding.etPhone.setText(me.phone ?: "")
+                
+                // Mostrar panel admin si corresponde
+                if (me.role == "admin") {
+                    binding.layoutAdmin.visibility = View.VISIBLE
+                } else {
+                    binding.layoutAdmin.visibility = View.GONE
+                }
+                
             } catch (e: Exception) {
                 // Fallback a datos locales si falla la consulta
                 val tm = TokenManager(requireContext())
@@ -79,6 +95,7 @@ class ProfileFragment : Fragment() {
                 binding.tvEmailValue.text = tm.getEmail().orEmpty()
                 binding.etShippingAddress.setText("")
                 binding.etPhone.setText("")
+                binding.layoutAdmin.visibility = View.GONE
             }
         }
     }
