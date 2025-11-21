@@ -22,6 +22,7 @@ class OrdersFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var adapter: OrdersAdapter
     private var page = 1
+    private var pageSize = 20
     private var loading = false
     private var endReached = false
 
@@ -50,21 +51,7 @@ class OrdersFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener { refresh() }
 
         setupFilters()
-
-        binding.recycler.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(rv: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(rv, dx, dy)
-                if (dy > 0) {
-                    val lm = rv.layoutManager as LinearLayoutManager
-                    val visible = lm.childCount
-                    val total = lm.itemCount
-                    val first = lm.findFirstVisibleItemPosition()
-                    if (!loading && !endReached && visible + first >= total - 2) {
-                        loadMore()
-                    }
-                }
-            }
-        })
+        setupPager()
 
         refresh()
     }
@@ -91,9 +78,14 @@ class OrdersFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createOrderService(requireContext())
-                val list = withContext(Dispatchers.IO) { service.listOrders(null, targetPage, 10) }
-                if (list.isEmpty()) endReached = true else page = targetPage
-                adapter.setData(list, append)
+                val list = withContext(Dispatchers.IO) { service.listOrders(currentStatusFilter, targetPage, pageSize, dateFrom, dateTo, currentTypeFilter) }
+                val filtered = applyClientFilters(list, currentStatusFilter, dateFrom, dateTo, currentTypeFilter)
+                if (filtered.isEmpty()) {
+                    endReached = true
+                    binding.state.tvEmpty.text = "Sin resultados con filtros"
+                } else page = targetPage
+                val sorted = sortOrders(filtered, currentSort)
+                adapter.setData(sorted, append)
                 binding.state.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
             } catch (e: Exception) {
                 binding.state.tvError.visibility = View.VISIBLE
@@ -137,16 +129,28 @@ class OrdersFragment : Fragment() {
     }
 
     private var currentStatusFilter: String? = null
+    private var currentTypeFilter: String? = null
+    private var dateFrom: Long? = null
+    private var dateTo: Long? = null
     private var currentSort: String = "fecha_desc"
 
     private fun setupFilters() {
         val statuses = listOf("todos", "pendiente", "confirmada", "enviado", "aceptado", "rechazado", "en_proceso", "completada", "cancelada")
         val sortOptions = listOf("fecha_desc", "fecha_asc", "estado_asc", "estado_desc")
+        val types = listOf("todos", "online", "tienda")
+        val pageSizes = listOf("20", "30", "50")
 
         val spStatus = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spStatus)
         val spSort = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spSort)
+        val spType = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spType)
+        val spPageSize = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spPageSize)
+        val etFrom = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etFrom)
+        val etTo = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etTo)
+        val btnApply = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnApply)
         spStatus.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, statuses)
         spSort.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, sortOptions)
+        spType.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, types)
+        spPageSize.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, pageSizes)
         spStatus.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
                 currentStatusFilter = statuses[position].takeIf { it != "todos" }
@@ -161,13 +165,66 @@ class OrdersFragment : Fragment() {
             }
             override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
         }
+        spType.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
+                currentTypeFilter = types[position].takeIf { it != "todos" }
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
+        }
+        spPageSize.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
+                pageSize = pageSizes[position].toInt()
+            }
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
+        }
+        btnApply.setOnClickListener {
+            dateFrom = parseDate(etFrom.text?.toString())
+            dateTo = parseDate(etTo.text?.toString())
+            refresh()
+        }
     }
 
-    private fun sortOrders(list: List<Order>): List<Order> = when (currentSort) {
-        "fecha_asc" -> list.sortedBy { it.createdAt ?: 0L }
-        "estado_asc" -> list.sortedBy { it.status }
-        "estado_desc" -> list.sortedByDescending { it.status }
-        else -> list.sortedByDescending { it.createdAt ?: 0L }
+    companion object {
+        fun sortOrders(list: List<Order>, sort: String): List<Order> = when (sort) {
+            "fecha_asc" -> list.sortedBy { it.createdAt ?: 0L }
+            "estado_asc" -> list.sortedBy { it.status }
+            "estado_desc" -> list.sortedByDescending { it.status }
+            else -> list.sortedByDescending { it.createdAt ?: 0L }
+        }
+        fun applyClientFilters(list: List<Order>, status: String?, from: Long?, to: Long?, type: String?): List<Order> {
+            return list.filter { o ->
+                val stOk = status?.let { o.status.equals(it, ignoreCase = true) } ?: true
+                val fromOk = from?.let { (o.createdAt ?: 0L) >= it } ?: true
+                val toOk = to?.let { (o.createdAt ?: 0L) <= it } ?: true
+                val typeOk = true
+                stOk && fromOk && toOk && typeOk
+            }
+        }
+        fun parseDate(s: String?): Long? {
+            if (s.isNullOrBlank()) return null
+            return try {
+                val fmt = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault())
+                fmt.parse(s)?.time
+            } catch (_: Exception) { null }
+        }
+    }
+
+    private fun setupPager() {
+        val btnPrev = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnPrev)
+        val btnNext = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnNext)
+        val tvPage = binding.root.findViewById<android.widget.TextView>(com.example.myapplication.R.id.tvPage)
+        fun update() {
+            tvPage.text = "Página $page"
+            btnPrev.isEnabled = page > 1
+            btnNext.isEnabled = !endReached
+        }
+        btnPrev.setOnClickListener {
+            if (page > 1) fetch(page - 1, append = false)
+        }
+        btnNext.setOnClickListener {
+            if (!endReached) fetch(page + 1, append = true)
+        }
+        update()
     }
 
     private fun showDetails(o: Order) {
