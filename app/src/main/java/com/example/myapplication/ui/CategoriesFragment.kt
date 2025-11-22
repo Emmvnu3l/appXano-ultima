@@ -72,10 +72,11 @@ class CategoriesFragment : Fragment() {
     }
 
     private fun setLoading(isLoading: Boolean) {
-        binding.swipeRefresh.isRefreshing = isLoading
-        if (isLoading && adapter.itemCount == 0) {
-             StateUi.showLoading(binding.state)
-        } else if (!isLoading && adapter.itemCount > 0) {
+        if (adapter.itemCount == 0) {
+             if (isLoading) StateUi.showLoading(binding.state) else StateUi.hide(binding.state)
+             binding.swipeRefresh.isRefreshing = false
+        } else {
+             binding.swipeRefresh.isRefreshing = isLoading
              StateUi.hide(binding.state)
         }
     }
