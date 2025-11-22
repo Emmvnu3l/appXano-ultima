@@ -23,7 +23,10 @@
 
     <item android:title="Más">
         <menu>
-            <!-- Cambiado de Agregar Producto a Gestionar Productos -->
+            <item
+                android:id="@+id/nav_add_product"
+                android:icon="@android:drawable/ic_input_add"
+                android:title="@string/menu_add_product" />
             <item
                 android:id="@+id/nav_manage_products"
                 android:icon="@android:drawable/ic_menu_manage"
@@ -35,7 +38,7 @@
             <item
                 android:id="@+id/nav_orders"
                 android:icon="@android:drawable/ic_menu_send"
-                android:title="@string/menu_orders" />
+                android:title="Gestión Órdenes" />
             <item
                 android:id="@+id/nav_users"
                 android:icon="@android:drawable/ic_menu_manage"
