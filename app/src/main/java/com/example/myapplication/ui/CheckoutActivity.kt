@@ -45,7 +45,14 @@ class CheckoutActivity : AppCompatActivity() {
         renderCartSummary()
 
         binding.btnPay.setOnClickListener { createPendingOrder() }
-        binding.btnRequestShipping.setOnClickListener { requestShipping() }
+        binding.rgDelivery.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == com.example.myapplication.R.id.rbDelivery) {
+                loadUserAddress()
+            } else {
+                binding.tvShippingAddress.visibility = View.GONE
+            }
+        }
+        binding.btnFinish.setOnClickListener { finalizeOrder() }
     }
 
     private fun renderCartSummary() {
@@ -91,8 +98,8 @@ class CheckoutActivity : AppCompatActivity() {
 
     private fun setLoading(loading: Boolean) {
         binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
-        binding.btnPay.isEnabled = !loading
-        binding.btnRequestShipping.isEnabled = !loading && currentOrder != null
+        binding.btnPay.isEnabled = !loading && binding.layoutDeliveryOptions.visibility == View.GONE
+        binding.btnFinish.isEnabled = !loading
     }
 
     private fun createPendingOrder() {
@@ -131,16 +138,14 @@ class CheckoutActivity : AppCompatActivity() {
                 }
                 currentOrder = order
                 cm.clear()
-                binding.tvItems.text = ""
-                binding.tvSubtotal.text = formatCurrency(0.0)
-                binding.tvTax.text = formatCurrency(0.0)
-                binding.tvDiscount.text = formatCurrency(0.0)
-                binding.tvTotal.text = formatCurrency(0.0)
-                binding.btnPay.isEnabled = false
-                binding.btnRequestShipping.isEnabled = true
-                Toast.makeText(this@CheckoutActivity, "Compra existosa", Toast.LENGTH_SHORT).show()
                 
-                // Actualizar stock en segundo plano (o esperar si es crítico)
+                Toast.makeText(this@CheckoutActivity, "Pago confirmado", Toast.LENGTH_SHORT).show()
+                
+                // Update UI for delivery choice
+                binding.btnPay.visibility = View.GONE
+                binding.layoutDeliveryOptions.visibility = View.VISIBLE
+                
+                // Actualizar stock en segundo plano
                 for ((pid, qty) in itemsMap) {
                     val p = products.find { it.id == pid } ?: continue
                     val newStock = ((p.stock ?: 0) - qty).coerceAtLeast(0)
@@ -160,18 +165,8 @@ class CheckoutActivity : AppCompatActivity() {
                     )
                     try {
                         withContext(Dispatchers.IO) { productService.patchProduct(pid, req) }
-                    } catch(e: Exception) {
-                        // Log or ignore stock update failure if necessary
-                    }
+                    } catch(e: Exception) {}
                 }
-                
-                // Redirigir al Home correspondiente
-                val dest = if (tm.isAdmin()) HomeActivity::class.java else LimitedHomeActivity::class.java
-                val intent = Intent(this@CheckoutActivity, dest)
-                // Limpiar back stack para evitar volver al checkout
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
                 
             } catch (e: Exception) {
                 Toast.makeText(this@CheckoutActivity, "Error creando orden: ${NetworkError.message(e)}", Toast.LENGTH_LONG).show()
@@ -180,21 +175,50 @@ class CheckoutActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun requestShipping() {
-        // Ya no debería ser necesario si redirigimos inmediatamente después del pago, 
-        // pero lo mantenemos por si acaso la lógica cambia o si falla la redirección.
+    
+    private fun loadUserAddress() {
+        lifecycleScope.launch {
+            try {
+                val tm = TokenManager(this@CheckoutActivity)
+                val service = RetrofitClient.createAuthServiceAuthenticated(this@CheckoutActivity)
+                val me = withContext(Dispatchers.IO) { service.me() }
+                val addr = me.shippingAddress
+                binding.tvShippingAddress.text = if (!addr.isNullOrBlank()) "Dirección: $addr" else "No tiene dirección registrada (actualícela en su perfil)"
+                binding.tvShippingAddress.visibility = View.VISIBLE
+            } catch (e: Exception) {
+                binding.tvShippingAddress.text = "Error cargando dirección"
+                binding.tvShippingAddress.visibility = View.VISIBLE
+            }
+        }
+    }
+    
+    private fun finalizeOrder() {
         val order = currentOrder ?: return
+        val isDelivery = binding.rbDelivery.isChecked
+        val isPickup = binding.rbPickup.isChecked
+        
+        if (!isDelivery && !isPickup) {
+            Toast.makeText(this, "Seleccione un método de entrega", Toast.LENGTH_SHORT).show()
+            return
+        }
+        
+        val newStatus = if (isDelivery) "enviado" else "confirmada" // o "para_retirar" si existiera
+        
         setLoading(true)
         lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createOrderService(this@CheckoutActivity)
-                val updated = withContext(Dispatchers.IO) { service.updateStatus(order.id, UpdateOrderStatusRequest("enviado")) }
-                currentOrder = updated
-                Toast.makeText(this@CheckoutActivity, "Solicitud de envío realizada", Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.IO) { service.updateStatus(order.id, UpdateOrderStatusRequest(newStatus)) }
+                Toast.makeText(this@CheckoutActivity, "Orden finalizada", Toast.LENGTH_SHORT).show()
+                
+                val tm = TokenManager(this@CheckoutActivity)
+                val dest = if (tm.isAdmin()) HomeActivity::class.java else LimitedHomeActivity::class.java
+                val intent = Intent(this@CheckoutActivity, dest)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
             } catch (e: Exception) {
-                Toast.makeText(this@CheckoutActivity, "Error solicitando envío: ${e.message}", Toast.LENGTH_LONG).show()
-            } finally {
+                Toast.makeText(this@CheckoutActivity, "Error actualizando orden: ${e.message}", Toast.LENGTH_LONG).show()
                 setLoading(false)
             }
         }
@@ -208,29 +232,5 @@ class CheckoutActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         cartManager.unregisterListener(prefsListener)
-    }
-
-    private fun sendReceiptEmail(order: Order, pricing: Pricing) {
-        val tm = TokenManager(this)
-        val email = tm.getEmail()
-        val subject = "Comprobante de compra #${order.id}"
-        val body = buildString {
-            appendLine("Gracias por su compra")
-            appendLine("Orden: #${order.id}")
-            appendLine("Estado: ${order.status}")
-            appendLine("Subtotal: ${formatCurrency(pricing.subtotal)}")
-            appendLine("Descuento: ${formatCurrency(pricing.discount)}")
-            appendLine("Impuesto: ${formatCurrency(pricing.tax)}")
-            appendLine("Total: ${formatCurrency(pricing.total)}")
-        }
-        val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:")
-            putExtra(Intent.EXTRA_EMAIL, arrayOf(email ?: ""))
-            putExtra(Intent.EXTRA_SUBJECT, subject)
-            putExtra(Intent.EXTRA_TEXT, body)
-        }
-        try {
-            startActivity(intent)
-        } catch (_: Exception) {}
     }
 }
