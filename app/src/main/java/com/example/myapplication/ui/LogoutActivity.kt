@@ -40,20 +40,18 @@ class LogoutActivity : AppCompatActivity() {
         binding.navView.setNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.nav_home -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
+                    navigateToHome(openProducts = false)
                     true
                 }
                 R.id.nav_products -> {
-                    startActivity(Intent(this, HomeActivity::class.java).apply {
-                        putExtra("open_products", true)
-                    })
-                    finish()
+                    navigateToHome(openProducts = true)
                     true
                 }
                 R.id.nav_profile -> {
-                    startActivity(Intent(this, HomeActivity::class.java))
-                    finish()
+                    // Si vamos al perfil, idealmente deberíamos ir a HomeActivity y abrir el fragmento
+                    // O simplemente reiniciar HomeActivity que por defecto (si es admin) puede manejarlo.
+                    // Por simplicidad, vamos a Home
+                    navigateToHome(openProducts = false)
                     true
                 }
                 // Eliminado nav_add_product ya que fue reemplazado y esta activity es genérica
@@ -70,8 +68,20 @@ class LogoutActivity : AppCompatActivity() {
         binding.btnLogout.setOnClickListener {
             val tm = TokenManager(this)
             tm.clear()
-            startActivity(Intent(this, MainActivity::class.java))
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
             finish()
         }
+    }
+
+    private fun navigateToHome(openProducts: Boolean) {
+        val intent = Intent(this, HomeActivity::class.java)
+        if (openProducts) {
+            intent.putExtra("open_products", true)
+        }
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        startActivity(intent)
+        finish()
     }
 }

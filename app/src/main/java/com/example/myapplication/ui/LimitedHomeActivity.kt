@@ -1,5 +1,6 @@
 package com.example.myapplication.ui
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -53,7 +54,7 @@ class LimitedHomeActivity : AppCompatActivity() {
                 R.id.nav_orders -> replaceFragment(OrdersFragment())
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
                 R.id.nav_logout -> {
-                    startActivity(android.content.Intent(this, LogoutActivity::class.java))
+                    startActivity(Intent(this, LogoutActivity::class.java))
                     true
                 }
                 else -> false
@@ -67,12 +68,18 @@ class LimitedHomeActivity : AppCompatActivity() {
 
         val tm = TokenManager(this)
         if (tm.isAdmin()) {
-            startActivity(android.content.Intent(this, HomeActivity::class.java))
+            startActivity(Intent(this, HomeActivity::class.java))
             finish()
         }
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
+        // Ensure the container exists and clean up potential back stack issues
+        if (supportFragmentManager.isStateSaved) return false
+        
+        // Clear back stack to avoid deep nesting when switching main tabs
+        supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
