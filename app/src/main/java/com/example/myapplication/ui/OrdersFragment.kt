@@ -13,6 +13,7 @@ import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.ui.StateUi
 import com.example.myapplication.databinding.FragmentOrdersBinding
 import com.example.myapplication.model.Order
+import com.google.android.material.chip.ChipGroup
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -152,12 +153,12 @@ class OrdersFragment : Fragment() {
 
     private fun setupFilters() {
         val statuses = listOf("todos", "pendiente", "confirmada", "enviado", "aceptado", "rechazado", "en_proceso", "completada", "cancelada")
-        val sortOptions = listOf("fecha_desc", "fecha_asc", "estado_asc", "estado_desc")
+        // val sortOptions = listOf("fecha_desc", "fecha_asc", "estado_asc", "estado_desc") // Eliminado, ahora se usa Chips
         val types = listOf("todos", "online", "tienda")
         val pageSizes = listOf("20", "30", "50")
 
         val spStatus = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spStatus)
-        val spSort = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spSort)
+        // val spSort = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spSort) // Eliminado
         val spType = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spType)
         val spPageSize = binding.root.findViewById<android.widget.Spinner>(com.example.myapplication.R.id.spPageSize)
         val etFrom = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etFrom)
@@ -166,7 +167,7 @@ class OrdersFragment : Fragment() {
         val etAmountMax = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etAmountMax)
         val btnApply = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnApply)
         spStatus.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, statuses)
-        spSort.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, sortOptions)
+        // spSort.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, sortOptions)
         spType.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, types)
         spPageSize.adapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, pageSizes)
         spStatus.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
@@ -176,13 +177,19 @@ class OrdersFragment : Fragment() {
             }
             override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
         }
-        spSort.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
-                currentSort = sortOptions[position]
-                refresh()
+        
+        // Nuevo manejo de chips para ordenamiento
+        binding.chipGroupSort.setOnCheckedChangeListener { group, checkedId ->
+            currentSort = when (checkedId) {
+                com.example.myapplication.R.id.chipSortDateDesc -> "fecha_desc"
+                com.example.myapplication.R.id.chipSortDateAsc -> "fecha_asc"
+                com.example.myapplication.R.id.chipSortStatusAsc -> "estado_asc"
+                com.example.myapplication.R.id.chipSortStatusDesc -> "estado_desc"
+                else -> "fecha_desc"
             }
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>) {}
+            refresh()
         }
+
         spType.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: android.widget.AdapterView<*>, view: View?, position: Int, id: Long) {
                 currentTypeFilter = types[position].takeIf { it != "todos" }
