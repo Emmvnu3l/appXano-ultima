@@ -127,21 +127,13 @@ class ProductsFragment : Fragment() {
         binding.swipeRefresh.setOnRefreshListener { loadProducts() }
         binding.state.btnRetry.setOnClickListener { loadProducts() }
 
-        binding.fabAdd.visibility = View.VISIBLE
-        binding.fabAdd.setOnClickListener { NavigationHelper.openCart(requireContext()) }
+        // FAB logic removed as per new design
 
         val cm = CartManager(requireContext())
-        val updateBadge = {
-            val count = cm.getItems().values.sum()
-            if (count > 0) {
-                binding.tvCartBadge.visibility = View.VISIBLE
-                binding.tvCartBadge.text = count.toString()
-            } else {
-                binding.tvCartBadge.visibility = View.GONE
-            }
+        // Badge logic removed from Fragment as it is now in Toolbar (Activity)
+        cartPrefsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> 
+             // Optional: Update activity badge if needed
         }
-        updateBadge()
-        cartPrefsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> updateBadge() }
         cm.registerListener(cartPrefsListener!!)
 
         StateUi.hide(binding.state)
@@ -154,7 +146,7 @@ class ProductsFragment : Fragment() {
             StateUi.showLoading(binding.state)
             binding.state.tvEmpty.visibility = View.GONE 
         }
-        binding.fabAdd.visibility = if (loading) View.GONE else View.VISIBLE
+        // FAB visibility logic removed
         if (!loading) binding.swipeRefresh.isRefreshing = false
     }
 

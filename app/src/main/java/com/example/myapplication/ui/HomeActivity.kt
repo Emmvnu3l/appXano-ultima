@@ -1,6 +1,7 @@
 package com.example.myapplication.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -57,6 +58,11 @@ class HomeActivity : AppCompatActivity() {
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+        
+        // Configurar click del botón de carrito en la toolbar
+        binding.toolbar.findViewById<View>(R.id.actionCart)?.setOnClickListener {
+            NavigationHelper.openCart(this)
+        }
 
         // Abrir destinos iniciales según extras
         val productsQuery = intent?.getStringExtra("products_query")

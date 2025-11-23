@@ -15,52 +15,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingTop="8dp"
-            android:paddingBottom="88dp"
+            android:paddingBottom="100dp"
             android:clipToPadding="false" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <FrameLayout
-        android:id="@+id/fabContainer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="28dp"
-        android:clipChildren="false"
-        android:clipToPadding="false">
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabAdd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_cart"
-            app:backgroundTint="?attr/colorPrimary"
-            app:tint="?attr/colorOnPrimary"
-            android:contentDescription="Carrito de compras" />
-
-        <TextView
-            android:id="@+id/tvCartBadge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minWidth="20dp"
-            android:minHeight="20dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="11sp"
-            android:gravity="center"
-            android:background="@drawable/bg_badge"
-            android:layout_gravity="end|top"
-            android:translationX="4dp"
-            android:translationY="-4dp"
-            android:visibility="gone"
-            android:elevation="10dp"
-            android:importantForAccessibility="no"/>
-
-    </FrameLayout>
 
     <include
         android:id="@+id/state"

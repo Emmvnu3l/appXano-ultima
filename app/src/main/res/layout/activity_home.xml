@@ -27,7 +27,23 @@
                 android:title="AppXano"
                 app:titleTextColor="?attr/colorOnSurface"
                 app:titleCentered="true"
-                app:navigationIconTint="?attr/colorOnSurface"/>
+                app:navigationIconTint="?attr/colorOnSurface">
+                
+                <!-- Menú de acción (Carrito) -->
+                <ImageView
+                    android:id="@+id/actionCart"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_cart"
+                    app:tint="?attr/colorOnSurface"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Carrito"
+                    android:clickable="true"
+                    android:focusable="true" />
+                    
+            </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.AppBarLayout>
 
