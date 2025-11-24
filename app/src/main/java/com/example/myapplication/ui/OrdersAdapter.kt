@@ -93,9 +93,10 @@ class OrdersAdapter(
             }
 
             val st = o.status.lowercase()
-            val showProcess = st == "pendiente"
-            val showComplete = st == "en_proceso"
-            val showCancel = st == "pendiente" || st == "en_proceso"
+            val acts = actionsForStatus(st)
+            val showProcess = acts.first
+            val showComplete = acts.second
+            val showCancel = acts.third
 
             btnAccept.visibility = if (showProcess) View.VISIBLE else View.GONE
             btnReject.visibility = if (showCancel) View.VISIBLE else View.GONE
@@ -123,6 +124,16 @@ class OrdersAdapter(
         }
 
         private fun statusColor(status: String): Int = Color.DKGRAY
+    }
+
+    companion object {
+        fun actionsForStatus(status: String): Triple<Boolean, Boolean, Boolean> {
+            val st = status.lowercase()
+            val showProcess = st == "pendiente"
+            val showComplete = st == "en_proceso"
+            val showCancel = st == "pendiente" || st == "en_proceso"
+            return Triple(showProcess, showComplete, showCancel)
+        }
     }
 
     fun getSelectedIds(): Set<Int> = selected

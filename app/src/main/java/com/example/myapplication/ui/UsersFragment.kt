@@ -69,6 +69,7 @@ class UsersFragment : Fragment() {
         binding.recycler.adapter = adapter
 
         binding.swipeRefresh.setOnRefreshListener { refresh() }
+        binding.state.btnRetry.setOnClickListener { refresh() }
 
         val sizes = listOf(10, 25, 50)
         val sizeAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, sizes)
@@ -174,6 +175,14 @@ class UsersFragment : Fragment() {
         setLoading(true)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
+                if (!isOnline()) {
+                    binding.state.tvError.visibility = View.VISIBLE
+                    binding.state.tvError.text = "Sin conexión a Internet"
+                    return@launch
+                }
+                val tm = TokenManager(requireContext())
+                android.util.Log.d("UsersFragment", "Fetching users... Token present: ${!tm.getToken().isNullOrBlank()}")
+                
                 val list = withContext(Dispatchers.IO) {
                     val key = (currentQuery ?: "") + "|" + itemsPerPage
                     val cached = pageCache[key]
@@ -184,15 +193,36 @@ class UsersFragment : Fragment() {
                     } else {
                         val svcPrimary = RetrofitClient.createUserService(requireContext())
                         val resp: Response<List<User>> = try {
+                            android.util.Log.d("UsersFragment", "Calling primary service: ${com.example.myapplication.api.ApiConfig.userBaseUrl}")
                             svcPrimary.list(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
                         } catch (e: Exception) {
+                            android.util.Log.e("UsersFragment", "Primary service failed", e)
                             val isNotFound = (e is HttpException && e.code() == 404)
                             if (isNotFound) {
+                                android.util.Log.d("UsersFragment", "404 on primary, trying fallback...")
                                 val svcAlt = RetrofitClient.createUserServiceAuth(requireContext())
                                 svcAlt.list(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
                             } else throw e
                         }
-                        val body = resp.body() ?: emptyList()
+                        
+                        if (!resp.isSuccessful) {
+                            val errorBody = resp.errorBody()?.string()
+                            android.util.Log.e("UsersFragment", "Response not successful: ${resp.code()} - $errorBody")
+                            throw HttpException(resp)
+                        }
+
+                        var body = resp.body() ?: emptyList()
+                        if (body.isEmpty()) {
+                            val svc = RetrofitClient.createUserService(requireContext())
+                            val offset = (targetPage - 1) * itemsPerPage
+                            val alt = svc.listOffsetLimit(offset, itemsPerPage, null, currentQuery, getStatusFilter())
+                            if (alt.isSuccessful) {
+                                body = alt.body() ?: emptyList()
+                            } else {
+                                android.util.Log.w("UsersFragment", "Fallback offset/limit failed: ${alt.code()}")
+                            }
+                        }
+                        android.util.Log.d("UsersFragment", "Users fetched: ${body.size}")
                         val headers = resp.headers()
                         totalUsers = parseTotal(headers)
                         val entry = cached ?: CacheEntry(totalUsers, mutableMapOf())
@@ -210,12 +240,27 @@ class UsersFragment : Fragment() {
                     page = targetPage
                 }
                 adapter.setData(list, append)
-                binding.state.tvEmpty.visibility = if (adapter.itemCount == 0) View.VISIBLE else View.GONE
+                if (adapter.itemCount == 0) {
+                    binding.state.tvEmpty.text = buildEmptyMessage()
+                    binding.state.tvEmpty.visibility = View.VISIBLE
+                } else {
+                    binding.state.tvEmpty.visibility = View.GONE
+                    binding.state.tvError.visibility = View.GONE
+                }
                 updateRangeLabel()
                 savePrefs()
             } catch (e: Exception) {
+                android.util.Log.e("UsersFragment", "Error fetching users", e)
                 binding.state.tvError.visibility = View.VISIBLE
-                binding.state.tvError.text = com.example.myapplication.api.NetworkError.message(e)
+                val msg = com.example.myapplication.api.NetworkError.message(e)
+                binding.state.tvError.text = msg
+                if (e is HttpException && e.code() == 401) {
+                    binding.state.btnRetry.text = "Iniciar sesión"
+                    binding.state.btnRetry.visibility = View.VISIBLE
+                    binding.state.btnRetry.setOnClickListener {
+                        startActivity(android.content.Intent(requireContext(), MainActivity::class.java))
+                    }
+                }
             } finally {
                 setLoading(false)
             }
@@ -244,6 +289,24 @@ class UsersFragment : Fragment() {
             }
         }
         return null
+    }
+
+    private fun buildEmptyMessage(): String {
+        val q = currentQuery
+        val st = getStatusFilter()
+        return when {
+            !q.isNullOrBlank() && !st.isNullOrBlank() -> "Sin resultados para \"$q\" con estado $st"
+            !q.isNullOrBlank() -> "Sin resultados para \"$q\""
+            !st.isNullOrBlank() -> "Sin resultados con estado $st"
+            else -> "No hay usuarios que mostrar"
+        }
+    }
+
+    private fun isOnline(): Boolean {
+        val cm = requireContext().getSystemService(android.net.ConnectivityManager::class.java)
+        val nw = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(nw) ?: return false
+        return caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
     private fun confirmBlockToggle(u: User, checked: Boolean) {
