@@ -144,15 +144,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text=""
-                    android:visibility="gone" />
-                <EditText
-                    android:id="@+id/etFirstName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:hint="Nombre(s)"
-                    android:inputType="textPersonName" />
+                    android:padding="12dp"
+                    android:background="@drawable/bg_input_dark" />
             </LinearLayout>
 
             <LinearLayout
@@ -177,15 +170,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text=""
-                    android:visibility="gone" />
-                <EditText
-                    android:id="@+id/etLastName"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:hint="Apellidos"
-                    android:inputType="textPersonName" />
+                    android:padding="12dp"
+                    android:background="@drawable/bg_input_dark" />
             </LinearLayout>
 
             <LinearLayout
@@ -233,15 +219,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text=""
-                    android:visibility="gone" />
-                <EditText
-                    android:id="@+id/etShippingAddress"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:hint="Dirección"
-                    android:inputType="textPostalAddress" />
+                    android:padding="12dp"
+                    android:background="@drawable/bg_input_dark" />
             </LinearLayout>
 
             <LinearLayout
@@ -266,15 +245,8 @@
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
                     android:text=""
-                    android:visibility="gone" />
-                <EditText
-                    android:id="@+id/etPhone"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:hint="Teléfono"
-                    android:inputType="phone" />
+                    android:padding="12dp"
+                    android:background="@drawable/bg_input_dark" />
             </LinearLayout>
         </LinearLayout>
 
@@ -302,26 +274,7 @@
                 android:text="Gestionar Categorías" />
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end"
-            android:layout_marginTop="16dp">
-            <Button
-                android:id="@+id/btnCancel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Cancelar" />
-            <Space
-                android:layout_width="8dp"
-                android:layout_height="wrap_content" />
-            <Button
-                android:id="@+id/btnSave"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Guardar" />
-        </LinearLayout>
+        <!-- Botones de edición eliminados para modo solo lectura -->
 
         <ProgressBar
             android:id="@+id/progress"
