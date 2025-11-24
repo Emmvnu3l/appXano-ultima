@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.ActionBarDrawerToggle
+import android.view.View
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.Fragment
@@ -45,12 +46,19 @@ class LimitedHomeActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
+        binding.toolbar.findViewById<View>(R.id.actionCart)?.setOnClickListener {
+            NavigationHelper.openCart(this)
+        }
+
+        NavigationHelper.setupCartFab(this, binding.fabCart)
+
         replaceFragment(ProductsFragment.newInstance(null))
         binding.navView.setCheckedItem(R.id.nav_products)
 
         binding.navView.setNavigationItemSelectedListener { item ->
             val handled = when (item.itemId) {
                 R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
+                R.id.nav_cart -> { NavigationHelper.openCart(this); true }
                 R.id.nav_orders -> replaceFragment(OrdersFragment())
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
                 R.id.nav_logout -> {

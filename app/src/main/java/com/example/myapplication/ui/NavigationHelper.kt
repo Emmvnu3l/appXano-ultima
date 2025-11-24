@@ -106,4 +106,44 @@ object NavigationHelper {
             context.startActivity(intent)
         }
     }
+
+    fun setupCartFab(activity: androidx.appcompat.app.AppCompatActivity, fab: com.google.android.material.floatingactionbutton.FloatingActionButton) {
+        fab.setOnClickListener { openCart(activity) }
+        val cm = CartManager(activity)
+        var badge = fab.getTag(com.example.myapplication.R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+        if (badge == null) {
+            badge = com.google.android.material.badge.BadgeDrawable.create(activity)
+            badge.badgeGravity = com.google.android.material.badge.BadgeDrawable.BOTTOM_END
+            badge.verticalOffset = 6
+            badge.horizontalOffset = 6
+            fab.setTag(com.example.myapplication.R.id.tag_cart_badge, badge)
+            try {
+                com.google.android.material.badge.BadgeUtils.attachBadgeDrawable(badge, fab)
+            } catch (_: Throwable) { }
+        }
+
+        fun updateBadge() {
+            val count = cm.getItems().values.sum()
+            if (count > 0) {
+                badge?.isVisible = true
+                badge?.number = count
+                fab.contentDescription = "Abrir carrito, $count artículos"
+            } else {
+                badge?.clearNumber()
+                badge?.isVisible = false
+                fab.contentDescription = "Abrir carrito"
+            }
+        }
+
+        updateBadge()
+
+        val listener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ -> updateBadge() }
+        fab.setTag(com.example.myapplication.R.id.tag_cart_prefs_listener, listener)
+        cm.registerListener(listener)
+
+        fab.alpha = 0f
+        fab.scaleX = 0.9f
+        fab.scaleY = 0.9f
+        fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+    }
 }

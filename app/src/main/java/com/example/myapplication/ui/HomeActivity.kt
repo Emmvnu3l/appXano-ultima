@@ -37,14 +37,22 @@ class HomeActivity : AppCompatActivity() {
         }
         val tm = com.example.myapplication.api.TokenManager(this)
         val isAdmin = tm.isAdmin()
+
         if (!isAdmin) {
-            // Fallback: si por cualquier motivo permanecemos en HomeActivity, restringir menú
+            // LÓGICA CORREGIDA:
+            // Solo ocultamos las opciones de GESTIÓN (Admin).
+            // Dejamos visible 'nav_orders' para que el usuario vea sus compras.
             val menu = binding.navView.menu
+
+            // Nota: Si quieres que el usuario vea "Inicio" (Home), borra la siguiente línea también.
             menu.removeItem(R.id.nav_home)
+
             menu.removeItem(R.id.nav_manage_products)
             menu.removeItem(R.id.nav_manage_categories)
-            menu.removeItem(R.id.nav_orders)
             menu.removeItem(R.id.nav_users)
+
+            // HEMOS ELIMINADO: menu.removeItem(R.id.nav_orders)
+            // Ahora los pedidos son visibles para todos.
         }
 
         // Configurar Toolbar + Drawer toggle
@@ -58,24 +66,27 @@ class HomeActivity : AppCompatActivity() {
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
-        
+
         // Configurar click del botón de carrito en la toolbar
+        // Esto funciona para TODOS los usuarios (Admin y Normal)
         binding.toolbar.findViewById<View>(R.id.actionCart)?.setOnClickListener {
             NavigationHelper.openCart(this)
         }
+
+        NavigationHelper.setupCartFab(this, binding.fabCart)
 
         // Abrir destinos iniciales según extras
         val productsQuery = intent?.getStringExtra("products_query")
         val openProducts = intent?.getBooleanExtra("open_products", false) ?: false
         val openAddProduct = intent?.getBooleanExtra("open_add_product", false) ?: false
         val openCreateCategory = intent?.getBooleanExtra("open_create_category", false) ?: false
+
         when {
             openCreateCategory -> {
                 replaceFragment(CreateCategoryFragment())
             }
             openAddProduct -> {
                 replaceFragment(AddProductFragment())
-                // No marcamos nada específico o quizás products
             }
             intent.getBooleanExtra("open_edit_product", false) -> {
                 val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
@@ -101,7 +112,7 @@ class HomeActivity : AppCompatActivity() {
                 binding.navView.setCheckedItem(R.id.nav_products)
             }
             else -> {
-                // Cambiado: ahora la vista por defecto es CategoriesFragment
+                // Vista por defecto
                 replaceFragment(CategoriesFragment())
                 binding.navView.setCheckedItem(R.id.nav_categories)
             }
@@ -111,12 +122,18 @@ class HomeActivity : AppCompatActivity() {
             val handled = when (item.itemId) {
                 R.id.nav_home -> replaceFragment(HomeFragment())
                 R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
+                R.id.nav_cart -> { NavigationHelper.openCart(this); true }
                 R.id.nav_categories -> replaceFragment(CategoriesFragment())
                 R.id.nav_profile -> replaceFragment(ProfileFragment())
+
+                // Opciones solo para Admin
                 R.id.nav_manage_products -> if (isAdmin) replaceFragment(ProductManagementFragment()) else false
                 R.id.nav_manage_categories -> if (isAdmin) replaceFragment(CategoryManagementFragment()) else false
-                R.id.nav_orders -> if (isAdmin) replaceFragment(OrdersFragment()) else false
                 R.id.nav_users -> if (isAdmin) replaceFragment(UsersFragment()) else false
+
+                // CORREGIDO: Orders ahora es accesible para todos (quitamos el "if isAdmin")
+                R.id.nav_orders -> replaceFragment(OrdersFragment())
+
                 R.id.nav_logout -> {
                     startActivity(android.content.Intent(this, LogoutActivity::class.java))
                     true
@@ -135,7 +152,6 @@ class HomeActivity : AppCompatActivity() {
                 if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
                     binding.drawerLayout.closeDrawer(GravityCompat.START)
                 } else {
-                    // Si hay fragments en la pila, volver atrás
                     if (supportFragmentManager.backStackEntryCount > 0) {
                         supportFragmentManager.popBackStack()
                     } else {
@@ -149,9 +165,8 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
-        // Limpiar back stack al cambiar de sección principal del menú
         supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
-        
+
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
@@ -167,17 +182,16 @@ class HomeActivity : AppCompatActivity() {
             binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
             binding.toolbar.navigationIcon = AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back)
             binding.toolbar.setNavigationOnClickListener {
-                // Volver según el contexto. Si es Edit/Add product, volver a ProductManagement
                 if (fragment is AddProductFragment || fragment is EditProductFragment) {
-                     replaceFragment(ProductManagementFragment())
-                     binding.navView.setCheckedItem(R.id.nav_manage_products)
-                     restoreHamburger()
+                    replaceFragment(ProductManagementFragment())
+                    binding.navView.setCheckedItem(R.id.nav_manage_products)
+                    restoreHamburger()
                 } else if (fragment is CreateCategoryFragment) {
-                     replaceFragment(CategoryManagementFragment())
-                     binding.navView.setCheckedItem(R.id.nav_manage_categories)
-                     restoreHamburger()
+                    replaceFragment(CategoryManagementFragment())
+                    binding.navView.setCheckedItem(R.id.nav_manage_categories)
+                    restoreHamburger()
                 } else {
-                    replaceFragment(CategoriesFragment()) 
+                    replaceFragment(CategoriesFragment())
                     binding.navView.setCheckedItem(R.id.nav_categories)
                     restoreHamburger()
                 }

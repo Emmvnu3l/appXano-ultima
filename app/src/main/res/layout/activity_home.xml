@@ -55,6 +55,21 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:background="?android:colorBackground" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabCart"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="20dp"
+            android:contentDescription="Abrir carrito"
+            android:elevation="6dp"
+            android:translationZ="8dp"
+            app:useCompatPadding="true"
+            app:srcCompat="@drawable/ic_cart"
+            app:rippleColor="@color/black"
+            app:tint="@color/white"
+            app:backgroundTint="@color/black" />
+
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
     <!-- Drawer lateral tipo offcanvas -->
