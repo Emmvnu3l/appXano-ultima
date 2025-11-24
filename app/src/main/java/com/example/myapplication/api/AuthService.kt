@@ -3,6 +3,7 @@ package com.example.myapplication.api
 // @Body serializa el data class a JSON en el cuerpo del POST. El endpoint /auth/me requiere token.
 
 import com.example.myapplication.model.AuthResponse
+import com.example.myapplication.model.UserUpdateRequest
 import com.example.myapplication.model.LoginRequest
 import com.example.myapplication.model.SignupRequest
 import com.example.myapplication.model.User
@@ -22,4 +23,8 @@ interface AuthService {
     // Registro: crea un usuario y devuelve AuthResponse (token y user).
     @POST("auth/signup")
     suspend fun signup(@Body request: SignupRequest): AuthResponse
+
+    // Actualiza el perfil del usuario autenticado (parcial)
+    @retrofit2.http.PATCH("auth/me")
+    suspend fun updateMe(@Body request: UserUpdateRequest): User
 }
