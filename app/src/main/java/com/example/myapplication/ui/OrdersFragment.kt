@@ -316,7 +316,15 @@ class OrdersFragment : Fragment() {
                     android.widget.Toast.makeText(requireContext(), "Motivo obligatorio", android.widget.Toast.LENGTH_LONG).show()
                 } else {
                     changeState {
-                        val res = RetrofitClient.createOrderService(requireContext()).updateStatus(o.id, com.example.myapplication.model.UpdateOrderStatusRequest("cancelada", reason = reason, adminId = com.example.myapplication.api.TokenManager(requireContext()).getUserId()))
+                        val res = RetrofitClient.createOrderService(requireContext()).updateStatus(
+                            o.id,
+                            com.example.myapplication.model.UpdateOrderStatusRequest(
+                                "cancelada",
+                                reason = reason,
+                                adminId = com.example.myapplication.api.TokenManager(requireContext()).getUserId(),
+                                cancelledAt = System.currentTimeMillis()
+                            )
+                        )
                         appendHistory(res.id, "cancelada", reason)
                         res
                     }

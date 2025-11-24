@@ -19,6 +19,16 @@ interface UserService {
         @Query("status") status: String? = null
     ): Response<List<User>>
 
+    // Fallback para APIs que usan offset/limit en lugar de page/pageSize
+    @GET("user")
+    suspend fun listOffsetLimit(
+        @Query("offset") offset: Int?,
+        @Query("limit") limit: Int?,
+        @Query("blocked") blocked: Boolean? = null,
+        @Query("q") q: String? = null,
+        @Query("status") status: String? = null
+    ): Response<List<User>>
+
     @PATCH("user/{id}")
     suspend fun update(@Path("id") id: Int, @Body request: UserUpdateRequest): User
 }
