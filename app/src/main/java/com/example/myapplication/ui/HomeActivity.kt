@@ -16,6 +16,10 @@ import com.example.myapplication.databinding.ActivityHomeBinding
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var toggle: ActionBarDrawerToggle
+    private val tagHome = "HomeFragment"
+    private val tagProducts = "ProductsFragment"
+    private val tagCategories = "CategoriesFragment"
+    private val tagProfile = "ProfileFragment"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,19 +88,39 @@ class HomeActivity : AppCompatActivity() {
 
         when {
             openCreateCategory -> {
-                replaceFragment(CreateCategoryFragment())
+                switchToFragment(tagCategories) { CategoriesFragment() }
+                supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .addToBackStack(null)
+                    .replace(binding.fragmentContainer.id, CreateCategoryFragment())
+                    .commit()
             }
             openAddProduct -> {
-                replaceFragment(AddProductFragment())
+                switchToFragment(tagProducts) { ProductsFragment.newInstance(null) }
+                supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .addToBackStack(null)
+                    .replace(binding.fragmentContainer.id, AddProductFragment())
+                    .commit()
             }
             openProfileDetails -> {
-                replaceFragment(ProfileDetailsFragment())
+                switchToFragment(tagProfile) { ProfileFragment() }
                 binding.navView.setCheckedItem(R.id.nav_profile)
+                supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .addToBackStack(null)
+                    .replace(binding.fragmentContainer.id, ProfileDetailsFragment())
+                    .commit()
             }
             intent.getBooleanExtra("open_edit_product", false) -> {
                 val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
                 if (p != null) {
-                    replaceFragment(EditProductFragment.newInstance(p))
+                    switchToFragment(tagProducts) { ProductsFragment.newInstance(null) }
+                    supportFragmentManager.beginTransaction()
+                        .setReorderingAllowed(true)
+                        .addToBackStack(null)
+                        .replace(binding.fragmentContainer.id, EditProductFragment.newInstance(p))
+                        .commit()
                 }
             }
             intent.getBooleanExtra("open_orders", false) -> {
@@ -105,39 +129,39 @@ class HomeActivity : AppCompatActivity() {
                 val limit = intent.getIntExtra("orders_limit", -1)
                 if (limit > 0) args.putInt("limit", limit)
                 frag.arguments = args
-                replaceFragment(frag)
+                switchToFragment("OrdersFragment") { frag }
                 binding.navView.setCheckedItem(R.id.nav_orders)
             }
             intent.getBooleanExtra("open_users", false) -> {
-                replaceFragment(UsersFragment())
+                switchToFragment("UsersFragment") { UsersFragment() }
                 binding.navView.setCheckedItem(R.id.nav_users)
             }
             openProducts || !productsQuery.isNullOrEmpty() -> {
-                replaceFragment(ProductsFragment.newInstance(productsQuery))
+                switchToFragment(tagProducts) { ProductsFragment.newInstance(productsQuery) }
                 binding.navView.setCheckedItem(R.id.nav_products)
             }
             else -> {
                 // Vista por defecto
-                replaceFragment(CategoriesFragment())
+                switchToFragment(tagCategories) { CategoriesFragment() }
                 binding.navView.setCheckedItem(R.id.nav_categories)
             }
         }
 
         binding.navView.setNavigationItemSelectedListener { item ->
             val handled = when (item.itemId) {
-                R.id.nav_home -> replaceFragment(HomeFragment())
-                R.id.nav_products -> replaceFragment(ProductsFragment.newInstance(null))
+                R.id.nav_home -> switchToFragment(tagHome) { HomeFragment() }
+                R.id.nav_products -> switchToFragment(tagProducts) { ProductsFragment.newInstance(null) }
                 R.id.nav_cart -> { NavigationHelper.openCart(this); true }
-                R.id.nav_categories -> replaceFragment(CategoriesFragment())
-                R.id.nav_profile -> replaceFragment(ProfileFragment())
+                R.id.nav_categories -> switchToFragment(tagCategories) { CategoriesFragment() }
+                R.id.nav_profile -> switchToFragment(tagProfile) { ProfileFragment() }
 
                 // Opciones solo para Admin
-                R.id.nav_manage_products -> if (isAdmin) replaceFragment(ProductManagementFragment()) else false
-                R.id.nav_manage_categories -> if (isAdmin) replaceFragment(CategoryManagementFragment()) else false
-                R.id.nav_users -> if (isAdmin) replaceFragment(UsersFragment()) else false
+                R.id.nav_manage_products -> if (isAdmin) switchToFragment("ProductManagementFragment") { ProductManagementFragment() } else false
+                R.id.nav_manage_categories -> if (isAdmin) switchToFragment("CategoryManagementFragment") { CategoryManagementFragment() } else false
+                R.id.nav_users -> if (isAdmin) switchToFragment("UsersFragment") { UsersFragment() } else false
 
                 // CORREGIDO: Orders ahora es accesible para todos (quitamos el "if isAdmin")
-                R.id.nav_orders -> replaceFragment(OrdersFragment())
+                R.id.nav_orders -> switchToFragment("OrdersFragment") { OrdersFragment() }
 
                 R.id.nav_logout -> {
                     startActivity(android.content.Intent(this, LogoutActivity::class.java))
@@ -170,13 +194,30 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
-        supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
-
         supportFragmentManager.beginTransaction()
+            .setReorderingAllowed(true)
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
         configureToolbarForFragment(fragment)
         configureFabForFragment(fragment)
+        return true
+    }
+
+    private fun switchToFragment(tag: String, supplier: () -> Fragment): Boolean {
+        val fm = supportFragmentManager
+        val containerId = binding.fragmentContainer.id
+        val tx = fm.beginTransaction().setReorderingAllowed(true)
+        var target = fm.findFragmentByTag(tag)
+        if (target == null) {
+            target = supplier()
+            tx.add(containerId, target, tag)
+        }
+        fm.fragments.forEach { f ->
+            if (f.isAdded && f !== target) tx.hide(f)
+        }
+        tx.show(target).commit()
+        configureToolbarForFragment(target)
+        configureFabForFragment(target)
         return true
     }
 
@@ -189,15 +230,15 @@ class HomeActivity : AppCompatActivity() {
             binding.toolbar.navigationIcon = AppCompatResources.getDrawable(this, R.drawable.ic_arrow_back)
             binding.toolbar.setNavigationOnClickListener {
                 if (fragment is AddProductFragment || fragment is EditProductFragment) {
-                    replaceFragment(ProductManagementFragment())
+                    switchToFragment("ProductManagementFragment") { ProductManagementFragment() }
                     binding.navView.setCheckedItem(R.id.nav_manage_products)
                     restoreHamburger()
                 } else if (fragment is CreateCategoryFragment) {
-                    replaceFragment(CategoryManagementFragment())
+                    switchToFragment("CategoryManagementFragment") { CategoryManagementFragment() }
                     binding.navView.setCheckedItem(R.id.nav_manage_categories)
                     restoreHamburger()
                 } else {
-                    replaceFragment(CategoriesFragment())
+                    switchToFragment(tagCategories) { CategoriesFragment() }
                     binding.navView.setCheckedItem(R.id.nav_categories)
                     restoreHamburger()
                 }
