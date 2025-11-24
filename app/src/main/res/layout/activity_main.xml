@@ -45,6 +45,15 @@
                     android:layout_width="0dp"
                     android:layout_height="40dp" />
 
+                <ImageView
+                    android:id="@+id/ivLoginLogo"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginBottom="16dp"
+                    android:contentDescription="Logo"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@mipmap/ic_launcher" />
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
