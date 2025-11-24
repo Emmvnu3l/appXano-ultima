@@ -57,11 +57,25 @@ class CheckoutActivity : AppCompatActivity() {
 
     private fun renderCartSummary() {
         val items = cartManager.getItems()
-        binding.tvItems.text = items.entries.joinToString("\n") { (id, qty) -> "Producto $id x$qty" }
         lifecycleScope.launch {
             try {
                 val service = RetrofitClient.createProductService(this@CheckoutActivity)
                 val products = withContext(Dispatchers.IO) { service.getProducts() }
+                val map = products.associateBy { it.id }
+                val detail = buildString {
+                    items.entries.forEach { (id, qty) ->
+                        val p = map[id]
+                        if (p != null) {
+                            val line = p.price * qty
+                            append("• ${p.name} x${qty} = ")
+                            append(formatCurrency(line))
+                            append("\n")
+                        } else {
+                            append("• Producto ${id} x${qty}\n")
+                        }
+                    }
+                }.trimEnd()
+                binding.tvItems.text = detail.ifBlank { "Sin productos" }
                 val pricing = computePricing(items, products)
                 binding.tvSubtotal.text = formatCurrency(pricing.subtotal)
                 binding.tvTax.text = formatCurrency(pricing.tax)
