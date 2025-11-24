@@ -157,7 +157,15 @@ class ProfileFragment : Fragment() {
                     android.widget.Toast.makeText(requireContext(), "Perfil actualizado", android.widget.Toast.LENGTH_SHORT).show()
                     restoreFields()
                 } catch (e2: Exception) {
-                    android.widget.Toast.makeText(requireContext(), com.example.myapplication.api.NetworkError.message(e2), android.widget.Toast.LENGTH_LONG).show()
+                    try {
+                        val authSvc = RetrofitClient.createAuthServiceAuthenticated(requireContext())
+                        val user = withContext(Dispatchers.IO) { authSvc.updateMe(req) }
+                        currentUser = user
+                        android.widget.Toast.makeText(requireContext(), "Perfil actualizado", android.widget.Toast.LENGTH_SHORT).show()
+                        restoreFields()
+                    } catch (e3: Exception) {
+                        android.widget.Toast.makeText(requireContext(), com.example.myapplication.api.NetworkError.message(e3), android.widget.Toast.LENGTH_LONG).show()
+                    }
                 }
             } finally {
                 setLoading(false)

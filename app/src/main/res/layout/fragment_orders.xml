@@ -191,6 +191,12 @@
             </LinearLayout>
         </LinearLayout>
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <!-- Espaciado inferior invisible para evitar que botones queden pegados al borde -->
+        <View
+            android:id="@+id/bottomSpacer"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:visibility="invisible" />
     </LinearLayout>
 
     <include
