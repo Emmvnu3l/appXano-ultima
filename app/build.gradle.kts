@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
-buildDir = file("${rootDir}/app/build12")
+buildDir = file("${rootDir}/app/build13")
 
 
 android {
