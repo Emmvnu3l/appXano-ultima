@@ -28,5 +28,6 @@ data class UserUpdateRequest(
     @SerializedName("role") val role: String? = null,
     @SerializedName("status") val status: String? = null,
     @SerializedName("shipping_address") val shippingAddress: String? = null,
-    @SerializedName("phone") val phone: String? = null
+    @SerializedName("phone") val phone: String? = null,
+    @SerializedName("comuna") val comuna: Int? = null
 )
