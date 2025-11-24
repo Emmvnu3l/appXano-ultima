@@ -15,7 +15,8 @@ data class User(
     @SerializedName("last_name") val lastName: String?,
     @SerializedName("status") val status: String?,
     @SerializedName("shipping_address") val shippingAddress: String?,
-    @SerializedName("phone") val phone: String?
+    @SerializedName("phone") val phone: String?,
+    @SerializedName("comuna") val comuna: Int?
 ) : Serializable
 
 data class UserUpdateRequest(
