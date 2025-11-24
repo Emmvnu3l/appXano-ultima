@@ -65,6 +65,36 @@ object NavigationHelper {
         context.startActivity(Intent(context, CheckoutActivity::class.java))
     }
 
+    fun openProfileDetails(context: Context) {
+        if (context is HomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
+                .replace(R.id.fragmentContainer, ProfileDetailsFragment())
+                .addToBackStack(null)
+                .commit()
+        } else if (context is LimitedHomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
+                .replace(R.id.fragmentContainer, ProfileDetailsFragment())
+                .addToBackStack(null)
+                .commit()
+        } else {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.putExtra("open_profile_details", true)
+            context.startActivity(intent)
+        }
+    }
+
     fun openOrders(context: Context, limit: Int? = null) {
         if (context is HomeActivity) {
             val frag = OrdersFragment()
@@ -141,6 +171,14 @@ object NavigationHelper {
         fab.setTag(com.example.myapplication.R.id.tag_cart_prefs_listener, listener)
         cm.registerListener(listener)
 
+        fab.alpha = 0f
+        fab.scaleX = 0.9f
+        fab.scaleY = 0.9f
+        fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+    }
+
+    fun setupProfileFab(activity: androidx.appcompat.app.AppCompatActivity, fab: com.google.android.material.floatingactionbutton.FloatingActionButton) {
+        fab.setOnClickListener { openProfileDetails(activity) }
         fab.alpha = 0f
         fab.scaleX = 0.9f
         fab.scaleY = 0.9f

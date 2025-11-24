@@ -56,16 +56,16 @@
             android:background="?android:colorBackground" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabCart"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:id="@+id/fabProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="20dp"
-            android:contentDescription="Abrir carrito"
+            android:contentDescription="Abrir perfil"
             android:elevation="6dp"
             android:translationZ="8dp"
-            app:useCompatPadding="true"
-            app:srcCompat="@drawable/ic_cart"
+            app:fabCustomSize="50dp"
+            app:srcCompat="@drawable/ic_user"
             app:rippleColor="@color/black"
             app:tint="@color/white"
             app:backgroundTint="@color/black" />

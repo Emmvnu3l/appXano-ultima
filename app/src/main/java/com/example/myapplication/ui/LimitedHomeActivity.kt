@@ -50,7 +50,7 @@ class LimitedHomeActivity : AppCompatActivity() {
             NavigationHelper.openCart(this)
         }
 
-        NavigationHelper.setupCartFab(this, binding.fabCart)
+        // Estado del FAB se ajusta según el fragmento activo
 
         replaceFragment(ProductsFragment.newInstance(null))
         binding.navView.setCheckedItem(R.id.nav_products)
@@ -91,6 +91,7 @@ class LimitedHomeActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
+        configureFabForFragment(fragment)
         return true
     }
 
@@ -100,5 +101,29 @@ class LimitedHomeActivity : AppCompatActivity() {
         } else {
             super.onBackPressed()
         }
+    }
+
+    private fun configureFabForFragment(fragment: Fragment) {
+        val fab = binding.fabProfile
+        val isProfile = fragment is ProfileFragment
+        if (isProfile) {
+            fab.setImageResource(R.drawable.ic_user)
+            fab.contentDescription = "Abrir perfil"
+            val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+            badge?.isVisible = false
+            val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+            if (listener != null) {
+                try {
+                    val cm = CartManager(this)
+                    cm.unregisterListener(listener)
+                } catch (_: Exception) {}
+            }
+            fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
+        } else {
+            fab.setImageResource(R.drawable.ic_cart)
+            fab.contentDescription = "Abrir carrito"
+            NavigationHelper.setupCartFab(this, fab)
+        }
+        fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
     }
 }

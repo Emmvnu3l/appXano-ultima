@@ -110,4 +110,10 @@ object RetrofitClient {
         return retrofit(ApiConfig.storeBaseUrl, authenticated = true, tokenManager = tm)
             .create(CategoryService::class.java)
     }
+
+    fun createGeoService(context: Context): GeoService {
+        val tm = TokenManager(context)
+        return retrofit(ApiConfig.userBaseUrl, authenticated = true, tokenManager = tm)
+            .create(GeoService::class.java)
+    }
 }

@@ -73,13 +73,14 @@ class HomeActivity : AppCompatActivity() {
             NavigationHelper.openCart(this)
         }
 
-        NavigationHelper.setupCartFab(this, binding.fabCart)
+        // Inicializa con estado del fragmento actual más adelante
 
         // Abrir destinos iniciales según extras
         val productsQuery = intent?.getStringExtra("products_query")
         val openProducts = intent?.getBooleanExtra("open_products", false) ?: false
         val openAddProduct = intent?.getBooleanExtra("open_add_product", false) ?: false
         val openCreateCategory = intent?.getBooleanExtra("open_create_category", false) ?: false
+        val openProfileDetails = intent?.getBooleanExtra("open_profile_details", false) ?: false
 
         when {
             openCreateCategory -> {
@@ -87,6 +88,10 @@ class HomeActivity : AppCompatActivity() {
             }
             openAddProduct -> {
                 replaceFragment(AddProductFragment())
+            }
+            openProfileDetails -> {
+                replaceFragment(ProfileDetailsFragment())
+                binding.navView.setCheckedItem(R.id.nav_profile)
             }
             intent.getBooleanExtra("open_edit_product", false) -> {
                 val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
@@ -171,6 +176,7 @@ class HomeActivity : AppCompatActivity() {
             .replace(binding.fragmentContainer.id, fragment)
             .commit()
         configureToolbarForFragment(fragment)
+        configureFabForFragment(fragment)
         return true
     }
 
@@ -210,5 +216,34 @@ class HomeActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+    }
+
+    private fun configureFabForFragment(fragment: Fragment) {
+        val fab = binding.fabProfile
+        val isProfile = fragment is ProfileFragment
+        if (isProfile) {
+            // Mostrar FAB de perfil que navega a detalles
+            fab.setImageResource(R.drawable.ic_user)
+            fab.contentDescription = "Abrir perfil"
+            // Ocultar badge si estaba adjunto
+            val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+            badge?.isVisible = false
+            // Desregistrar listener de carrito si existía
+            val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+            if (listener != null) {
+                try {
+                    val cm = CartManager(this)
+                    cm.unregisterListener(listener)
+                } catch (_: Exception) {}
+            }
+            fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
+        } else {
+            // Configurar FAB como carrito con badge y navegación
+            fab.setImageResource(R.drawable.ic_cart)
+            fab.contentDescription = "Abrir carrito"
+            NavigationHelper.setupCartFab(this, fab)
+        }
+        // Animación sutil al cambiar
+        fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
     }
 }
