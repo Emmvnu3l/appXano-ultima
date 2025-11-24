@@ -165,6 +165,14 @@
                     android:textColor="@android:color/holo_blue_dark"
                     android:layout_marginTop="4dp" />
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEditFixed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Editar producto"
+                    android:visibility="gone" />
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 
@@ -177,5 +185,15 @@
             app:layout_anchor="@id/contentScroll"
             app:layout_anchorGravity="bottom|end"
             android:layout_margin="16dp" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabCart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_cart"
+            app:layout_anchor="@id/contentScroll"
+            app:layout_anchorGravity="bottom|start"
+            android:layout_margin="16dp"
+            android:contentDescription="Abrir carrito" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

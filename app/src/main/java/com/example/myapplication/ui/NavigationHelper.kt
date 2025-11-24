@@ -35,6 +35,19 @@ object NavigationHelper {
 
     fun openCart(context: Context) {
         if (context is HomeActivity) {
+            val toolbarCart = context.findViewById<android.view.View>(R.id.actionCart)
+            toolbarCart?.visibility = android.view.View.GONE
+            val fab = context.findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabProfile)
+            fab?.let {
+                it.visibility = android.view.View.GONE
+                val badge = it.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+                badge?.isVisible = false
+                val listener = it.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+                if (listener != null) {
+                    try { CartManager(context).unregisterListener(listener) } catch (_: Exception) {}
+                }
+                it.setOnClickListener(null)
+            }
             context.supportFragmentManager.beginTransaction()
                 .setCustomAnimations(
                     R.anim.fade_in_300,
@@ -45,6 +58,19 @@ object NavigationHelper {
                 .replace(R.id.fragmentContainer, CartFragment())
                 .commit()
         } else if (context is LimitedHomeActivity) {
+            val toolbarCart = context.findViewById<android.view.View>(R.id.actionCart)
+            toolbarCart?.visibility = android.view.View.GONE
+            val fab = context.findViewById<com.google.android.material.floatingactionbutton.FloatingActionButton>(R.id.fabProfile)
+            fab?.let {
+                it.visibility = android.view.View.GONE
+                val badge = it.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+                badge?.isVisible = false
+                val listener = it.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+                if (listener != null) {
+                    try { CartManager(context).unregisterListener(listener) } catch (_: Exception) {}
+                }
+                it.setOnClickListener(null)
+            }
             context.supportFragmentManager.beginTransaction()
                 .setCustomAnimations(
                     R.anim.fade_in_300,
