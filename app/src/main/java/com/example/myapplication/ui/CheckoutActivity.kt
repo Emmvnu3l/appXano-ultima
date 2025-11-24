@@ -8,6 +8,7 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import android.content.Intent
 import android.net.Uri
+import com.example.myapplication.R
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.model.UpdateProductRequest
 import com.example.myapplication.model.ImagePayload
@@ -40,6 +41,7 @@ class CheckoutActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.toolbar.findViewById<View>(R.id.actionCart)?.visibility = View.GONE
 
         cartManager = CartManager(this)
         renderCartSummary()

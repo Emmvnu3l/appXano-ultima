@@ -105,25 +105,45 @@ class LimitedHomeActivity : AppCompatActivity() {
 
     private fun configureFabForFragment(fragment: Fragment) {
         val fab = binding.fabProfile
-        val isProfile = fragment is ProfileFragment
-        if (isProfile) {
-            fab.setImageResource(R.drawable.ic_user)
-            fab.contentDescription = "Abrir perfil"
-            val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
-            badge?.isVisible = false
-            val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
-            if (listener != null) {
-                try {
-                    val cm = CartManager(this)
-                    cm.unregisterListener(listener)
-                } catch (_: Exception) {}
+        val actionCart = binding.toolbar.findViewById<View>(R.id.actionCart)
+        when (fragment) {
+            is ProfileFragment -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageResource(R.drawable.ic_user)
+                fab.contentDescription = "Abrir perfil"
+                val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+                badge?.isVisible = false
+                val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+                if (listener != null) {
+                    try {
+                        val cm = CartManager(this)
+                        cm.unregisterListener(listener)
+                    } catch (_: Exception) {}
+                }
+                fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
+                fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+                actionCart?.visibility = View.VISIBLE
             }
-            fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
-        } else {
-            fab.setImageResource(R.drawable.ic_cart)
-            fab.contentDescription = "Abrir carrito"
-            NavigationHelper.setupCartFab(this, fab)
+            is CategoriesFragment -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageResource(R.drawable.ic_cart)
+                fab.contentDescription = "Abrir carrito"
+                NavigationHelper.setupCartFab(this, fab)
+                fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+                actionCart?.visibility = View.VISIBLE
+            }
+            is ProductsFragment -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageResource(R.drawable.ic_cart)
+                fab.contentDescription = "Abrir carrito"
+                NavigationHelper.setupCartFab(this, fab)
+                fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+                actionCart?.visibility = View.VISIBLE
+            }
+            else -> {
+                fab.visibility = View.GONE
+                actionCart?.visibility = if (fragment is CartFragment) View.GONE else View.VISIBLE
+            }
         }
-        fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
     }
 }

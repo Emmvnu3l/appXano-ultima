@@ -44,7 +44,7 @@ class ProductDetailActivity : AppCompatActivity() {
         }
         // Buscador eliminado: sin comportamiento de filtro en esta actividad
         val tm = TokenManager(this)
-        val isAdmin = tm.isAdmin()
+        var isAdmin = tm.isAdmin()
 
         // Si el rol no está aún cargado, obtenerlo desde /auth/me y actualizar visibilidad
         if (tm.getRole().isNullOrBlank()) {
@@ -52,7 +52,8 @@ class ProductDetailActivity : AppCompatActivity() {
                 try {
                     val me = withContext(Dispatchers.IO) { RetrofitClient.createAuthServiceAuthenticated(this@ProductDetailActivity).me() }
                     tm.setRole(me.role)
-                    // nada
+                    isAdmin = (me.role == "admin")
+                    applyRoleUi(isAdmin)
                 } catch (_: Exception) { /* ignorar */ }
             }
         }
@@ -119,11 +120,30 @@ class ProductDetailActivity : AppCompatActivity() {
             }
         }
 
-        // FAB edición (visual)
-        binding.fabEdit.visibility = if (isAdmin) View.VISIBLE else View.GONE
-        binding.fabEdit.setOnClickListener {
-            val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
-            if (p != null) NavigationHelper.openEditProduct(this, p)
+        applyRoleUi(isAdmin)
+
+        binding.fabCart.setOnClickListener {
+            NavigationHelper.openCart(this)
+        }
+        binding.fabCart.alpha = 0f
+        binding.fabCart.scaleX = 0.9f
+        binding.fabCart.scaleY = 0.9f
+        binding.fabCart.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+    }
+
+    private fun applyRoleUi(isAdmin: Boolean) {
+        if (isAdmin) {
+            binding.fabEdit.visibility = View.GONE
+            binding.fabCart.visibility = View.VISIBLE
+            binding.btnEditFixed.visibility = View.VISIBLE
+            binding.btnEditFixed.setOnClickListener {
+                val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
+                if (p != null) NavigationHelper.openEditProduct(this, p)
+            }
+        } else {
+            binding.fabEdit.visibility = View.GONE
+            binding.fabCart.visibility = View.VISIBLE
+            binding.btnEditFixed.visibility = View.GONE
         }
     }
 

@@ -249,6 +249,19 @@ class HomeActivity : AppCompatActivity() {
         } else {
             restoreHamburger()
         }
+
+        val actionCart = binding.toolbar.findViewById<View>(R.id.actionCart)
+        if (fragment is CartFragment) {
+            actionCart?.visibility = View.GONE
+        } else {
+            val isAdminToolbar = com.example.myapplication.api.TokenManager(this).isAdmin()
+            if (isAdminToolbar) {
+                actionCart?.visibility = View.GONE
+            } else {
+                actionCart?.visibility = View.VISIBLE
+                actionCart?.setOnClickListener { NavigationHelper.openCart(this) }
+            }
+        }
     }
 
     private fun restoreHamburger() {
@@ -264,30 +277,50 @@ class HomeActivity : AppCompatActivity() {
 
     private fun configureFabForFragment(fragment: Fragment) {
         val fab = binding.fabProfile
-        val isProfile = fragment is ProfileFragment
-        if (isProfile) {
-            // Mostrar FAB de perfil que navega a detalles
-            fab.setImageResource(R.drawable.ic_user)
-            fab.contentDescription = "Abrir perfil"
-            // Ocultar badge si estaba adjunto
-            val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
-            badge?.isVisible = false
-            // Desregistrar listener de carrito si existía
-            val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
-            if (listener != null) {
-                try {
-                    val cm = CartManager(this)
-                    cm.unregisterListener(listener)
-                } catch (_: Exception) {}
+        when (fragment) {
+            is ProfileFragment -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageResource(R.drawable.ic_user)
+                fab.contentDescription = "Abrir perfil"
+                val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+                badge?.isVisible = false
+                val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+                if (listener != null) {
+                    try {
+                        val cm = CartManager(this)
+                        cm.unregisterListener(listener)
+                    } catch (_: Exception) {}
+                }
+                fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
+                fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
             }
-            fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
-        } else {
-            // Configurar FAB como carrito con badge y navegación
-            fab.setImageResource(R.drawable.ic_cart)
-            fab.contentDescription = "Abrir carrito"
-            NavigationHelper.setupCartFab(this, fab)
+            is CategoriesFragment -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageResource(R.drawable.ic_cart)
+                fab.contentDescription = "Abrir carrito"
+                NavigationHelper.setupCartFab(this, fab)
+                fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+            }
+            is ProductsFragment -> {
+                fab.visibility = View.VISIBLE
+                fab.setImageResource(R.drawable.ic_cart)
+                fab.contentDescription = "Abrir carrito"
+                NavigationHelper.setupCartFab(this, fab)
+                fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+            }
+            else -> {
+                fab.visibility = View.GONE
+            }
         }
-        // Animación sutil al cambiar
-        fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
+    }
+    companion object {
+        fun fabModeForFragment(fragment: Fragment): String {
+            return when (fragment) {
+                is ProfileFragment -> "profile"
+                is CategoriesFragment -> "cart"
+                is ProductsFragment -> "cart"
+                else -> "hidden"
+            }
+        }
     }
 }
