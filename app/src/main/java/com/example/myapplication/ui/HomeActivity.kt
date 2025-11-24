@@ -71,10 +71,13 @@ class HomeActivity : AppCompatActivity() {
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
 
-        // Configurar click del botón de carrito en la toolbar
-        // Esto funciona para TODOS los usuarios (Admin y Normal)
-        binding.toolbar.findViewById<View>(R.id.actionCart)?.setOnClickListener {
-            NavigationHelper.openCart(this)
+        // Configurar visibilidad y click del botón de carrito en la toolbar
+        val actionCart = binding.toolbar.findViewById<View>(R.id.actionCart)
+        if (isAdmin) {
+            actionCart?.visibility = View.GONE
+        } else {
+            actionCart?.visibility = View.VISIBLE
+            actionCart?.setOnClickListener { NavigationHelper.openCart(this) }
         }
 
         // Inicializa con estado del fragmento actual más adelante
