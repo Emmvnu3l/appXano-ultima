@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:background="?android:colorBackground">
+
+    <!-- Contenido principal con Toolbar -->
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorSurface"
+            android:elevation="4dp"
+            android:fitsSystemWindows="true">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:title="AppXano"
+                app:titleTextColor="?attr/colorOnSurface"
+                app:titleCentered="true"
+                app:navigationIconTint="?attr/colorOnSurface">
+                
+                <!-- Menú de acción (Carrito) -->
+                <ImageView
+                    android:id="@+id/actionCart"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="16dp"
+                    android:src="@drawable/ic_cart"
+                    app:tint="?attr/colorOnSurface"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Carrito"
+                    android:clickable="true"
+                    android:focusable="true" />
+                    
+            </com.google.android.material.appbar.MaterialToolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <!-- Contenedor de fragments migrado a FragmentContainerView -->
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:background="?android:colorBackground" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="20dp"
+            android:contentDescription="Abrir perfil"
+            android:elevation="6dp"
+            android:translationZ="8dp"
+            app:fabCustomSize="50dp"
+            app:srcCompat="@drawable/ic_user"
+            app:rippleColor="@color/black"
+            app:tint="@color/white"
+            app:backgroundTint="@color/black" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!-- Drawer lateral tipo offcanvas -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="?attr/colorSurface"
+        app:itemTextColor="?attr/colorOnSurface"
+        app:itemIconTint="?attr/colorOnSurface"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/nav_drawer_menu"
+        app:itemIconSize="24dp"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

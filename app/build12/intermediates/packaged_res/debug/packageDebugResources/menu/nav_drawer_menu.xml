@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_categories"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="Categorías" />
+        <item
+            android:id="@+id/nav_products"
+            android:icon="@drawable/ic_store"
+            android:title="@string/menu_products" />
+        <item
+            android:id="@+id/nav_cart"
+            android:icon="@drawable/ic_cart"
+            android:title="Carrito" />
+        <item
+            android:id="@+id/nav_profile"
+            android:icon="@drawable/ic_user"
+            android:title="@string/menu_profile" />
+    </group>
+
+    <item android:title="Más">
+        <menu>
+            <item
+                android:id="@+id/nav_manage_products"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="Gestionar Productos" />
+            <item
+                android:id="@+id/nav_manage_categories"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="Gestionar Categorías" />
+            <item
+                android:id="@+id/nav_orders"
+                android:icon="@android:drawable/ic_menu_send"
+                android:title="Gestión Órdenes" />
+            <item
+                android:id="@+id/nav_users"
+                android:icon="@android:drawable/ic_menu_manage"
+                android:title="@string/menu_users" />
+            <item
+                android:id="@+id/nav_logout"
+                android:icon="@android:drawable/ic_lock_power_off"
+                android:title="@string/menu_logout" />
+        </menu>
+    </item>
+
+</menu>
