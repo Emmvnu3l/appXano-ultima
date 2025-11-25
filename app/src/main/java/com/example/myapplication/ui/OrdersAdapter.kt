@@ -50,12 +50,12 @@ class OrdersAdapter(
         private val cbSelect: android.widget.CheckBox = itemView.findViewById(R.id.cbSelect)
 
         fun bind(o: Order) {
+            val nf = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("es","CL"))
             val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date(it)) } ?: "-"
-            tvId.text = "#${o.id} ${created}"
+            tvId.text = "#${o.id} ${created}\t${nf.format(o.total)}"
             tvId.setTextColor(Color.WHITE)
             tvClient.visibility = View.GONE
-            tvTotal.text = "$${o.total}"
-            tvTotal.setTextColor(Color.WHITE)
+            tvTotal.visibility = View.GONE
             tvStatus.text = o.status
             tvStatus.setTextColor(android.graphics.Color.WHITE)
             tvDate.visibility = View.GONE
