@@ -10,15 +10,20 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
+import android.provider.OpenableColumns
+import android.graphics.BitmapFactory
+import org.json.JSONObject
  
 import com.example.myapplication.api.TokenManager
 import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.databinding.FragmentAddProductBinding
 import com.example.myapplication.model.CreateProductFullRequest
+import com.example.myapplication.model.CreateProductBasicRequest
 import com.example.myapplication.model.Category
 import com.example.myapplication.model.ProductImage
 import com.example.myapplication.model.ImagePayload
+import com.example.myapplication.model.ProductImageCreateItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -64,9 +69,7 @@ class AddProductFragment : Fragment() {
         }
 
         binding.btnCreate.setOnClickListener {
-            // 1) Sube cada imagen como Multipart.
-            // 2) Convierte la respuesta ProductImage a ImagePayload.
-            // 3) Envía CreateProductFullRequest al endpoint POST /product.
+            // Nuevo flujo API v0.0.1: crear producto básico y luego asociar imágenes vía /product_image
             createProduct()
         }
     }
@@ -118,28 +121,106 @@ class AddProductFragment : Fragment() {
         setLoading(true)
         lifecycleScope.launch {
             try {
-                // 1) Subir imágenes si hay
-                val uploadService = RetrofitClient.createUploadService(requireContext())
-                val uploaded: MutableList<ProductImage> = mutableListOf()
-                for (uri in selectedUris) {
-                    val part = makeImagePart(uri)
-                    val img = withContext(Dispatchers.IO) { uploadService.uploadImage(part) }
-                    uploaded.add(img)
-                }
-
-                // 2) Crear producto
+                // 1) Crear producto básico
                 val productService = RetrofitClient.createProductService(requireContext())
-                val payloads: List<ImagePayload> = uploaded.map { toPayload(it) }
-                val req = CreateProductFullRequest(
+                val basicReq = CreateProductBasicRequest(
                     name = name,
                     description = description,
                     price = price!!,
                     stock = stock,
                     brand = brand,
-                    category = categoryId,
-                    images = payloads
+                    categoryId = categoryId
                 )
-                withContext(Dispatchers.IO) { productService.createProductFull(req) }
+                val created = withContext(Dispatchers.IO) { productService.createProductBasic(basicReq) }
+                val productId = created.product?.id ?: created.productId ?: created.id
+
+                // 2) Si hay imágenes seleccionadas, subir y asociar
+                if (productId != null && productId > 0 && selectedUris.isNotEmpty()) {
+                    val uploadService = RetrofitClient.createUploadService(requireContext())
+                    val payloads = mutableListOf<ImagePayload>()
+                    val forProductImageApi = mutableListOf<ProductImageCreateItem>()
+                    for (uri in selectedUris) {
+                        val part = makeImagePart(uri)
+                        val img = withContext(Dispatchers.IO) { uploadService.uploadImage(part) }
+                        val path = img.path ?: img.url ?: ""
+                        if (path.isBlank()) continue
+                        val nameImg = path.split('/').lastOrNull()
+                        val displayName = queryDisplayName(uri) ?: nameImg
+                        val bounds = queryImageBounds(uri)
+                        val metaMap = mutableMapOf<String, Any>()
+                        if (displayName != null) metaMap["name"] = displayName
+                        metaMap["source"] = "android"
+                        metaMap["size"] = img.size ?: 0
+                        metaMap["mime"] = img.mime ?: ""
+                        if (bounds != null) {
+                            metaMap["width"] = bounds.first
+                            metaMap["height"] = bounds.second
+                        }
+                        payloads.add(
+                            ImagePayload(
+                                access = "public",
+                                path = path,
+                                name = displayName,
+                                type = "image",
+                                size = img.size,
+                                mime = img.mime,
+                                meta = metaMap
+                            )
+                        )
+                        forProductImageApi.add(
+                            ProductImageCreateItem(
+                                productId = productId,
+                                access = "public",
+                                path = path,
+                                name = displayName,
+                                type = "image",
+                                size = img.size,
+                                mime = img.mime,
+                                meta = JSONObject(metaMap as Map<*, *>).toString()
+                            )
+                        )
+                    }
+
+                    // Preferir PATCH /product con array de imágenes en el atributo del producto
+                    try {
+                        val req = com.example.myapplication.model.UpdateProductRequest(
+                            name = null,
+                            description = null,
+                            price = null,
+                            stock = null,
+                            brand = null,
+                            categoryId = null,
+                            img = payloads
+                        )
+                        withContext(Dispatchers.IO) { productService.patchProduct(productId, req) }
+                    } catch (ePatch: Exception) {
+                        // Fallback a endpoints /product_image
+                        try {
+                            val imageService = RetrofitClient.createProductImageService(requireContext())
+                            for (item in forProductImageApi) {
+                                withContext(Dispatchers.IO) { imageService.createProductImage(item) }
+                            }
+                        } catch (e1: Exception) {
+                            try {
+                                val imageService = RetrofitClient.createProductImageService(requireContext())
+                                withContext(Dispatchers.IO) { imageService.createProductImagesPlural(forProductImageApi) }
+                            } catch (e2: Exception) {
+                                // Último fallback: crear producto con imágenes embebidas
+                                val reqFull = CreateProductFullRequest(
+                                    name = name,
+                                    description = description,
+                                    price = price!!,
+                                    stock = stock,
+                                    brand = brand,
+                                    categoryId = categoryId,
+                                    img = payloads
+                                )
+                                withContext(Dispatchers.IO) { productService.createProductFull(reqFull) }
+                            }
+                        }
+                    }
+                }
+
                 Toast.makeText(requireContext(), getString(com.example.myapplication.R.string.msg_product_created), Toast.LENGTH_SHORT).show()
                 clearForm()
             } catch (e: Exception) {
@@ -148,6 +229,24 @@ class AddProductFragment : Fragment() {
                 setLoading(false)
             }
         }
+    }
+
+    private fun queryDisplayName(uri: Uri): String? {
+        val cr = requireContext().contentResolver
+        val c = cr.query(uri, null, null, null, null)
+        return c?.use {
+            val idx = it.getColumnIndex(OpenableColumns.DISPLAY_NAME)
+            if (idx >= 0 && it.moveToFirst()) it.getString(idx) else null
+        }
+    }
+
+    private fun queryImageBounds(uri: Uri): Pair<Int, Int>? {
+        val opts = BitmapFactory.Options()
+        opts.inJustDecodeBounds = true
+        val isr = requireContext().contentResolver.openInputStream(uri) ?: return null
+        isr.use { BitmapFactory.decodeStream(it, null, opts) }
+        if (opts.outWidth > 0 && opts.outHeight > 0) return Pair(opts.outWidth, opts.outHeight)
+        return null
     }
 
     private fun clearForm() {

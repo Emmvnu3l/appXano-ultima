@@ -63,7 +63,8 @@ class EditProductFragment : Fragment() {
             price = binding.etPrice.text?.toString()?.toDoubleOrNull(),
             stock = binding.etStock.text?.toString()?.toIntOrNull(),
             brand = binding.etBrand.text?.toString()?.trim(),
-            category = null
+            categoryId = null,
+            img = null
         )
         setLoading(true)
         viewLifecycleOwner.lifecycleScope.launch {

@@ -60,6 +60,16 @@
                 android:text="Crear categoría"
                 android:layout_marginBottom="12dp" />
 
+            <View
+                android:id="@+id/bottomSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="16dp"
+                android:layout_marginTop="8dp"
+                android:background="#00000000"
+                android:importantForAccessibility="no"
+                android:clickable="false"
+                android:focusable="false" />
+
         </LinearLayout>
 
     </ScrollView>

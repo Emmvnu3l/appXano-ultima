@@ -14,6 +14,8 @@ import com.example.myapplication.api.NetworkError
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.databinding.FragmentProductsBinding
 import com.example.myapplication.model.Product
+import com.example.myapplication.model.ProductImage
+import com.example.myapplication.api.ProductImageService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -62,23 +64,23 @@ class ProductsFragment : Fragment() {
             val normQ = normalize(query)
             val tokens = normQ.split(" ").filter { it.isNotBlank() }
 
-            val exactCategoryId = categoryNames.entries.firstOrNull { normalize(it.value) == normQ }?.key
+                val exactCategoryId = categoryNames.entries.firstOrNull { normalize(it.value) == normQ }?.key
 
             return original.filter { p ->
-                val catFilterMatch = categoryIdFilter?.let { it == p.category } ?: true
+                val catFilterMatch = categoryIdFilter?.let { it == p.categoryId } ?: true
                 if (!catFilterMatch) return@filter false
 
                 if (normQ.isEmpty()) return@filter true
 
                 val nameNorm = normalize(p.name)
                 val descNorm = normalize(p.description)
-                val catNameNorm = p.category?.let { normalize(categoryNames[it]) }
+                val catNameNorm = p.categoryId?.let { normalize(categoryNames[it]) }
 
                 val tokenMatch = tokens.any { t ->
                     nameNorm.contains(t) || (descNorm?.contains(t) == true) || (catNameNorm?.contains(t) == true)
                 }
 
-                val exactCatMatch = exactCategoryId != null && exactCategoryId == p.category
+                val exactCatMatch = exactCategoryId != null && exactCategoryId == p.categoryId
 
                 tokenMatch || exactCatMatch
             }

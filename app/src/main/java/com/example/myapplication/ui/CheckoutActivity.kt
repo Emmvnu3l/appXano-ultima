@@ -187,10 +187,10 @@ class CheckoutActivity : AppCompatActivity() {
                 for ((pid, qty) in itemsMap) {
                     val p = products.find { it.id == pid } ?: continue
                     val newStock = ((p.stock ?: 0) - qty).coerceAtLeast(0)
-                    val imagesPayload = (p.images ?: emptyList()).map {
-                        val path = it.path ?: (it.url ?: "")
-                        val name = (it.path ?: it.url)?.substringAfterLast('/')
-                        ImagePayload(access = "public", path = path, name = name, type = "image", size = it.size, mime = it.mime, meta = emptyMap())
+                    val imagesPayload = (p.img ?: emptyList()).map { im ->
+                        val path = im.path ?: (im.url ?: "")
+                        val name = (im.path ?: im.url)?.substringAfterLast('/')
+                        ImagePayload(access = "public", path = path, name = name, type = "image", size = im.size, mime = im.mime, meta = emptyMap())
                     }
                     val req = UpdateProductRequest(
                         name = p.name,
@@ -198,8 +198,8 @@ class CheckoutActivity : AppCompatActivity() {
                         price = p.price,
                         stock = newStock,
                         brand = p.brand,
-                        category = p.category,
-                        images = imagesPayload
+                        categoryId = p.categoryId,
+                        img = imagesPayload
                     )
                     try {
                         withContext(Dispatchers.IO) { productService.patchProduct(pid, req) }
