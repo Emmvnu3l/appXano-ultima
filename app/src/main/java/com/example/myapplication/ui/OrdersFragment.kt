@@ -360,9 +360,7 @@ class OrdersFragment : Fragment() {
             line.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", nm, qty.toString(), nf.format(pu), nf.format(lt))
             line.setOnClickListener {
                 if (prod != null) {
-                    val intent = android.content.Intent(ctx, com.example.myapplication.ui.ProductDetailActivity::class.java)
-                    intent.putExtra("product", prod)
-                    startActivity(intent)
+                    NavigationHelper.openProductDetail(ctx, prod)
                 }
             }
             wrap.addView(line)
