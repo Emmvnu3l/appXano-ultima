@@ -24,6 +24,9 @@ interface OrderService {
     @GET("order/{id}")
     suspend fun getOrder(@Path("id") id: Int): Order
 
+    @GET("orders/get")
+    suspend fun getOrderByQuery(@Query("order_id") id: Int): Order
+
     @GET("order")
     suspend fun listOrders(
         @Query("status") status: String?,

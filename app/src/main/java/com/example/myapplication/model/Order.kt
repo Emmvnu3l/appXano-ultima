@@ -16,5 +16,5 @@ data class Order(
 data class OrderItem(
     @SerializedName(value = "product_id", alternate = ["productId"]) val productId: Int,
     @SerializedName(value = "quantity", alternate = ["qty"]) val quantity: Int,
-    @SerializedName(value = "price", alternate = ["unit_price", "pu", "price_unit"]) val price: Double?
+    @SerializedName(value = "price", alternate = ["unit_price", "pu", "price_unit", "price_at_purchase"]) val price: Double?
 ) : Serializable

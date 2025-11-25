@@ -281,21 +281,48 @@ class OrdersFragment : Fragment() {
             try {
                 val fullOrder = withContext(Dispatchers.IO) {
                     val svc = com.example.myapplication.api.RetrofitClient.createOrderService(requireContext())
-                    // Si ya vienen items no hacemos llamada adicional
-                    if (!o.items.isNullOrEmpty()) o else svc.getOrder(o.id)
+                    if (!o.items.isNullOrEmpty()) o else try { svc.getOrderByQuery(o.id) } catch (_: Exception) { svc.getOrder(o.id) }
                 }
-                buildDetailsDialog(fullOrder)
+                val ids = fullOrder.items.orEmpty().map { it.productId }.toSet()
+                val names = if (ids.isNotEmpty()) withContext(Dispatchers.IO) {
+                    try {
+                        val ps = com.example.myapplication.api.RetrofitClient.createProductService(requireContext())
+                        val products = ps.getProducts()
+                        products.filter { ids.contains(it.id) }.associate { it.id to it.name }
+                    } catch (_: Exception) { emptyMap<Int, String>() }
+                } else emptyMap()
+                buildDetailsDialog(fullOrder, names)
             } catch (e: Exception) {
-                androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                    .setTitle("Detalles de la orden")
-                    .setMessage(com.example.myapplication.api.NetworkError.message(e))
-                    .setPositiveButton("Cerrar", null)
-                    .show()
+                try {
+                    val fallback = withContext(Dispatchers.IO) {
+                        val svc = com.example.myapplication.api.RetrofitClient.createOrderService(requireContext())
+                        val tm = com.example.myapplication.api.TokenManager(requireContext())
+                        val ownOnly = !tm.isAdmin()
+                        val userIdParam = if (ownOnly) tm.getUserId() else null
+                        val list = svc.listOrders(null, userIdParam, userIdParam, null, null, null, null, null)
+                        list.find { it.id == o.id }
+                    }
+                    if (fallback != null) {
+                        buildDetailsDialog(fallback, emptyMap())
+                    } else {
+                        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                            .setTitle("Detalles de la orden")
+                            .setMessage(com.example.myapplication.api.NetworkError.message(e))
+                            .setPositiveButton("Cerrar", null)
+                            .show()
+                    }
+                } catch (_: Exception) {
+                    androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Detalles de la orden")
+                        .setMessage(com.example.myapplication.api.NetworkError.message(e))
+                        .setPositiveButton("Cerrar", null)
+                        .show()
+                }
             }
         }
     }
 
-    private fun buildDetailsDialog(o: Order) {
+    private fun buildDetailsDialog(o: Order, names: Map<Int, String>) {
         val ctx = requireContext()
         val cont = android.widget.ScrollView(ctx)
         val wrap = android.widget.LinearLayout(ctx)
@@ -328,7 +355,8 @@ class OrdersFragment : Fragment() {
             val qty = it.quantity ?: 0
             val pu = it.price ?: 0.0
             val lt = qty * pu
-            line.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", "${it.productId}", qty.toString(), nf.format(pu), nf.format(lt))
+            val nm = names[it.productId] ?: "${it.productId}"
+            line.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", nm, qty.toString(), nf.format(pu), nf.format(lt))
             wrap.addView(line)
             totalProductos += lt
         }
