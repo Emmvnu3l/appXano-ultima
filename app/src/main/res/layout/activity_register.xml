@@ -24,117 +24,94 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fillViewport="true"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:padding="24dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:gravity="center">
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilName"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundMode="outline"
+                    app:hintEnabled="true">
 
-        <EditText
-            android:id="@+id/etName"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:hint="Nombre"
-            android:layout_marginBottom="12dp"
-            android:inputType="textPersonName"
-            android:visibility="gone" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Nombre completo"
+                        android:inputType="textPersonName" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etFirstName"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:hint="Nombre"
-            android:layout_marginBottom="12dp"
-            android:inputType="textPersonName" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilEmail"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:boxBackgroundMode="outline">
 
-        <EditText
-            android:id="@+id/etLastName"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:hint="Apellido"
-            android:layout_marginBottom="12dp"
-            android:inputType="textPersonName" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Correo electrónico"
+                        android:inputType="textEmailAddress" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etEmail"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:hint="Correo electrónico"
-            android:inputType="textEmailAddress"
-            android:layout_marginBottom="12dp" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPassword"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:boxBackgroundMode="outline">
 
-        <EditText
-            android:id="@+id/etPassword"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:hint="Contraseña"
-            android:inputType="textPassword"
-            android:layout_marginBottom="16dp" />
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Contraseña"
+                        android:inputType="textPassword" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etPhone"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:hint="Teléfono"
-            android:inputType="phone"
-            android:layout_marginBottom="12dp" />
+                <TextView
+                    android:id="@+id/tvPasswordHint"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:text="Mínimo 8 caracteres, 1 número y 1 carácter especial"
+                    android:textSize="12sp"
+                    android:layout_marginTop="6dp"
+                    android:textColor="@android:color/darker_gray" />
 
-        <EditText
-            android:id="@+id/etShippingAddress"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:hint="Dirección de envío"
-            android:inputType="textPostalAddress"
-            android:layout_marginBottom="12dp" />
+                <Button
+                    android:id="@+id/btnRegister"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:text="Registrarse"
+                    android:layout_marginTop="16dp" />
 
-        <Spinner
-            android:id="@+id/spRole"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:visibility="gone" />
+                <ProgressBar
+                    android:id="@+id/progress"
+                    style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
+                    android:layout_width="280dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_marginTop="8dp" />
 
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginBottom="16dp" />
+                <TextView
+                    android:id="@+id/tvLogin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¿Ya tienes cuenta? Inicia sesión"
+                    android:textColor="@color/purple_500"
+                    android:layout_marginTop="16dp" />
 
-        <Button
-            android:id="@+id/btnRegister"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:text="Registrar"
-            android:layout_marginBottom="16dp" />
-
-        <ProgressBar
-            android:id="@+id/progress"
-            style="@android:style/Widget.DeviceDefault.Light.ProgressBar.Horizontal"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/btnBack"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:text="Volver"
-            android:layout_marginTop="16dp"
-            android:visibility="gone" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        </LinearLayout>
+            </LinearLayout>
         </ScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
