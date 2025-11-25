@@ -63,7 +63,7 @@ class ProductDetailActivity : AppCompatActivity() {
             binding.tvName.text = product.name
             binding.tvPrice.text = "$${product.price}"
             binding.tvDescription.text = product.description ?: ""
-            val urlsRaw = product.images?.mapNotNull { it.url ?: it.path }.orEmpty()
+            val urlsRaw = product.img?.mapNotNull { it.url ?: it.path }.orEmpty()
             val urls = urlsRaw.mapNotNull { sanitizeImageUrl(it) }
             val cover = urls.firstOrNull()
             if (cover != null) {
@@ -71,6 +71,9 @@ class ProductDetailActivity : AppCompatActivity() {
                     crossfade(true)
                     placeholder(android.R.drawable.ic_menu_gallery)
                     error(android.R.drawable.ic_menu_gallery)
+                    allowHardware(false)
+                    memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                    diskCachePolicy(coil.request.CachePolicy.ENABLED)
                 }
             } else {
                 binding.ivImage.setImageResource(android.R.drawable.ic_menu_gallery)

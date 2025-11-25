@@ -153,13 +153,16 @@ class ProductAdapter(
         fun bind(p: Product) {
             name.text = p.name
             price.text = "$${p.price}"
-            val raw = p.images?.firstOrNull()?.let { it.url ?: it.path }
+            val raw = p.img?.firstOrNull()?.let { it.url ?: it.path }
             val url = sanitizeImageUrl(raw)
             if (url != null) {
                 iv.load(url) {
                     crossfade(true)
                     placeholder(android.R.drawable.ic_menu_gallery)
                     error(android.R.drawable.ic_menu_gallery)
+                    allowHardware(false)
+                    memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                    diskCachePolicy(coil.request.CachePolicy.ENABLED)
                 }
             } else {
                 iv.setImageResource(android.R.drawable.ic_menu_gallery)
@@ -202,14 +205,11 @@ class ProductAdapter(
             var u = s.trim()
             u = u.replace("`", "").replace("\"", "")
             u = u.replace("\n", "").replace("\r", "").replace("\t", "")
-            if (u.startsWith("/")) {
-                val base = ApiConfig.storeBaseUrl
-                val parsed = Uri.parse(base)
-                val origin = (parsed.scheme ?: "https") + "://" + (parsed.host ?: "")
-                u = origin + u
-            }
+            // Si no es absoluta, prefijar con STORE_BASE_URL completo
             if (!u.startsWith("http")) {
-                u = "https://" + u.trimStart('/')
+                val base = ApiConfig.storeBaseUrl
+                val full = base.trimEnd('/') + "/" + u.trimStart('/')
+                u = full
             }
             u = u.replace(" ", "%20")
             return u

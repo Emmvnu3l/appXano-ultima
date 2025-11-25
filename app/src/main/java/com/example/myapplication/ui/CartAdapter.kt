@@ -63,7 +63,7 @@ class CartAdapter(
             totalItem.text = String.format("$%.2f", total)
 
             // Cargar imagen
-            val raw = p.images?.firstOrNull()?.let { it.url ?: it.path }
+            val raw = p.img?.firstOrNull()?.let { it.url ?: it.path }
             val url = sanitizeImageUrl(raw)
             if (url != null) {
                 ivThumb.load(url) {
@@ -71,6 +71,9 @@ class CartAdapter(
                     placeholder(android.R.drawable.ic_menu_gallery)
                     error(android.R.drawable.ic_menu_gallery)
                     transformations(RoundedCornersTransformation(8f))
+                    allowHardware(false)
+                    memoryCachePolicy(coil.request.CachePolicy.ENABLED)
+                    diskCachePolicy(coil.request.CachePolicy.ENABLED)
                 }
             } else {
                 ivThumb.setImageResource(android.R.drawable.ic_menu_gallery)
@@ -111,14 +114,9 @@ class CartAdapter(
             var u = s.trim()
             u = u.replace("`", "").replace("\"", "")
             u = u.replace("\n", "").replace("\r", "").replace("\t", "")
-            if (u.startsWith("/")) {
-                val base = ApiConfig.storeBaseUrl
-                val parsed = Uri.parse(base)
-                val origin = (parsed.scheme ?: "https") + "://" + (parsed.host ?: "")
-                u = origin + u
-            }
             if (!u.startsWith("http")) {
-                u = "https://" + u.trimStart('/')
+                val base = ApiConfig.storeBaseUrl
+                u = base.trimEnd('/') + "/" + u.trimStart('/')
             }
             u = u.replace(" ", "%20")
             return u

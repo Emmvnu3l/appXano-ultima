@@ -90,6 +90,12 @@ object RetrofitClient {
             .create(UserService::class.java)
     }
 
+    fun createProductImageService(context: Context): ProductImageService {
+        val tm = TokenManager(context)
+        return retrofit(ApiConfig.storeBaseUrl, authenticated = true, tokenManager = tm)
+            .create(ProductImageService::class.java)
+    }
+
     fun createUserServiceAuth(context: Context): UserService {
         val tm = TokenManager(context)
         return retrofit(ApiConfig.authBaseUrl, authenticated = true, tokenManager = tm)

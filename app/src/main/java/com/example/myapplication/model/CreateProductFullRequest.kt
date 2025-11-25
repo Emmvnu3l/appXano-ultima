@@ -10,7 +10,7 @@ data class CreateProductFullRequest(
     @SerializedName("price") val price: Double,
     @SerializedName("stock") val stock: Int? = null,
     @SerializedName("brand") val brand: String? = null,
-    @SerializedName("category") val category: Int? = null,
-    @SerializedName("images") val images: List<ImagePayload> = emptyList()
+    @SerializedName("category_id") val categoryId: Int? = null,
+    @SerializedName("img") val img: List<ImagePayload> = emptyList()
 )
 

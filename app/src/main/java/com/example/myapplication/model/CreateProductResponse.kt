@@ -7,5 +7,7 @@ import java.io.Serializable
 
 data class CreateProductResponse(
     @SerializedName("success") val success: Boolean = true,
-    @SerializedName("product") val product: Product? = null
+    @SerializedName("product") val product: Product? = null,
+    @SerializedName("product_id") val productId: Int? = null,
+    @SerializedName("id") val id: Int? = null
 ) : Serializable
