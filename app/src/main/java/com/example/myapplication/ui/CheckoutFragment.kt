@@ -119,21 +119,23 @@ class CheckoutFragment : Fragment() {
                         }
                     }
                 }.trimEnd()
-                binding.tvItems.text = detail.ifBlank { "Sin productos" }
+                val b = _binding ?: return@launch
+                b.tvItems.text = detail.ifBlank { "Sin productos" }
                 val pricing = computePricing(items, products)
-                binding.tvSubtotal.text = formatCurrency(pricing.subtotal)
-                binding.tvTax.text = formatCurrency(pricing.tax)
-                binding.tvDiscount.text = formatCurrency(pricing.discount)
+                b.tvSubtotal.text = formatCurrency(pricing.subtotal)
+                b.tvTax.text = formatCurrency(pricing.tax)
+                b.tvDiscount.text = formatCurrency(pricing.discount)
                 tvTotalBefore.text = formatCurrency(pricing.subtotal)
-                binding.tvTotal.text = formatCurrency(pricing.total)
+                b.tvTotal.text = formatCurrency(pricing.total)
                 if (couponPercentage > 0.0) {
                     tvCouponFeedback.text = "Cupón aplicado: -${formatCurrency(pricing.discount)} (10%)"
                 }
-                binding.btnPay.isEnabled = items.isNotEmpty()
+                b.btnPay.isEnabled = items.isNotEmpty()
                 cartManager.registerListener(prefsListener)
             } catch (_: Exception) {
-                binding.tvTotal.text = "$0.00"
-                binding.btnPay.isEnabled = false
+                val b = _binding ?: return@launch
+                b.tvTotal.text = "$0.00"
+                b.btnPay.isEnabled = false
             }
         }
     }
@@ -175,9 +177,10 @@ class CheckoutFragment : Fragment() {
     }
 
     private fun setLoading(loading: Boolean) {
-        binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
-        binding.btnPay.isEnabled = !loading && binding.layoutDeliveryOptions.visibility == View.GONE
-        binding.btnFinish.isEnabled = !loading
+        val b = _binding ?: return
+        b.progress.visibility = if (loading) View.VISIBLE else View.GONE
+        b.btnPay.isEnabled = !loading && b.layoutDeliveryOptions.visibility == View.GONE
+        b.btnFinish.isEnabled = !loading
     }
 
     private fun createPendingOrder() {
