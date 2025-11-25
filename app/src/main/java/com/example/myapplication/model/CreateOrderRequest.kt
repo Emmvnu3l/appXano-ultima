@@ -14,3 +14,10 @@ data class CreateOrderItem(
     @SerializedName("product_id") val productId: Int,
     @SerializedName("quantity") val quantity: Int
 )
+
+data class CheckoutRequest(
+    @SerializedName("cart_id") val cartId: Int,
+    @SerializedName("status") val status: String = "pendiente",
+    @SerializedName("user_id") val userId: Int? = null,
+    @SerializedName("discount_code_id") val discountCodeId: Int? = null
+)

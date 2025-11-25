@@ -19,7 +19,7 @@ interface OrderService {
     suspend fun createOrderRaw(@Body body: Map<String, @JvmSuppressWildcards Any>): Order
 
     @POST("order/checkout")
-    suspend fun checkout(@Body request: CreateOrderRequest): Order
+    suspend fun checkout(@Body request: com.example.myapplication.model.CheckoutRequest): Order
 
     @GET("order/{id}")
     suspend fun getOrder(@Path("id") id: Int): Order
