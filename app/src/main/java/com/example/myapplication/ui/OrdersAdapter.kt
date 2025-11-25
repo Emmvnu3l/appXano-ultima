@@ -50,17 +50,15 @@ class OrdersAdapter(
         private val cbSelect: android.widget.CheckBox = itemView.findViewById(R.id.cbSelect)
 
         fun bind(o: Order) {
-            tvId.text = "#${o.id}"
+            val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date(it)) } ?: "-"
+            tvId.text = "#${o.id} ${created}"
             tvId.setTextColor(Color.WHITE)
-            tvClient.text = "Cliente: ${o.userId ?: "-"}"
-            tvClient.setTextColor(Color.WHITE)
+            tvClient.visibility = View.GONE
             tvTotal.text = "$${o.total}"
             tvTotal.setTextColor(Color.WHITE)
             tvStatus.text = o.status
             tvStatus.setTextColor(android.graphics.Color.WHITE)
-            val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date(it)) } ?: "-"
-            tvDate.text = created
-            tvDate.setTextColor(Color.WHITE)
+            tvDate.visibility = View.GONE
 
             val tint = when (o.status.lowercase()) {
                 "pendiente" -> android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#616161"))
