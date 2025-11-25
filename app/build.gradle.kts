@@ -19,9 +19,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField("String", "AUTH_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:QGdanllI/\"")
-        buildConfigField("String", "STORE_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:3BVxr_UT/\"")
-        buildConfigField("String", "USER_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:xfq7gh7l/\"")
+        buildConfigField("String", "AUTH_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:E0E2xd7q/\"")
+        buildConfigField("String", "STORE_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:-51vSSC_/\"")
+        buildConfigField("String", "USER_BASE_URL", "\"https://x8ki-letl-twmt.n7.xano.io/api:Az9iOmEB/\"")
         buildConfigField("int", "TOKEN_TTL_SEC", "3600")
     }
     buildTypes {
