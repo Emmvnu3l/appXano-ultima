@@ -155,7 +155,7 @@ class HomeActivity : AppCompatActivity() {
                 R.id.nav_home -> switchToFragment(tagHome) { HomeFragment() }
                 R.id.nav_products -> switchToFragment(tagProducts) { ProductsFragment.newInstance(null) }
                 R.id.nav_cart -> { NavigationHelper.openCart(this); true }
-                R.id.nav_categories -> switchToFragment(tagCategories) { CategoriesFragment() }
+                R.id.nav_categories -> { NavigationHelper.openCategories(this); true }
                 R.id.nav_profile -> switchToFragment(tagProfile) { ProfileFragment() }
 
                 // Opciones solo para Admin
@@ -273,6 +273,16 @@ class HomeActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+    }
+
+    fun showOverlayLoading() {
+        try { StateUi.showLoading(binding.stateOverlay) } catch (_: Exception) {}
+    }
+    fun showOverlayError(message: String) {
+        try { StateUi.showError(binding.stateOverlay, message, showRetry = false) } catch (_: Exception) {}
+    }
+    fun hideOverlay() {
+        try { StateUi.hide(binding.stateOverlay) } catch (_: Exception) {}
     }
 
     private fun configureFabForFragment(fragment: Fragment) {

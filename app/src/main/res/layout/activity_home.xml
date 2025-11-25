@@ -55,6 +55,10 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:background="?android:colorBackground" />
 
+        <include
+            android:id="@+id/stateOverlay"
+            layout="@layout/view_state" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fabProfile"
             android:layout_width="wrap_content"
