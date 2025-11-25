@@ -333,6 +333,10 @@ class OrdersFragment : Fragment() {
             totalProductos += lt
         }
 
+        if (totalProductos == 0.0 && (o.total > 0)) {
+            totalProductos = o.total
+        }
+
         val showBoleta = !o.status.equals("pendiente", ignoreCase = true)
         if (showBoleta) {
             val subtotal = kotlin.math.round((totalProductos / 1.19) * 100) / 100
