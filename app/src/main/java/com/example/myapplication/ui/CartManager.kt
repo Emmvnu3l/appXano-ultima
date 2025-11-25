@@ -67,5 +67,18 @@ class CartManager(context: Context) {
     companion object {
         private const val PREFS_NAME = "cart_prefs"
         private const val KEY_CART = "cart_items"
+        private const val KEY_BACKEND_CART_ID = "backend_cart_id"
+    }
+
+    fun setBackendCartId(id: Int?) {
+        if (id == null) {
+            prefs.edit().remove(KEY_BACKEND_CART_ID).apply()
+        } else {
+            prefs.edit().putInt(KEY_BACKEND_CART_ID, id).apply()
+        }
+    }
+
+    fun getBackendCartId(): Int? {
+        return if (prefs.contains(KEY_BACKEND_CART_ID)) prefs.getInt(KEY_BACKEND_CART_ID, 0).takeIf { it > 0 } else null
     }
 }

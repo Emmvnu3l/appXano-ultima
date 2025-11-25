@@ -131,26 +131,48 @@ class CheckoutActivity : AppCompatActivity() {
             try {
                 val productService = RetrofitClient.createProductService(this@CheckoutActivity)
                 val products = withContext(Dispatchers.IO) { productService.getProducts() }
+                // Validación de stock disponible
+                val insufficient = itemsMap.entries.firstOrNull { (pid, qty) ->
+                    val p = products.find { it.id == pid }
+                    val stock = p?.stock ?: Int.MAX_VALUE
+                    qty > stock
+                }
+                if (insufficient != null) {
+                    Toast.makeText(this@CheckoutActivity, "Stock insuficiente para producto ${insufficient.key}", Toast.LENGTH_LONG).show()
+                    setLoading(false)
+                    return@launch
+                }
                 val pricing = computePricing(itemsMap, products)
                 val tm = TokenManager(this@CheckoutActivity)
                 val uid = tm.getUserId()
-                val request = CreateOrderRequest(items, pricing.total, status = "pendiente", userId = uid, discountCodeId = uid)
                 val orderService = RetrofitClient.createOrderService(this@CheckoutActivity)
-                val order = try {
-                    withContext(Dispatchers.IO) { orderService.createOrder(request) }
-                } catch (e: HttpException) {
-                    if (e.code() == 400) {
-                        val raw = mutableMapOf<String, Any>(
-                            "total" to pricing.total,
-                            "status" to "pendiente"
-                        )
-                        uid?.let { raw["user_id"] = it; raw["discount_code_id"] = it }
-                        try {
-                            withContext(Dispatchers.IO) { orderService.createOrderRaw(raw) }
-                        } catch (e2: HttpException) {
-                            throw e2
-                        }
-                    } else throw e
+                val backendCartId = cartManager.getBackendCartId()
+                val order = if (backendCartId != null) {
+                    val req = com.example.myapplication.model.CheckoutRequest(
+                        cartId = backendCartId,
+                        status = "pendiente",
+                        userId = uid,
+                        discountCodeId = uid
+                    )
+                    withContext(Dispatchers.IO) { orderService.checkout(req) }
+                } else {
+                    val request = CreateOrderRequest(items, pricing.total, status = "pendiente", userId = uid, discountCodeId = uid)
+                    try {
+                        withContext(Dispatchers.IO) { orderService.createOrder(request) }
+                    } catch (e: HttpException) {
+                        if (e.code() == 400) {
+                            val raw = mutableMapOf<String, Any>(
+                                "total" to pricing.total,
+                                "status" to "pendiente"
+                            )
+                            uid?.let { raw["user_id"] = it; raw["discount_code_id"] = it }
+                            try {
+                                withContext(Dispatchers.IO) { orderService.createOrderRaw(raw) }
+                            } catch (e2: HttpException) {
+                                throw e2
+                            }
+                        } else throw e
+                    }
                 }
                 currentOrder = order
                 cm.clear()
