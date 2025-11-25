@@ -3,6 +3,9 @@ package com.example.myapplication.ui
 import android.content.Context
 import android.content.Intent
 import com.example.myapplication.R
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 object NavigationHelper {
     fun openAddProduct(context: Context) {
@@ -149,7 +152,37 @@ object NavigationHelper {
             context.startActivity(intent)
         }
     }
-
+   fun openCategories(context: Context) {
+        if (context is HomeActivity) {
+            context.showOverlayLoading()
+            context.lifecycleScope.launch {
+                try {
+                    val service = com.example.myapplication.api.RetrofitClient.createCategoryService(context)
+                    val list = withContext(kotlinx.coroutines.Dispatchers.IO) { service.getCategories() }
+                    val frag = CategoriesFragment()
+                    val args = android.os.Bundle()
+                    args.putSerializable("preloaded_categories", java.util.ArrayList(list))
+                    frag.arguments = args
+                    context.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, frag)
+                        .commit()
+                    context.hideOverlay()
+                } catch (e: Exception) {
+                    context.showOverlayError(com.example.myapplication.api.NetworkError.message(e))
+                    // Opcional: fallback sin prefetch
+                    context.supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainer, CategoriesFragment())
+                        .commit()
+                } finally {
+                    // En caso de fallback, ocultar overlay después de que el fragmento muestre su propio loader
+                }
+            }
+        } else {
+            val intent = Intent(context, HomeActivity::class.java)
+            intent.putExtra("open_categories", true)
+            context.startActivity(intent)
+        }
+    }
     fun openEditProduct(context: Context, product: com.example.myapplication.model.Product) {
         if (context is HomeActivity) {
             context.supportFragmentManager.beginTransaction()

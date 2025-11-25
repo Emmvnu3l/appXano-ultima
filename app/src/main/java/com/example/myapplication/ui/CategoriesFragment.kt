@@ -39,7 +39,6 @@ class CategoriesFragment : Fragment() {
                 .replace(R.id.fragmentContainer, fragment)
                 .addToBackStack(null)
                 .commit()
-            // Opcional: Actualizar título o selección en NavigationView si es necesario
         }
 
         binding.recycler.layoutManager = GridLayoutManager(requireContext(), 2)
@@ -47,7 +46,14 @@ class CategoriesFragment : Fragment() {
 
         binding.swipeRefresh.setOnRefreshListener { loadCategories() }
 
-        loadCategories()
+        val preloaded = arguments?.getSerializable("preloaded_categories") as? java.util.ArrayList<Category>
+        if (preloaded != null && preloaded.isNotEmpty()) {
+            StateUi.hide(binding.state)
+            adapter.submitList(preloaded)
+        } else {
+            StateUi.showLoading(binding.state)
+            loadCategories()
+        }
     }
 
     private fun loadCategories() {
