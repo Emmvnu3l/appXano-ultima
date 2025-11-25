@@ -185,7 +185,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Confirmar pago (simulado)" />
+                android:text="Confirmar pago" />
 
             <!-- Sección post-pago oculta -->
             <LinearLayout
