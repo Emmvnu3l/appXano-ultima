@@ -261,8 +261,6 @@ class OrdersFragment : Fragment() {
         val btnPrev = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnPrev)
         val btnNext = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnNext)
         val tvPage = binding.root.findViewById<android.widget.TextView>(com.example.myapplication.R.id.tvPage)
-        val etPage = binding.root.findViewById<android.widget.EditText>(com.example.myapplication.R.id.etPage)
-        val btnGo = binding.root.findViewById<android.widget.Button>(com.example.myapplication.R.id.btnGoPage)
         fun update() {
             val maxPage = kotlin.math.max(1, (totalCount + pageSize - 1) / pageSize)
             tvPage.text = "Página $page de $maxPage"
@@ -275,31 +273,89 @@ class OrdersFragment : Fragment() {
         btnNext.setOnClickListener {
             fetch(page + 1, append = false)
         }
-        btnGo.setOnClickListener {
-            val num = etPage.text?.toString()?.toIntOrNull()
-            val maxPage = kotlin.math.max(1, (totalCount + pageSize - 1) / pageSize)
-            if (num != null && num in 1..maxPage) fetch(num, append = false)
-        }
         update()
     }
 
     private fun showDetails(o: Order) {
-        val sb = StringBuilder()
-        sb.appendLine("Orden #${o.id}")
-        sb.appendLine("Estado: ${o.status}")
-        sb.appendLine("Total: $${o.total}")
-        val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date(it)) } ?: "-"
-        sb.appendLine("Creada: $created")
-        sb.appendLine("Items:")
-        o.items.orEmpty().forEach { sb.appendLine("• Producto ${it.productId} x${it.quantity} (${it.price ?: 0.0})") }
+        val ctx = requireContext()
+        val cont = android.widget.ScrollView(ctx)
+        val wrap = android.widget.LinearLayout(ctx)
+        wrap.orientation = android.widget.LinearLayout.VERTICAL
+        wrap.setPadding(32, 24, 32, 24)
+        cont.addView(wrap)
+
+        val created = o.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale("es","CL")).format(java.util.Date(it)) } ?: "-"
+        val title = android.widget.TextView(ctx)
+        title.text = "Orden #${o.id} - $created"
+        title.textSize = 18f
+        title.setTypeface(android.graphics.Typeface.DEFAULT_BOLD)
+        wrap.addView(title)
+
+        val statusView = android.widget.TextView(ctx)
+        statusView.text = "Estado: ${o.status}"
+        statusView.setPadding(0, 8, 0, 8)
+        wrap.addView(statusView)
+
+        val nf = java.text.NumberFormat.getCurrencyInstance(java.util.Locale("es","CL"))
+        val itemsHeader = android.widget.TextView(ctx)
+        itemsHeader.typeface = android.graphics.Typeface.MONOSPACE
+        itemsHeader.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", "Producto", "Cant", "P.U.", "Total")
+        wrap.addView(itemsHeader)
+
+        o.items.orEmpty().forEach { it ->
+            val line = android.widget.TextView(ctx)
+            line.typeface = android.graphics.Typeface.MONOSPACE
+            val qty = it.quantity ?: 0
+            val pu = it.price ?: 0.0
+            val lt = qty * pu
+            line.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", "${it.productId}", qty.toString(), nf.format(pu), nf.format(lt))
+            wrap.addView(line)
+        }
+
+        val totalView = android.widget.TextView(ctx)
+        totalView.setPadding(0, 12, 0, 0)
+        totalView.text = "Total: ${nf.format(o.total)}"
+        wrap.addView(totalView)
+
+        val isConfirmed = o.status.equals("confirmada", ignoreCase = true)
+        if (isConfirmed) {
+            val net = (o.total / 1.19)
+            val iva = o.total - net
+            val boletaTitle = android.widget.TextView(ctx)
+            boletaTitle.setPadding(0, 16, 0, 8)
+            boletaTitle.text = "Boleta"
+            boletaTitle.setTypeface(android.graphics.Typeface.DEFAULT_BOLD)
+            wrap.addView(boletaTitle)
+
+            val mono = android.widget.TextView(ctx)
+            mono.typeface = android.graphics.Typeface.MONOSPACE
+            val s = StringBuilder()
+            s.appendLine(String.format("%-18s %s", "Folio", "${o.id}"))
+            s.appendLine(String.format("%-18s %s", "Fecha", created))
+            s.appendLine(String.format("%-18s %s", "Subtotal", nf.format(kotlin.math.round(net * 100) / 100)))
+            s.appendLine(String.format("%-18s %s", "IVA (19%)", nf.format(kotlin.math.round(iva * 100) / 100)))
+            s.appendLine(String.format("%-18s %s", "Total", nf.format(o.total)))
+            mono.text = s.toString()
+            wrap.addView(mono)
+        }
+
         val hist = loadHistory(o.id)
         if (hist.isNotEmpty()) {
-            sb.appendLine("\nHistorial de estado:")
-            hist.forEach { sb.appendLine("• $it") }
+            val hTitle = android.widget.TextView(ctx)
+            hTitle.setPadding(0, 16, 0, 8)
+            hTitle.text = "Historial"
+            hTitle.setTypeface(android.graphics.Typeface.DEFAULT_BOLD)
+            wrap.addView(hTitle)
+            hist.forEach { ev ->
+                val tv = android.widget.TextView(ctx)
+                tv.text = "• $ev"
+                wrap.addView(tv)
+            }
         }
-        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+
+        androidx.appcompat.app.AlertDialog.Builder(ctx)
             .setTitle("Detalles de la orden")
-            .setMessage(sb.toString())
+            .setView(cont)
             .setPositiveButton("Cerrar", null)
             .show()
     }
