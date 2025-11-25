@@ -84,7 +84,7 @@ class CreateCategoryFragment : Fragment() {
                 val part = makeImagePart(uri)
                 val uploaded: ProductImage = withContext(Dispatchers.IO) { uploadService.uploadImage(part) }
 
-                // 2) Crear categoría
+                // 2) Crear categoría usando payload con path (requerido por backend)
                 val payload: ImagePayload = toPayload(uploaded)
                 val req = CategoryCreateRequest(
                     name = name,

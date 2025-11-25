@@ -28,22 +28,41 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <!-- Contenido: mantiene los campos originales, con padding estándar -->
-        <androidx.core.widget.NestedScrollView
+        <!-- Contenido con centrado perfecto usando ConstraintLayout y guidelines -->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Guidelines para centro horizontal y vertical -->
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineVCenter"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="24dp">
+                app:layout_constraintGuide_percent="0.5" />
 
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="40dp" />
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guidelineHCenter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <!-- Contenedor del formulario, centrado a ambas direcciones -->
+            <LinearLayout
+                android:id="@+id/formContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="24dp"
+                android:maxWidth="360dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintVertical_bias="0.5">
 
                 <ImageView
                     android:id="@+id/ivLoginLogo"
@@ -59,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
                     android:hint="Email">
-                    
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etEmail"
                         android:layout_width="match_parent"
@@ -74,7 +93,7 @@
                     android:layout_marginBottom="24dp"
                     android:hint="Password"
                     app:endIconMode="password_toggle">
-                    
+
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etPassword"
                         android:layout_width="match_parent"
@@ -91,7 +110,6 @@
                     android:paddingVertical="12dp"
                     android:text="Login" />
 
-                <!-- Botón para ir a la actividad de registro -->
                 <Button
                     android:id="@+id/btnGoRegister"
                     android:layout_width="match_parent"
@@ -107,11 +125,6 @@
                     android:layout_height="wrap_content"
                     android:visibility="gone" />
 
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
-
             </LinearLayout>
-        </androidx.core.widget.NestedScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
