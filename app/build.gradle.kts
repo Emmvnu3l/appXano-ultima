@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
 }
 
-buildDir = file("${rootDir}/app/build13")
+// buildDir personalizado eliminado para evitar bloqueos de archivos en Windows
 
 
 android {

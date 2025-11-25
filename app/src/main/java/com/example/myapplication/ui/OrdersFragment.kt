@@ -277,6 +277,25 @@ class OrdersFragment : Fragment() {
     }
 
     private fun showDetails(o: Order) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val fullOrder = withContext(Dispatchers.IO) {
+                    val svc = com.example.myapplication.api.RetrofitClient.createOrderService(requireContext())
+                    // Si ya vienen items no hacemos llamada adicional
+                    if (!o.items.isNullOrEmpty()) o else svc.getOrder(o.id)
+                }
+                buildDetailsDialog(fullOrder)
+            } catch (e: Exception) {
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Detalles de la orden")
+                    .setMessage(com.example.myapplication.api.NetworkError.message(e))
+                    .setPositiveButton("Cerrar", null)
+                    .show()
+            }
+        }
+    }
+
+    private fun buildDetailsDialog(o: Order) {
         val ctx = requireContext()
         val cont = android.widget.ScrollView(ctx)
         val wrap = android.widget.LinearLayout(ctx)
@@ -302,6 +321,7 @@ class OrdersFragment : Fragment() {
         itemsHeader.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", "Producto", "Cant", "P.U.", "Total")
         wrap.addView(itemsHeader)
 
+        var totalProductos = 0.0
         o.items.orEmpty().forEach { it ->
             val line = android.widget.TextView(ctx)
             line.typeface = android.graphics.Typeface.MONOSPACE
@@ -310,17 +330,13 @@ class OrdersFragment : Fragment() {
             val lt = qty * pu
             line.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", "${it.productId}", qty.toString(), nf.format(pu), nf.format(lt))
             wrap.addView(line)
+            totalProductos += lt
         }
 
-        val totalView = android.widget.TextView(ctx)
-        totalView.setPadding(0, 12, 0, 0)
-        totalView.text = "Total: ${nf.format(o.total)}"
-        wrap.addView(totalView)
-
-        val isConfirmed = o.status.equals("confirmada", ignoreCase = true)
-        if (isConfirmed) {
-            val net = (o.total / 1.19)
-            val iva = o.total - net
+        val showBoleta = !o.status.equals("pendiente", ignoreCase = true)
+        if (showBoleta) {
+            val subtotal = kotlin.math.round((totalProductos / 1.19) * 100) / 100
+            val ivaB = kotlin.math.round((subtotal * 0.19) * 100) / 100
             val boletaTitle = android.widget.TextView(ctx)
             boletaTitle.setPadding(0, 16, 0, 8)
             boletaTitle.text = "Boleta"
@@ -332,9 +348,9 @@ class OrdersFragment : Fragment() {
             val s = StringBuilder()
             s.appendLine(String.format("%-18s %s", "Folio", "${o.id}"))
             s.appendLine(String.format("%-18s %s", "Fecha", created))
-            s.appendLine(String.format("%-18s %s", "Subtotal", nf.format(kotlin.math.round(net * 100) / 100)))
-            s.appendLine(String.format("%-18s %s", "IVA (19%)", nf.format(kotlin.math.round(iva * 100) / 100)))
-            s.appendLine(String.format("%-18s %s", "Total", nf.format(o.total)))
+            s.appendLine(String.format("%-18s %s", "Subtotal", nf.format(subtotal)))
+            s.appendLine(String.format("%-18s %s", "IVA (19%)", nf.format(ivaB)))
+            s.appendLine(String.format("%-18s %s", "Total", nf.format(totalProductos)))
             mono.text = s.toString()
             wrap.addView(mono)
         }
@@ -346,7 +362,7 @@ class OrdersFragment : Fragment() {
             hTitle.text = "Historial"
             hTitle.setTypeface(android.graphics.Typeface.DEFAULT_BOLD)
             wrap.addView(hTitle)
-            hist.forEach { ev ->
+            hist.asReversed().forEach { ev ->
                 val tv = android.widget.TextView(ctx)
                 tv.text = "• $ev"
                 wrap.addView(tv)
@@ -446,7 +462,8 @@ class OrdersFragment : Fragment() {
         try {
             val prefs = requireContext().getSharedPreferences("orders_history", android.content.Context.MODE_PRIVATE)
             val ts = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.getDefault()).format(java.util.Date())
-            val line = "$ts - $status" + (comment?.let { " - $it" } ?: "")
+            val resp = com.example.myapplication.api.TokenManager(requireContext()).getUserId()
+            val line = "$ts - $status - resp:$resp" + (comment?.let { " - $it" } ?: "")
             val key = "order_$orderId"
             val cur = prefs.getString(key, "") ?: ""
             val newVal = if (cur.isBlank()) line else (cur + "\n" + line)
