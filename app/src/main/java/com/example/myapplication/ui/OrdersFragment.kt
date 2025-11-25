@@ -284,14 +284,14 @@ class OrdersFragment : Fragment() {
                     if (!o.items.isNullOrEmpty()) o else try { svc.getOrderByQuery(o.id) } catch (_: Exception) { svc.getOrder(o.id) }
                 }
                 val ids = fullOrder.items.orEmpty().map { it.productId }.toSet()
-                val names = if (ids.isNotEmpty()) withContext(Dispatchers.IO) {
+                val productsById = if (ids.isNotEmpty()) withContext(Dispatchers.IO) {
                     try {
                         val ps = com.example.myapplication.api.RetrofitClient.createProductService(requireContext())
                         val products = ps.getProducts()
-                        products.filter { ids.contains(it.id) }.associate { it.id to it.name }
-                    } catch (_: Exception) { emptyMap<Int, String>() }
+                        products.filter { ids.contains(it.id) }.associateBy { it.id }
+                    } catch (_: Exception) { emptyMap<Int, com.example.myapplication.model.Product>() }
                 } else emptyMap()
-                buildDetailsDialog(fullOrder, names)
+                buildDetailsDialog(fullOrder, productsById)
             } catch (e: Exception) {
                 try {
                     val fallback = withContext(Dispatchers.IO) {
@@ -303,7 +303,7 @@ class OrdersFragment : Fragment() {
                         list.find { it.id == o.id }
                     }
                     if (fallback != null) {
-                        buildDetailsDialog(fallback, emptyMap())
+                        buildDetailsDialog(fallback, emptyMap<Int, com.example.myapplication.model.Product>())
                     } else {
                         androidx.appcompat.app.AlertDialog.Builder(requireContext())
                             .setTitle("Detalles de la orden")
@@ -322,7 +322,7 @@ class OrdersFragment : Fragment() {
         }
     }
 
-    private fun buildDetailsDialog(o: Order, names: Map<Int, String>) {
+    private fun buildDetailsDialog(o: Order, productsById: Map<Int, com.example.myapplication.model.Product>) {
         val ctx = requireContext()
         val cont = android.widget.ScrollView(ctx)
         val wrap = android.widget.LinearLayout(ctx)
@@ -355,8 +355,16 @@ class OrdersFragment : Fragment() {
             val qty = it.quantity ?: 0
             val pu = it.price ?: 0.0
             val lt = qty * pu
-            val nm = names[it.productId] ?: "${it.productId}"
+            val prod = productsById[it.productId]
+            val nm = prod?.name ?: "${it.productId}"
             line.text = String.format("%1$-12s %2$-6s %3$-10s %4$-10s", nm, qty.toString(), nf.format(pu), nf.format(lt))
+            line.setOnClickListener {
+                if (prod != null) {
+                    val intent = android.content.Intent(ctx, com.example.myapplication.ui.ProductDetailActivity::class.java)
+                    intent.putExtra("product", prod)
+                    startActivity(intent)
+                }
+            }
             wrap.addView(line)
             totalProductos += lt
         }
