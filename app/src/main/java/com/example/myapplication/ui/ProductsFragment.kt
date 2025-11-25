@@ -107,9 +107,7 @@ class ProductsFragment : Fragment() {
         binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
         adapter = ProductAdapter(
             onProductClick = { product ->
-                val intent = Intent(requireContext(), ProductDetailActivity::class.java)
-                intent.putExtra("product", product)
-                startActivity(intent)
+                NavigationHelper.openProductDetail(requireContext(), product)
             },
             onResultsCountChanged = { count ->
                 // Empty check handled by onProductsLoaded

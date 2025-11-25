@@ -94,6 +94,36 @@ object NavigationHelper {
         context.startActivity(Intent(context, CheckoutActivity::class.java))
     }
 
+    fun openProductDetail(context: Context, product: com.example.myapplication.model.Product) {
+        if (context is HomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
+                .replace(R.id.fragmentContainer, ProductDetailFragment.newInstance(product))
+                .addToBackStack(null)
+                .commit()
+        } else if (context is LimitedHomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
+                .replace(R.id.fragmentContainer, ProductDetailFragment.newInstance(product))
+                .addToBackStack(null)
+                .commit()
+        } else {
+            val intent = Intent(context, ProductDetailActivity::class.java)
+            intent.putExtra("product", product)
+            context.startActivity(intent)
+        }
+    }
+
     fun openProfileDetails(context: Context) {
         if (context is HomeActivity) {
             context.supportFragmentManager.beginTransaction()
