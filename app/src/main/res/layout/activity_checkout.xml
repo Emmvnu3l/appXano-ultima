@@ -31,10 +31,49 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Detalle (boleta)"
+                android:textStyle="bold" />
+
+            <TextView
                 android:id="@+id/tvItems"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Items" />
+                android:text=""
+                android:typeface="monospace"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="8dp">
+
+                <EditText
+                    android:id="@+id/etCoupon"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="Cupón"
+                    android:inputType="text"
+                    android:singleLine="true" />
+
+                <Button
+                    android:id="@+id/btnApplyCoupon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Aplicar" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvCouponFeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"
+                android:text="" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,7 +89,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Subtotal" />
+                        android:text="Subtotal (sin IVA)" />
                     <TextView
                         android:id="@+id/tvSubtotal"
                         android:layout_width="wrap_content"
@@ -87,6 +126,24 @@
                         android:id="@+id/tvDiscount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:text="$0.00" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Total antes de descuentos"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tvTotalBefore"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
                         android:text="$0.00" />
                 </LinearLayout>
 
