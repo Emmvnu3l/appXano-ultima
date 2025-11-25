@@ -91,7 +91,35 @@ object NavigationHelper {
     }
 
     fun openCheckout(context: Context) {
-        context.startActivity(Intent(context, CheckoutActivity::class.java))
+        if (context is HomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
+                .replace(R.id.fragmentContainer, CheckoutFragment())
+                .addToBackStack(null)
+                .commit()
+        } else if (context is LimitedHomeActivity) {
+            context.supportFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
+                .replace(R.id.fragmentContainer, CheckoutFragment())
+                .addToBackStack(null)
+                .commit()
+        } else {
+            context.startActivity(Intent(context, CheckoutActivity::class.java))
+        }
+    }
+
+    fun openProductDetails(context: Context, product: com.example.myapplication.model.Product) {
+        openProductDetail(context, product)
     }
 
     fun openProductDetail(context: Context, product: com.example.myapplication.model.Product) {
