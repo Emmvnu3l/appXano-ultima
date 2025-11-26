@@ -19,6 +19,7 @@ class LimitedHomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
+        window.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         try {
             binding = ActivityLimitedHomeBinding.inflate(layoutInflater)
             setContentView(binding.root)
@@ -82,17 +83,25 @@ class LimitedHomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
-        // Ensure the container exists and clean up potential back stack issues
+        if (isFinishing || isDestroyed) return false
         if (supportFragmentManager.isStateSaved) return false
+        hideKeyboard()
         
         // Clear back stack to avoid deep nesting when switching main tabs
         supportFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
 
-        supportFragmentManager.beginTransaction()
-            .replace(binding.fragmentContainer.id, fragment)
-            .commit()
-        configureFabForFragment(fragment)
-        return true
+        return try {
+            supportFragmentManager.beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(binding.fragmentContainer.id, fragment)
+                .commit()
+            configureFabForFragment(fragment)
+            logMem("replaceFragment")
+            true
+        } catch (t: Throwable) {
+            android.util.Log.e("LimitedHomeActivity", "replaceFragment failed", t)
+            false
+        }
     }
 
     override fun onBackPressed() {
@@ -106,20 +115,12 @@ class LimitedHomeActivity : AppCompatActivity() {
     private fun configureFabForFragment(fragment: Fragment) {
         val fab = binding.fabProfile
         val actionCart = binding.toolbar.findViewById<View>(R.id.actionCart)
+        clearFabBindings()
         when (fragment) {
             is ProfileFragment -> {
                 fab.visibility = View.VISIBLE
                 fab.setImageResource(R.drawable.ic_user)
                 fab.contentDescription = "Abrir perfil"
-                val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
-                badge?.isVisible = false
-                val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
-                if (listener != null) {
-                    try {
-                        val cm = CartManager(this)
-                        cm.unregisterListener(listener)
-                    } catch (_: Exception) {}
-                }
                 fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
                 fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
                 actionCart?.visibility = View.VISIBLE
@@ -142,8 +143,45 @@ class LimitedHomeActivity : AppCompatActivity() {
             }
             else -> {
                 fab.visibility = View.GONE
+                fab.setOnClickListener(null)
                 actionCart?.visibility = if (fragment is CartFragment) View.GONE else View.VISIBLE
             }
         }
+    }
+
+    private fun clearFabBindings() {
+        val fab = binding.fabProfile
+        val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+        badge?.isVisible = false
+        val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+        if (listener != null) {
+            try {
+                val cm = CartManager(this)
+                cm.unregisterListener(listener)
+            } catch (_: Exception) {}
+            fab.setTag(R.id.tag_cart_prefs_listener, null)
+        }
+    }
+
+    private fun hideKeyboard() {
+        try {
+            val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            val view = currentFocus ?: binding.root
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        } catch (_: Exception) {}
+    }
+
+    private fun logMem(source: String) {
+        val rt = Runtime.getRuntime()
+        val max = rt.maxMemory() / (1024 * 1024)
+        val total = rt.totalMemory() / (1024 * 1024)
+        val free = rt.freeMemory() / (1024 * 1024)
+        android.util.Log.i("LimitedHomeActivity", "$source mem MB max=$max total=$total free=$free")
+    }
+
+    override fun onDestroy() {
+        try { binding.drawerLayout.removeDrawerListener(toggle) } catch (_: Exception) {}
+        clearFabBindings()
+        super.onDestroy()
     }
 }

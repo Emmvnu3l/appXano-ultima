@@ -40,10 +40,7 @@ class ProfileFragment : Fragment() {
 
         // Modo solo lectura: sin acciones de edición
         binding.btnManageCategories.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, CategoryManagementFragment())
-                .addToBackStack(null)
-                .commit()
+            activity?.let { NavigationHelper.openCategories(it) }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

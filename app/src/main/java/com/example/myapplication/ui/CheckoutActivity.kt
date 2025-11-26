@@ -54,7 +54,7 @@ class CheckoutActivity : AppCompatActivity() {
                 binding.tvShippingAddress.visibility = View.GONE
             }
         }
-        binding.btnFinish.setOnClickListener { finalizeOrder() }
+        
     }
 
     private fun renderCartSummary() {
@@ -114,8 +114,7 @@ class CheckoutActivity : AppCompatActivity() {
 
     private fun setLoading(loading: Boolean) {
         binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
-        binding.btnPay.isEnabled = !loading && binding.layoutDeliveryOptions.visibility == View.GONE
-        binding.btnFinish.isEnabled = !loading
+        binding.btnPay.isEnabled = !loading
     }
 
     private fun createPendingOrder() {
@@ -230,37 +229,7 @@ class CheckoutActivity : AppCompatActivity() {
         }
     }
     
-    private fun finalizeOrder() {
-        val order = currentOrder ?: return
-        val isDelivery = binding.rbDelivery.isChecked
-        val isPickup = binding.rbPickup.isChecked
-        
-        if (!isDelivery && !isPickup) {
-            Toast.makeText(this, "Seleccione un método de entrega", Toast.LENGTH_SHORT).show()
-            return
-        }
-        
-        val newStatus = if (isDelivery) "enviado" else "confirmada" // o "para_retirar" si existiera
-        
-        setLoading(true)
-        lifecycleScope.launch {
-            try {
-                val service = RetrofitClient.createOrderService(this@CheckoutActivity)
-                withContext(Dispatchers.IO) { service.updateStatus(order.id, UpdateOrderStatusRequest(newStatus)) }
-                Toast.makeText(this@CheckoutActivity, "Orden finalizada", Toast.LENGTH_SHORT).show()
-                
-                val tm = TokenManager(this@CheckoutActivity)
-                val dest = if (tm.isAdmin()) HomeActivity::class.java else LimitedHomeActivity::class.java
-                val intent = Intent(this@CheckoutActivity, dest)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-            } catch (e: Exception) {
-                Toast.makeText(this@CheckoutActivity, "Error actualizando orden: ${e.message}", Toast.LENGTH_LONG).show()
-                setLoading(false)
-            }
-        }
-    }
+    
 
     override fun onStart() {
         super.onStart()
