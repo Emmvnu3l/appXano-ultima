@@ -7,11 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.appcompat.app.AlertDialog
 import com.example.myapplication.R
 import com.example.myapplication.api.RetrofitClient
 import com.example.myapplication.api.TokenManager
 import com.example.myapplication.api.NetworkError
 import com.example.myapplication.databinding.ActivityCheckoutBinding
+import com.example.myapplication.model.UserUpdateRequest
 import com.example.myapplication.model.CreateOrderItem
 import com.example.myapplication.model.CreateOrderRequest
 import com.example.myapplication.model.ImagePayload
@@ -34,6 +36,10 @@ class CheckoutFragment : Fragment() {
     private lateinit var btnApplyCoupon: android.widget.Button
     private lateinit var tvCouponFeedback: android.widget.TextView
     private lateinit var tvTotalBefore: android.widget.TextView
+    private lateinit var etStreet: android.widget.EditText
+    private lateinit var etPhoneDelivery: android.widget.EditText
+    private lateinit var layoutAddressForm: View
+    private lateinit var btnSaveAddress: android.widget.Button
     private val prefsListener = android.content.SharedPreferences.OnSharedPreferenceChangeListener { _, _ ->
         renderCartSummary()
     }
@@ -52,7 +58,12 @@ class CheckoutFragment : Fragment() {
         btnApplyCoupon = binding.root.findViewById(R.id.btnApplyCoupon)
         tvCouponFeedback = binding.root.findViewById(R.id.tvCouponFeedback)
         tvTotalBefore = binding.root.findViewById(R.id.tvTotalBefore)
+        etStreet = binding.root.findViewById(R.id.etStreet)
+        etPhoneDelivery = binding.root.findViewById(R.id.etPhoneDelivery)
+        layoutAddressForm = binding.root.findViewById(R.id.layoutAddressForm)
+        btnSaveAddress = binding.root.findViewById(R.id.btnSaveAddress)
         btnApplyCoupon.isEnabled = false
+        btnSaveAddress.isEnabled = false
         etCoupon.addTextChangedListener(object : android.text.TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -80,17 +91,32 @@ class CheckoutFragment : Fragment() {
                 renderCartSummary()
             }
         }
+        binding.rbPickup.isChecked = true
+        binding.rgDelivery.setOnCheckedChangeListener { _, checkedId ->
+            if (checkedId == R.id.rbDelivery) {
+                showAddressForm(true)
+                prefillFromMe()
+                validateDeliveryForm()
+                btnSaveAddress.isEnabled = isDeliveryFormValid()
+            } else {
+                showAddressForm(false)
+                binding.tvShippingAddress.visibility = View.GONE
+                btnSaveAddress.isEnabled = false
+                renderCartSummary()
+            }
+        }
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { validateDeliveryForm() }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        }
+        etStreet.addTextChangedListener(watcher)
+        etPhoneDelivery.addTextChangedListener(watcher)
+        btnSaveAddress.setOnClickListener { saveAddress() }
         renderCartSummary()
 
         binding.btnPay.setOnClickListener { createPendingOrder() }
-        binding.rgDelivery.setOnCheckedChangeListener { _, checkedId ->
-            if (checkedId == R.id.rbDelivery) {
-                loadUserAddress()
-            } else {
-                binding.tvShippingAddress.visibility = View.GONE
-            }
-        }
-        binding.btnFinish.setOnClickListener { finalizeOrder() }
+        
     }
 
     override fun onDestroyView() {
@@ -130,7 +156,7 @@ class CheckoutFragment : Fragment() {
                 if (couponPercentage > 0.0) {
                     tvCouponFeedback.text = "Cupón aplicado: -${formatCurrency(pricing.discount)} (10%)"
                 }
-                b.btnPay.isEnabled = items.isNotEmpty()
+                b.btnPay.isEnabled = items.isNotEmpty() && (!binding.rbDelivery.isChecked || isDeliveryFormValid())
                 cartManager.registerListener(prefsListener)
             } catch (_: Exception) {
                 val b = _binding ?: return@launch
@@ -138,6 +164,99 @@ class CheckoutFragment : Fragment() {
                 b.btnPay.isEnabled = false
             }
         }
+    }
+
+    private fun isDeliveryFormValid(): Boolean {
+        val street = etStreet.text?.toString()?.trim().orEmpty()
+        val phone = etPhoneDelivery.text?.toString()?.trim().orEmpty()
+        return street.isNotEmpty() && phone.isNotEmpty()
+    }
+
+    private fun validateDeliveryForm() {
+        if (!binding.rbDelivery.isChecked) { btnSaveAddress.isEnabled = false; return }
+        val valid = isDeliveryFormValid()
+        binding.btnPay.isEnabled = valid
+        btnSaveAddress.isEnabled = valid
+        etStreet.error = if (etStreet.text?.toString()?.trim().isNullOrEmpty()) "Obligatorio" else null
+        etPhoneDelivery.error = if (etPhoneDelivery.text?.toString()?.trim().isNullOrEmpty()) "Obligatorio" else null
+        if (valid) {
+            val addr = buildAddressString()
+            binding.tvShippingAddress.text = "Dirección: $addr"
+            binding.tvShippingAddress.visibility = View.VISIBLE
+        }
+    }
+
+    private fun buildAddressString(): String {
+        return etStreet.text?.toString()?.trim().orEmpty()
+    }
+
+    private fun showAddressForm(show: Boolean) {
+        if (show) {
+            layoutAddressForm.visibility = View.VISIBLE
+            layoutAddressForm.alpha = 0f
+            layoutAddressForm.animate().alpha(1f).setDuration(200).start()
+        } else {
+            layoutAddressForm.animate().alpha(0f).setDuration(200).withEndAction {
+                layoutAddressForm.visibility = View.GONE
+            }.start()
+        }
+    }
+
+    private fun prefillFromMe() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val svc = RetrofitClient.createAuthServiceAuthenticated(requireContext())
+                val me = withContext(Dispatchers.IO) { svc.me() }
+                val address = me.shippingAddress ?: ""
+                val phone = me.phone ?: ""
+                if (address.isNotBlank()) etStreet.setText(address)
+                if (phone.isNotBlank()) etPhoneDelivery.setText(phone)
+            } catch (_: Exception) {}
+        }
+    }
+
+    private fun saveAddress() {
+        if (!isDeliveryFormValid()) {
+            Toast.makeText(requireContext(), "Complete la dirección y teléfono", Toast.LENGTH_LONG).show()
+            validateDeliveryForm()
+            return
+        }
+        AlertDialog.Builder(requireContext())
+            .setTitle("Guardar dirección")
+            .setMessage("¿Desea guardar esta dirección en su perfil?")
+            .setPositiveButton("Sí") { _, _ ->
+                val addr = buildAddressString()
+                val phone = etPhoneDelivery.text?.toString()?.trim()
+                android.util.Log.i("Checkout", "Guardar dirección -> addr='$addr' phone='$phone'")
+                setLoading(true)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    try {
+                        val members = RetrofitClient.createMembersServiceAuthenticated(requireContext())
+                        val body = com.example.myapplication.model.MemberEditAddressRequest(
+                            shippingAddress = addr,
+                            phone = phone.orEmpty()
+                        )
+                        val resp = withContext(Dispatchers.IO) { members.editAddress(body) }
+                        if (resp.isSuccessful) {
+                            Toast.makeText(requireContext(), "Dirección guardada", Toast.LENGTH_SHORT).show()
+                        } else {
+                            val errBody = resp.errorBody()?.string().orEmpty()
+                            if (resp.code() == 401 || resp.code() == 403) {
+                                throw Exception("JWT inválido o expirado")
+                            } else {
+                                throw Exception("Error ${resp.code()} en Members: ${errBody}")
+                            }
+                        }
+                        Toast.makeText(requireContext(), "Dirección guardada", Toast.LENGTH_SHORT).show()
+                    } catch (e: Exception) {
+                        Toast.makeText(requireContext(), "Error guardando dirección: ${NetworkError.message(e)}", Toast.LENGTH_LONG).show()
+                    } finally {
+                        setLoading(false)
+                    }
+                }
+            }
+            .setNegativeButton("No", null)
+            .show()
     }
 
     private fun formatCurrency(value: Double): String {
@@ -179,14 +298,18 @@ class CheckoutFragment : Fragment() {
     private fun setLoading(loading: Boolean) {
         val b = _binding ?: return
         b.progress.visibility = if (loading) View.VISIBLE else View.GONE
-        b.btnPay.isEnabled = !loading && b.layoutDeliveryOptions.visibility == View.GONE
-        b.btnFinish.isEnabled = !loading
+        b.btnPay.isEnabled = !loading && (!binding.rbDelivery.isChecked || isDeliveryFormValid())
     }
 
     private fun createPendingOrder() {
         val itemsMap = cartManager.getItems()
         if (itemsMap.isEmpty()) {
             Toast.makeText(requireContext(), "Carrito vacío", Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (binding.rbDelivery.isChecked && !isDeliveryFormValid()) {
+            Toast.makeText(requireContext(), "Complete la dirección y teléfono", Toast.LENGTH_LONG).show()
+            validateDeliveryForm()
             return
         }
         val items = itemsMap.entries.map { CreateOrderItem(it.key, it.value) }
@@ -210,6 +333,14 @@ class CheckoutFragment : Fragment() {
                 val uid = tm.getUserId()
                 val orderService = RetrofitClient.createOrderService(requireContext())
                 val backendCartId = cartManager.getBackendCartId()
+                if (binding.rbDelivery.isChecked) {
+                    val addr = buildAddressString()
+                    val phone = etPhoneDelivery.text?.toString()?.trim()
+                    try {
+                        val auth = RetrofitClient.createAuthServiceAuthenticated(requireContext())
+                        withContext(Dispatchers.IO) { auth.updateMe(UserUpdateRequest(null, null, null, null, null, null, null, null, addr, phone, null)) }
+                    } catch (_: Exception) {}
+                }
                 val order = if (backendCartId != null) {
                     val req = com.example.myapplication.model.CheckoutRequest(
                         cartId = backendCartId,

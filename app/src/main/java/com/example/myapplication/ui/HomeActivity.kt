@@ -24,6 +24,7 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, true)
+        window.setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN or android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         try {
             binding = ActivityHomeBinding.inflate(layoutInflater)
             setContentView(binding.root)
@@ -197,16 +198,28 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun replaceFragment(fragment: Fragment): Boolean {
-        supportFragmentManager.beginTransaction()
-            .setReorderingAllowed(true)
-            .replace(binding.fragmentContainer.id, fragment)
-            .commit()
-        configureToolbarForFragment(fragment)
-        configureFabForFragment(fragment)
-        return true
+        if (isFinishing || isDestroyed) return false
+        if (supportFragmentManager.isStateSaved) return false
+        hideKeyboard()
+        return try {
+            supportFragmentManager.beginTransaction()
+                .setReorderingAllowed(true)
+                .replace(binding.fragmentContainer.id, fragment)
+                .commit()
+            configureToolbarForFragment(fragment)
+            configureFabForFragment(fragment)
+            logMem("replaceFragment")
+            true
+        } catch (t: Throwable) {
+            android.util.Log.e("HomeActivity", "replaceFragment failed", t)
+            false
+        }
     }
 
     private fun switchToFragment(tag: String, supplier: () -> Fragment): Boolean {
+        if (isFinishing || isDestroyed) return false
+        if (supportFragmentManager.isStateSaved) return false
+        hideKeyboard()
         val fm = supportFragmentManager
         val containerId = binding.fragmentContainer.id
         val tx = fm.beginTransaction().setReorderingAllowed(true)
@@ -218,10 +231,16 @@ class HomeActivity : AppCompatActivity() {
         fm.fragments.forEach { f ->
             if (f.isAdded && f !== target) tx.hide(f)
         }
-        tx.show(target).commit()
-        configureToolbarForFragment(target)
-        configureFabForFragment(target)
-        return true
+        return try {
+            tx.show(target).commit()
+            configureToolbarForFragment(target)
+            configureFabForFragment(target)
+            logMem("switchToFragment:$tag")
+            true
+        } catch (t: Throwable) {
+            android.util.Log.e("HomeActivity", "switchToFragment failed", t)
+            false
+        }
     }
 
     private fun configureToolbarForFragment(fragment: Fragment) {
@@ -273,6 +292,22 @@ class HomeActivity : AppCompatActivity() {
         binding.toolbar.setNavigationOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
         }
+    }
+
+    private fun hideKeyboard() {
+        try {
+            val imm = getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+            val view = currentFocus ?: binding.root
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        } catch (_: Exception) {}
+    }
+
+    private fun logMem(source: String) {
+        val rt = Runtime.getRuntime()
+        val max = rt.maxMemory() / (1024 * 1024)
+        val total = rt.totalMemory() / (1024 * 1024)
+        val free = rt.freeMemory() / (1024 * 1024)
+        android.util.Log.i("HomeActivity", "$source mem MB max=$max total=$total free=$free")
     }
 
     fun showOverlayLoading() {

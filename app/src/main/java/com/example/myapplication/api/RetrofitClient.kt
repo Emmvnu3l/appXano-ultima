@@ -122,4 +122,10 @@ object RetrofitClient {
         return retrofit(ApiConfig.userBaseUrl, authenticated = true, tokenManager = tm)
             .create(GeoService::class.java)
     }
+
+    fun createMembersServiceAuthenticated(context: Context): MembersService {
+        val tm = TokenManager(context)
+        return retrofit("https://x8ki-letl-twmt.n7.xano.io/api:Az9iOmEB/", authenticated = true, tokenManager = tm)
+            .create(MembersService::class.java)
+    }
 }

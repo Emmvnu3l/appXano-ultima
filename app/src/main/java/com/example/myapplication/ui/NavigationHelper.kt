@@ -26,9 +26,17 @@ object NavigationHelper {
         val tm = com.example.myapplication.api.TokenManager(context)
         if (!tm.isAdmin()) return
         if (context is HomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, CreateCategoryFragment())
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainer, CreateCategoryFragment())
+                    .commit()
+            }
         } else {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("open_create_category", true)
@@ -51,15 +59,23 @@ object NavigationHelper {
                 }
                 it.setOnClickListener(null)
             }
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, CartFragment())
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, CartFragment())
+                    .commit()
+            }
         } else if (context is LimitedHomeActivity) {
             val toolbarCart = context.findViewById<android.view.View>(R.id.actionCart)
             toolbarCart?.visibility = android.view.View.GONE
@@ -74,15 +90,23 @@ object NavigationHelper {
                 }
                 it.setOnClickListener(null)
             }
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, CartFragment())
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, CartFragment())
+                    .commit()
+            }
         } else {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("open_products", true)
@@ -92,27 +116,43 @@ object NavigationHelper {
 
     fun openCheckout(context: Context) {
         if (context is HomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, CheckoutFragment())
-                .addToBackStack(null)
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, CheckoutFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
         } else if (context is LimitedHomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, CheckoutFragment())
-                .addToBackStack(null)
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, CheckoutFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
         } else {
             context.startActivity(Intent(context, CheckoutActivity::class.java))
         }
@@ -124,27 +164,43 @@ object NavigationHelper {
 
     fun openProductDetail(context: Context, product: com.example.myapplication.model.Product) {
         if (context is HomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, ProductDetailFragment.newInstance(product))
-                .addToBackStack(null)
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, ProductDetailFragment.newInstance(product))
+                    .addToBackStack(null)
+                    .commit()
+            }
         } else if (context is LimitedHomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, ProductDetailFragment.newInstance(product))
-                .addToBackStack(null)
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, ProductDetailFragment.newInstance(product))
+                    .addToBackStack(null)
+                    .commit()
+            }
         } else {
             val intent = Intent(context, ProductDetailActivity::class.java)
             intent.putExtra("product", product)
@@ -154,27 +210,43 @@ object NavigationHelper {
 
     fun openProfileDetails(context: Context) {
         if (context is HomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, ProfileDetailsFragment())
-                .addToBackStack(null)
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, ProfileDetailsFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
         } else if (context is LimitedHomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300,
-                    R.anim.fade_in_300,
-                    R.anim.fade_out_300
-                )
-                .replace(R.id.fragmentContainer, ProfileDetailsFragment())
-                .addToBackStack(null)
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .setCustomAnimations(
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300,
+                        R.anim.fade_in_300,
+                        R.anim.fade_out_300
+                    )
+                    .replace(R.id.fragmentContainer, ProfileDetailsFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
         } else {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("open_profile_details", true)
@@ -188,9 +260,17 @@ object NavigationHelper {
             val args = android.os.Bundle()
             if (limit != null) args.putInt("limit", limit)
             frag.arguments = args
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, frag)
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainer, frag)
+                    .commit()
+            }
         } else {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("open_orders", true)
@@ -201,9 +281,17 @@ object NavigationHelper {
 
     fun openUsers(context: Context) {
         if (context is HomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, UsersFragment())
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainer, UsersFragment())
+                    .commit()
+            }
         } else {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("open_users", true)
@@ -243,9 +331,17 @@ object NavigationHelper {
     }
     fun openEditProduct(context: Context, product: com.example.myapplication.model.Product) {
         if (context is HomeActivity) {
-            context.supportFragmentManager.beginTransaction()
-                .replace(R.id.fragmentContainer, EditProductFragment.newInstance(product))
-                .commit()
+            if (!context.isFinishing && !context.isDestroyed && !context.supportFragmentManager.isStateSaved) {
+                try {
+                    val imm = context.getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                    val view = context.currentFocus ?: context.findViewById(android.R.id.content)
+                    imm.hideSoftInputFromWindow(view.windowToken, 0)
+                } catch (_: Exception) {}
+                context.supportFragmentManager.beginTransaction()
+                    .setReorderingAllowed(true)
+                    .replace(R.id.fragmentContainer, EditProductFragment.newInstance(product))
+                    .commit()
+            }
         } else {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra("open_edit_product", true)
