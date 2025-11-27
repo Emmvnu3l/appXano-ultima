@@ -192,17 +192,10 @@ class UsersFragment : Fragment() {
                         cachedPage
                     } else {
                         val svcPrimary = RetrofitClient.createUserService(requireContext())
-                        val resp: Response<List<User>> = try {
-                            android.util.Log.d("UsersFragment", "Calling primary service: ${com.example.myapplication.api.ApiConfig.userBaseUrl}")
-                            svcPrimary.list(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
-                        } catch (e: Exception) {
-                            android.util.Log.e("UsersFragment", "Primary service failed", e)
-                            val isNotFound = (e is HttpException && e.code() == 404)
-                            if (isNotFound) {
-                                android.util.Log.d("UsersFragment", "404 on primary, trying fallback...")
-                                val svcAlt = RetrofitClient.createUserServiceAuth(requireContext())
-                                svcAlt.list(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
-                            } else throw e
+                        var resp: Response<List<User>> = svcPrimary.list(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
+                        if (!resp.isSuccessful && resp.code() == 404) {
+                            android.util.Log.d("UsersFragment", "404 on singular /user, trying plural /users...")
+                            resp = svcPrimary.listPlural(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
                         }
                         
                         if (!resp.isSuccessful) {

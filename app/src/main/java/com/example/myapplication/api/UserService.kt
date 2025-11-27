@@ -31,4 +31,13 @@ interface UserService {
 
     @PATCH("user/{id}")
     suspend fun update(@Path("id") id: Int, @Body request: UserUpdateRequest): User
+
+    @GET("users")
+    suspend fun listPlural(
+        @Query("page") page: Int?,
+        @Query("pageSize") pageSize: Int?,
+        @Query("blocked") blocked: Boolean? = null,
+        @Query("q") q: String? = null,
+        @Query("status") status: String? = null
+    ): Response<List<User>>
 }
