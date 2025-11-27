@@ -124,20 +124,11 @@ class ProductDetailActivity : AppCompatActivity() {
         }
 
         applyRoleUi(isAdmin)
-
-        binding.fabCart.setOnClickListener {
-            NavigationHelper.openCart(this)
-        }
-        binding.fabCart.alpha = 0f
-        binding.fabCart.scaleX = 0.9f
-        binding.fabCart.scaleY = 0.9f
-        binding.fabCart.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
     }
 
     private fun applyRoleUi(isAdmin: Boolean) {
         if (isAdmin) {
             binding.fabEdit.visibility = View.GONE
-            binding.fabCart.visibility = View.VISIBLE
             binding.btnEditFixed.visibility = View.VISIBLE
             binding.btnEditFixed.setOnClickListener {
                 val p = intent.getSerializableExtra("product") as? com.example.myapplication.model.Product
@@ -145,7 +136,6 @@ class ProductDetailActivity : AppCompatActivity() {
             }
         } else {
             binding.fabEdit.visibility = View.GONE
-            binding.fabCart.visibility = View.VISIBLE
             binding.btnEditFixed.visibility = View.GONE
         }
     }
