@@ -35,6 +35,7 @@ class UsersFragment : Fragment() {
     private var currentQuery: String? = null
     private var itemsPerPage: Int = 10
     private var totalUsers: Int? = null
+    private var lastLoadAt: Long = 0L
 
     private data class CacheEntry(var total: Int?, val pages: MutableMap<Int, List<User>>)
     private val pageCache: MutableMap<String, CacheEntry> = mutableMapOf()
@@ -51,6 +52,7 @@ class UsersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.root.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        styleUi()
         val tm = TokenManager(requireContext())
         val isAdmin = tm.isAdmin()
         if (!isAdmin) {
@@ -97,7 +99,7 @@ class UsersFragment : Fragment() {
                 val maxPage = kotlin.math.max(1, (total + itemsPerPage - 1) / itemsPerPage)
                 if (page < maxPage) fetch(page + 1, append = false)
             } else {
-                fetch(page + 1, append = false)
+                if (!endReached) fetch(page + 1, append = false)
             }
         }
         binding.btnGoPage.setOnClickListener {
@@ -126,27 +128,18 @@ class UsersFragment : Fragment() {
             }
         })
 
+        // filtros de nombre/email eliminados
+
         val prefs = requireContext().getSharedPreferences("users_prefs", android.content.Context.MODE_PRIVATE)
         itemsPerPage = prefs.getInt("pageSize", itemsPerPage)
         val savedPage = prefs.getInt("page", 1)
         binding.etSearch.setText(prefs.getString("search", "") ?: "")
-        binding.etNameFilter.setText(prefs.getString("name", "") ?: "")
-        binding.etEmailFilter.setText(prefs.getString("email", "") ?: "")
 
-        val statuses = listOf("", "active", "disconnected", "blocked")
-        val stAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, statuses)
-        stAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.spStatusFilter.adapter = stAdapter
-        val savedStatus = prefs.getString("status", "") ?: ""
-        binding.spStatusFilter.setSelection(statuses.indexOf(savedStatus).let { if (it >= 0) it else 0 })
+        // filtros por estado eliminados
 
-        binding.btnToggleFilters.setOnClickListener {
-            binding.filtersPanel.visibility = if (binding.filtersPanel.visibility == View.VISIBLE) View.GONE else View.VISIBLE
-        }
-        binding.btnApplyFilters.setOnClickListener {
-            savePrefs()
-            refresh()
-        }
+        binding.btnToggleFilters.visibility = View.GONE
+        binding.btnApplyFilters.visibility = View.GONE
+        binding.filtersPanel.visibility = View.GONE
 
         page = savedPage
         setupSearchAutocomplete()
@@ -192,10 +185,10 @@ class UsersFragment : Fragment() {
                         cachedPage
                     } else {
                         val svcPrimary = RetrofitClient.createUserService(requireContext())
-                        var resp: Response<List<User>> = svcPrimary.list(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
+                        var resp: Response<List<User>> = svcPrimary.list(targetPage, itemsPerPage, null, currentQuery, null)
                         if (!resp.isSuccessful && resp.code() == 404) {
                             android.util.Log.d("UsersFragment", "404 on singular /user, trying plural /users...")
-                            resp = svcPrimary.listPlural(targetPage, itemsPerPage, null, currentQuery, getStatusFilter())
+                            resp = svcPrimary.listPlural(targetPage, itemsPerPage, null, currentQuery, null)
                         }
                         
                         if (!resp.isSuccessful) {
@@ -208,7 +201,7 @@ class UsersFragment : Fragment() {
                         if (body.isEmpty()) {
                             val svc = RetrofitClient.createUserService(requireContext())
                             val offset = (targetPage - 1) * itemsPerPage
-                            val alt = svc.listOffsetLimit(offset, itemsPerPage, null, currentQuery, getStatusFilter())
+                            val alt = svc.listOffsetLimit(offset, itemsPerPage, null, currentQuery, null)
                             if (alt.isSuccessful) {
                                 body = alt.body() ?: emptyList()
                             } else {
@@ -226,10 +219,10 @@ class UsersFragment : Fragment() {
                     }
                 }
                 val maxPage = totalUsers?.let { kotlin.math.max(1, (it + itemsPerPage - 1) / itemsPerPage) }
-                if (maxPage != null && targetPage > maxPage) {
+                if (maxPage != null && targetPage >= maxPage) {
                     endReached = true
                 } else {
-                    endReached = list.isEmpty()
+                    endReached = list.size < itemsPerPage
                     page = targetPage
                 }
                 adapter.setData(list, append)
@@ -242,6 +235,7 @@ class UsersFragment : Fragment() {
                 }
                 updateRangeLabel()
                 savePrefs()
+                lastLoadAt = System.currentTimeMillis()
             } catch (e: Exception) {
                 android.util.Log.e("UsersFragment", "Error fetching users", e)
                 binding.state.tvError.visibility = View.VISIBLE
@@ -261,14 +255,12 @@ class UsersFragment : Fragment() {
     }
 
     private fun updateRangeLabel() {
-        val start = (page - 1) * itemsPerPage + 1
-        val end = ((page - 1) * itemsPerPage + adapter.itemCount).coerceAtLeast(start)
-        val total = totalUsers
-        binding.tvRange.text = if (total != null) "Mostrando ${start}-${end} de ${total} usuarios" else "Mostrando ${start}-${end}"
-        val maxPage = total?.let { kotlin.math.max(1, (it + itemsPerPage - 1) / itemsPerPage) } ?: 1
-        binding.tvPages.text = "Página ${page} de ${maxPage}"
+        val total = totalUsers ?: adapter.itemCount
+        val maxPage = computeMaxPage(total, itemsPerPage)
+        binding.tvRange.visibility = View.GONE
+        binding.tvPages.text = "${page}/${maxPage}"
         binding.btnPrev.isEnabled = page > 1
-        binding.btnNext.isEnabled = page < maxPage
+        binding.btnNext.isEnabled = if (totalUsers != null) page < maxPage else !endReached
     }
 
     private fun parseTotal(headers: okhttp3.Headers): Int? {
@@ -286,13 +278,7 @@ class UsersFragment : Fragment() {
 
     private fun buildEmptyMessage(): String {
         val q = currentQuery
-        val st = getStatusFilter()
-        return when {
-            !q.isNullOrBlank() && !st.isNullOrBlank() -> "Sin resultados para \"$q\" con estado $st"
-            !q.isNullOrBlank() -> "Sin resultados para \"$q\""
-            !st.isNullOrBlank() -> "Sin resultados con estado $st"
-            else -> "No hay usuarios que mostrar"
-        }
+        return if (!q.isNullOrBlank()) "Sin resultados para \"$q\"" else "No hay usuarios que mostrar"
     }
 
     private fun isOnline(): Boolean {
@@ -382,16 +368,10 @@ class UsersFragment : Fragment() {
             .putInt("page", page)
             .putInt("pageSize", itemsPerPage)
             .putString("search", binding.etSearch.text?.toString()?.trim())
-            .putString("name", binding.etNameFilter.text?.toString()?.trim())
-            .putString("email", binding.etEmailFilter.text?.toString()?.trim())
-            .putString("status", getStatusFilter() ?: "")
             .apply()
     }
 
-    private fun getStatusFilter(): String? {
-        val v = binding.spStatusFilter.selectedItem?.toString()?.trim()
-        return if (v.isNullOrEmpty()) null else v
-    }
+    // filtros eliminados
 
     private fun setupSearchAutocomplete() {
         val suggestions = mutableSetOf<String>()
@@ -407,8 +387,61 @@ class UsersFragment : Fragment() {
         binding.etSearch.threshold = 2
     }
 
+    private fun styleUi() {
+        try {
+            binding.etSearch.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14f)
+            binding.etSearch.setPadding(24, 16, 24, 16)
+            binding.etSearch.hint = "Buscar por nombre o email"
+            binding.etSearch.gravity = android.view.Gravity.CENTER
+            binding.etSearch.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun afterTextChanged(s: Editable?) {
+                    val empty = s.isNullOrEmpty()
+                    binding.etSearch.gravity = if (empty) android.view.Gravity.CENTER else android.view.Gravity.START or android.view.Gravity.CENTER_VERTICAL
+                }
+            })
+
+            binding.spPageSize.visibility = View.GONE
+            binding.etPage.visibility = View.GONE
+            binding.btnGoPage.visibility = View.GONE
+            binding.tvRange.visibility = View.GONE
+            binding.filtersPanel.visibility = View.GONE
+            binding.btnToggleFilters.visibility = View.GONE
+            binding.btnApplyFilters.visibility = View.GONE
+            binding.btnPrev.text = "\u2039"
+            binding.btnNext.text = "\u203A"
+            val dm = resources.displayMetrics
+            val w = (36 * dm.density).toInt()
+            binding.btnPrev.minWidth = 0
+            binding.btnNext.minWidth = 0
+            binding.btnPrev.width = w
+            binding.btnNext.width = w
+            binding.btnPrev.setPadding(0, (8 * dm.density).toInt(), 0, (8 * dm.density).toInt())
+            binding.btnNext.setPadding(0, (8 * dm.density).toInt(), 0, (8 * dm.density).toInt())
+        } catch (_: Exception) {}
+    }
+
+    // filtros eliminados
+
+    companion object {
+        fun computeMaxPage(total: Int, perPage: Int): Int {
+            if (perPage <= 0) return 1
+            return kotlin.math.max(1, (total + perPage - 1) / perPage)
+        }
+        // validaciones de filtros eliminadas
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!loading) {
+            val now = System.currentTimeMillis()
+            if (now - lastLoadAt > 1000) refresh()
+        }
     }
 }
