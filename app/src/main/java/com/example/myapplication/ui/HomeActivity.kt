@@ -42,23 +42,7 @@ class HomeActivity : AppCompatActivity() {
         }
         val tm = com.example.myapplication.api.TokenManager(this)
         val isAdmin = tm.isAdmin()
-
-        if (!isAdmin) {
-            // LÓGICA CORREGIDA:
-            // Solo ocultamos las opciones de GESTIÓN (Admin).
-            // Dejamos visible 'nav_orders' para que el usuario vea sus compras.
-            val menu = binding.navView.menu
-
-            // Nota: Si quieres que el usuario vea "Inicio" (Home), borra la siguiente línea también.
-            menu.removeItem(R.id.nav_home)
-
-            menu.removeItem(R.id.nav_manage_products)
-            menu.removeItem(R.id.nav_manage_categories)
-            menu.removeItem(R.id.nav_users)
-
-            // HEMOS ELIMINADO: menu.removeItem(R.id.nav_orders)
-            // Ahora los pedidos son visibles para todos.
-        }
+        updateMenuForRole(isAdmin)
 
         // Configurar Toolbar + Drawer toggle
         setSupportActionBar(binding.toolbar)
@@ -244,6 +228,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun configureToolbarForFragment(fragment: Fragment) {
+        updateMenuForRole(com.example.myapplication.api.TokenManager(this).isAdmin())
         val childScreen = fragment is CreateCategoryFragment || fragment is AddProductFragment || fragment is EditProductFragment
         if (childScreen) {
             toggle.isDrawerIndicatorEnabled = false
@@ -322,20 +307,12 @@ class HomeActivity : AppCompatActivity() {
 
     private fun configureFabForFragment(fragment: Fragment) {
         val fab = binding.fabProfile
+        clearFabBindings()
         when (fragment) {
             is ProfileFragment -> {
                 fab.visibility = View.VISIBLE
                 fab.setImageResource(R.drawable.ic_user)
                 fab.contentDescription = "Abrir perfil"
-                val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
-                badge?.isVisible = false
-                val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
-                if (listener != null) {
-                    try {
-                        val cm = CartManager(this)
-                        cm.unregisterListener(listener)
-                    } catch (_: Exception) {}
-                }
                 fab.setOnClickListener { NavigationHelper.openProfileDetails(this) }
                 fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(200).start()
             }
@@ -355,8 +332,36 @@ class HomeActivity : AppCompatActivity() {
             }
             else -> {
                 fab.visibility = View.GONE
+                fab.setOnClickListener(null)
             }
         }
+    }
+
+    private fun clearFabBindings() {
+        val fab = binding.fabProfile
+        val badge = fab.getTag(R.id.tag_cart_badge) as? com.google.android.material.badge.BadgeDrawable
+        badge?.isVisible = false
+        val listener = fab.getTag(R.id.tag_cart_prefs_listener) as? android.content.SharedPreferences.OnSharedPreferenceChangeListener
+        if (listener != null) {
+            try {
+                val cm = CartManager(this)
+                cm.unregisterListener(listener)
+            } catch (_: Exception) {}
+            fab.setTag(R.id.tag_cart_prefs_listener, null)
+        }
+    }
+
+    private fun updateMenuForRole(isAdmin: Boolean) {
+        val menu = binding.navView.menu
+        fun setVisible(id: Int, visible: Boolean) { menu.findItem(id)?.isVisible = visible }
+        // Elementos de administración
+        setVisible(R.id.nav_manage_products, isAdmin)
+        setVisible(R.id.nav_manage_categories, isAdmin)
+        setVisible(R.id.nav_users, isAdmin)
+        // Home opcional sólo para admin
+        setVisible(R.id.nav_home, isAdmin)
+        // Órdenes visibles para todos
+        setVisible(R.id.nav_orders, true)
     }
     companion object {
         fun fabModeForFragment(fragment: Fragment): String {
