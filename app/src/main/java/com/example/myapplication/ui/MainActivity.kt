@@ -42,7 +42,22 @@ class MainActivity : AppCompatActivity() {
 
         tokenManager = TokenManager(this)
         if (tokenManager.isLoggedIn()) {
-            navigateToHome()
+            lifecycleScope.launch {
+                try {
+                    val me = withContext(Dispatchers.IO) { RetrofitClient.createAuthServiceAuthenticated(this@MainActivity).me() }
+                    val st = me.status?.lowercase()?.trim()
+                    if (st == "blocked") {
+                        Toast.makeText(this@MainActivity, "Tu cuenta ha sido suspendida. Contacta a un administrador.", Toast.LENGTH_LONG).show()
+                        tokenManager.clear()
+                    } else {
+                        navigateToHome()
+                        return@launch
+                    }
+                } catch (_: Exception) {
+                    navigateToHome()
+                    return@launch
+                }
+            }
             return
         }
 
@@ -96,6 +111,18 @@ class MainActivity : AppCompatActivity() {
                             me.id,
                             me.role
                         )
+                        val st = me.status?.lowercase()?.trim()
+                        if (st == "blocked") {
+                            Toast.makeText(this@MainActivity, "Tu cuenta ha sido suspendida. Contacta a un administrador.", Toast.LENGTH_LONG).show()
+                            tokenManager.clear()
+                            return@launch
+                        }
+                        try {
+                            withContext(Dispatchers.IO) {
+                                RetrofitClient.createMembersServiceAuthenticated(this@MainActivity)
+                                    .updateStatus(mapOf("status" to "active"))
+                            }
+                        } catch (_: Exception) {}
                     } catch (_: Exception) {
                         // Si falla, continuamos con lo que tenemos
                     }
