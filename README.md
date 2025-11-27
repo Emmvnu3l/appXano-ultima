@@ -1,7 +1,7 @@
 # Proyecto E-commerce Android (Kotlin + Xano)
 
 <p align="center">
-  <img src="docs/images/favicon.png" alt="fav" width="30" />
+  <img src="docs/images/favicon.png" alt="fav" width="120" />
 </p>
 
 ## Descripción
@@ -41,7 +41,7 @@ Aplicación nativa de e‑commerce para Android desarrollada en Kotlin, con back
   </tr>
   <tr>
     <td align="center">
-      <img src="docs/images/chekout.jppg" alt="Checkout" width="280" />
+      <img src="docs/images/chekout.jpg" alt="Checkout" width="280" />
       <br /><sub>Checkout</sub>
     </td>
     <td align="center">
