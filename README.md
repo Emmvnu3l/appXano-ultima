@@ -1,6 +1,45 @@
 # Proyecto E-commerce Android (Kotlin + Xano)
 
-Este proyecto es una aplicación de comercio electrónico nativa para Android escrita en Kotlin, que utiliza Xano como backend NoSQL.
+<p align="center">
+  <img src="docs/images/favicon.png" alt="Vista previa del proyecto" width="900" />
+</p>
+
+## Descripción
+
+Aplicación nativa de e‑commerce para Android desarrollada en Kotlin, con backend REST en Xano. Ofrece autenticación segura, catálogo de productos, gestión de usuarios y flujo de compra. La configuración de endpoints se gestiona mediante `BuildConfig` y variables definidas en `app/build.gradle.kts`, asegurando despliegues consistentes por ambiente.
+
+## Capturas
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="docs/images/login.jpg" alt="Login" width="280" />
+      <br /><sub>Login</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/catalogo.jpg" alt="Catálogo" width="280" />
+      <br /><sub>Catálogo</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/detalle_producto.jpg" alt="Detalle de Producto" width="280" />
+      <br /><sub>Detalle de producto</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="docs/images/checkout.jppg" alt="Checkout" width="280" />
+      <br /><sub>Checkout</sub>
+    </td>
+    <td align="center">
+      <img src="docs/images/perfil.jpg" alt="Perfil" width="280" />
+      <br /><sub>Perfil</sub>
+    </td>
+      <td align="center">
+      <img src="docs/images/detalle_orden.jpg" alt="Detalle de Orden" width="280" />
+      <br /><sub>Detalle de orden</sub>
+    </td>
+  </tr>
+</table>
 
 ## 1. Pasos de Configuración
 
