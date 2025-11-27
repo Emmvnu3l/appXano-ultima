@@ -73,13 +73,7 @@ class RegisterActivity : AppCompatActivity() {
         val request = SignupRequest(
             name = name,
             email = email,
-            password = password,
-            first_name = null,
-            last_name = null,
-            role = null,
-            status = null,
-            shipping_address = null,
-            phone = null
+            password = password
         )
 
         setLoading(true)
@@ -99,11 +93,21 @@ class RegisterActivity : AppCompatActivity() {
                         response.user?.id,
                         response.user?.role
                     )
+                    try {
+                        withContext(Dispatchers.IO) {
+                            com.example.myapplication.api.RetrofitClient.createMembersServiceAuthenticated(this@RegisterActivity)
+                                .updateStatus(mapOf("status" to "active"))
+                        }
+                    } catch (_: Exception) {}
                     Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_success), Toast.LENGTH_SHORT).show()
                     finish()
                 }
             } catch (e: Exception) {
-                Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_failed, e.message ?: ""), Toast.LENGTH_LONG).show()
+                val msg = when (e) {
+                    is java.net.UnknownHostException -> "No se pudo resolver el host (verifique conexión y DNS)"
+                    else -> e.message ?: ""
+                }
+                Toast.makeText(this@RegisterActivity, getString(R.string.msg_register_failed, msg), Toast.LENGTH_LONG).show()
             } finally {
                 setLoading(false)
             }
