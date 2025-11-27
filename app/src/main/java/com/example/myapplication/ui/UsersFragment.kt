@@ -133,7 +133,7 @@ class UsersFragment : Fragment() {
         binding.etNameFilter.setText(prefs.getString("name", "") ?: "")
         binding.etEmailFilter.setText(prefs.getString("email", "") ?: "")
 
-        val statuses = listOf("", "active", "inactive")
+        val statuses = listOf("", "active", "disconnected", "blocked")
         val stAdapter = android.widget.ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, statuses)
         stAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spStatusFilter.adapter = stAdapter
@@ -308,7 +308,7 @@ class UsersFragment : Fragment() {
             .setTitle("Confirmar")
             .setMessage("¿Deseas ${text} a ${u.name}?")
             .setPositiveButton("Sí") { _, _ -> toggleBlocked(u, checked) }
-            .setNegativeButton("No", null)
+            .setNegativeButton("No") { _, _ -> adapter.setBlocked(u.id, u.blocked) }
             .show()
     }
 
@@ -316,21 +316,30 @@ class UsersFragment : Fragment() {
         setLoading(true)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val service = RetrofitClient.createUserService(requireContext())
-                withContext(Dispatchers.IO) {
-                    service.update(u.id, com.example.myapplication.model.UserUpdateRequest(
-                        name = null,
-                        email = null,
-                        avatar = null,
-                        blocked = checked
+                android.util.Log.d("UsersFragment", "toggle start user=${u.id} checked=$checked")
+                val status = if (checked) "blocked" else "unlocked"
+                val svc = com.example.myapplication.api.RetrofitClient.createMembersServiceAuthenticated(requireContext())
+                val resp = withContext(Dispatchers.IO) {
+                    svc.updateUserStatus(mapOf(
+                        "user_id" to u.id,
+                        "status" to status
                     ))
                 }
+                if (!resp.isSuccessful) {
+                    val msg = resp.errorBody()?.string() ?: "Error"
+                    throw retrofit2.HttpException(retrofit2.Response.error<okhttp3.ResponseBody>(resp.code(), okhttp3.ResponseBody.create(null, msg)))
+                }
+                android.util.Log.d("UsersFragment", "toggle success user=${u.id} status=$status")
+                adapter.setBlocked(u.id, checked)
+                android.widget.Toast.makeText(requireContext(), "Estado actualizado", android.widget.Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 binding.state.tvError.visibility = View.VISIBLE
                 binding.state.tvError.text = com.example.myapplication.api.NetworkError.message(e)
+                android.util.Log.e("UsersFragment", "toggle error", e)
+                adapter.setBlocked(u.id, u.blocked)
             } finally {
                 setLoading(false)
-                refresh()
+                // Evitar flicker: dejamos actualización optimista y recarga manual por el usuario
             }
         }
     }
