@@ -61,7 +61,7 @@ class UsersFragment : Fragment() {
         }
 
         adapter = UsersAdapter(
-            onToggleBlocked = { u, checked -> confirmBlockToggle(u, checked) },
+            onChangeStatus = { u, status -> confirmChangeStatus(u, status) },
             onEdit = { showEditDialog(it) },
             onView = { showDetail(it) }
         )
@@ -302,40 +302,39 @@ class UsersFragment : Fragment() {
         return caps.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
     }
 
-    private fun confirmBlockToggle(u: User, checked: Boolean) {
-        val text = if (checked) "bloquear" else "desbloquear"
+    private fun confirmChangeStatus(u: User, status: String) {
+        val text = if (status == "blocked") "bloquear" else "desbloquear"
         AlertDialog.Builder(requireContext())
             .setTitle("Confirmar")
             .setMessage("¿Deseas ${text} a ${u.name}?")
-            .setPositiveButton("Sí") { _, _ -> toggleBlocked(u, checked) }
-            .setNegativeButton("No") { _, _ -> adapter.setBlocked(u.id, u.blocked) }
+            .setPositiveButton("Sí") { _, _ -> changeStatus(u, status) }
+            .setNegativeButton("No", null)
             .show()
     }
 
-    private fun toggleBlocked(u: User, checked: Boolean) {
+    private fun changeStatus(u: User, status: String) {
         setLoading(true)
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                android.util.Log.d("UsersFragment", "toggle start user=${u.id} checked=$checked")
-                val status = if (checked) "blocked" else "unlocked"
+                android.util.Log.d("UsersFragment", "status change start user=${u.id} -> $status")
                 val svc = com.example.myapplication.api.RetrofitClient.createMembersServiceAuthenticated(requireContext())
                 val resp = withContext(Dispatchers.IO) {
-                    svc.updateUserStatus(mapOf(
-                        "user_id" to u.id,
-                        "status" to status
+                    svc.updateUserStatus(com.example.myapplication.api.UpdateUserStatusRequest(
+                        user_id = u.id,
+                        status = status
                     ))
                 }
                 if (!resp.isSuccessful) {
                     val msg = resp.errorBody()?.string() ?: "Error"
                     throw retrofit2.HttpException(retrofit2.Response.error<okhttp3.ResponseBody>(resp.code(), okhttp3.ResponseBody.create(null, msg)))
                 }
-                android.util.Log.d("UsersFragment", "toggle success user=${u.id} status=$status")
-                adapter.setBlocked(u.id, checked)
+                android.util.Log.d("UsersFragment", "status change success user=${u.id} status=$status")
+                adapter.setBlocked(u.id, status == "blocked")
                 android.widget.Toast.makeText(requireContext(), "Estado actualizado", android.widget.Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 binding.state.tvError.visibility = View.VISIBLE
                 binding.state.tvError.text = com.example.myapplication.api.NetworkError.message(e)
-                android.util.Log.e("UsersFragment", "toggle error", e)
+                android.util.Log.e("UsersFragment", "status change error", e)
                 adapter.setBlocked(u.id, u.blocked)
             } finally {
                 setLoading(false)

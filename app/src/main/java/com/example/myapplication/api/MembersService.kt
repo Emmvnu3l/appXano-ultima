@@ -6,6 +6,11 @@ import retrofit2.http.Body
 import retrofit2.http.Headers
 import retrofit2.http.PATCH
 
+data class UpdateUserStatusRequest(
+    val user_id: Int,
+    val status: String
+)
+
 interface MembersService {
     @Headers("Content-Type: application/json")
     @PATCH("user/edit_address")
@@ -22,6 +27,6 @@ interface MembersService {
     @Headers("Content-Type: application/json")
     @retrofit2.http.POST("update_user_status")
     suspend fun updateUserStatus(
-        @Body body: Map<String, Any>
+        @Body body: UpdateUserStatusRequest
     ): Response<ResponseBody>
 }
