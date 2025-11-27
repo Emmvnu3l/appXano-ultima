@@ -104,3 +104,24 @@ Las imágenes de los productos y avatares se almacenan directamente en **Xano**.
 - **Subida**: Se utiliza el endpoint `POST /upload/image` (definido en `UploadService`).
 - **Formato**: Las imágenes se envían como `multipart/form-data`.
 - **Respuesta**: Xano devuelve un objeto con la URL pública de la imagen, que luego se guarda en el registro del producto o usuario.
+
+## Lógica de Usuarios Bloqueados
+
+- Estados del usuario: el backend expone `status` (`active`, `inactive`, `disconnected`, `blocked`) y un flag `blocked` que puede reflejar el estado real (`app/src/main/java/com/example/myapplication/model/User.kt:12-16`).
+- Bloqueo en inicio de sesión: si el usuario autenticado tiene `status = "blocked"`, se limpia el token y no se permite el ingreso (`app/src/main/java/com/example/myapplication/ui/MainActivity.kt:47-55`, `app/src/main/java/com/example/myapplication/ui/MainActivity.kt:114-119`).
+- Administración del bloqueo: un administrador puede cambiar el estado del usuario a `blocked`/`active` desde la lista de usuarios; se llama al endpoint de miembros y se actualiza la UI de forma optimista (`app/src/main/java/com/example/myapplication/ui/UsersFragment.kt:301-318`, `app/src/main/java/com/example/myapplication/ui/UsersAdapter.kt:69-75`, `app/src/main/java/com/example/myapplication/ui/UsersAdapter.kt:81-88`).
+- Listado y filtros: el servicio soporta filtros por `blocked` y `status` para paginar/buscar usuarios (`app/src/main/java/com/example/myapplication/api/UserService.kt:13-30`).
+
+## Lógica de Órdenes
+
+- Creación en checkout: la orden se crea al finalizar el checkout usando `CheckoutRequest`; el estado inicial actual en código es `pendiente` (`app/src/main/java/com/example/myapplication/model/CreateOrderRequest.kt:18-21`) y puede transicionar a `en_proceso`/`completada`/`cancelada` vía acciones de administrador (`app/src/main/java/com/example/myapplication/ui/OrdersAdapter.kt:103-118`, `app/src/main/java/com/example/myapplication/ui/OrdersAdapter.kt:128-135`).
+- Visualización inicial: el usuario ve sus órdenes en la lista; el detalle se enriquece cuando la orden deja de estar `pendiente` (se muestra “Boleta” e importes con IVA) (`app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:374-394`).
+- Historial de estados: cada cambio de estado agrega un registro con timestamp, responsable y comentario opcional; se guarda localmente y se muestra en el diálogo de detalles (`app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:124-131`, `app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:499-509`, `app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:512-518`).
+- Restricciones por rol: clientes solo ven sus propias órdenes; admins pueden filtrar, ordenar y aplicar cambios masivos de estado (`app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:85-93`, `app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:213-217`, `app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:453-477`).
+- Estados soportados: `pendiente`, `confirmada`, `en_proceso`, `enviado`, `aceptado`, `rechazado`, `completada`, `cancelada` (`app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:154-159`).
+
+## Otra lógica relevante
+
+- Generación de “Boleta”: cálculo de subtotal e IVA (19%) y presentación cuando la orden no está `pendiente` (`app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:374-394`).
+- Acciones contextuales: los botones disponibles dependen del estado actual de la orden; por ejemplo, `pendiente → en_proceso`, `en_proceso → completada`, y cancelación permitida en `pendiente`/`en_proceso` (`app/src/main/java/com/example/myapplication/ui/OrdersAdapter.kt:128-135`).
+- Auditoría de cancelación: al cancelar se registra motivo, admin y timestamp, y se añade al historial (`app/src/main/java/com/example/myapplication/ui/OrdersFragment.kt:417-446`).
