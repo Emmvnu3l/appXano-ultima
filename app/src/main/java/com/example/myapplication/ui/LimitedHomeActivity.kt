@@ -46,6 +46,12 @@ class LimitedHomeActivity : AppCompatActivity() {
         )
         binding.drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
+        try {
+            val header = binding.navView.getHeaderView(0)
+            val tv = header.findViewById<android.widget.TextView>(R.id.tvHeaderSubtitle)
+            val name = com.example.myapplication.api.TokenManager(this).getName()
+            tv?.text = if (!name.isNullOrBlank()) "Bienvenido ${name}" else "Bienvenido"
+        } catch (_: Exception) {}
 
         binding.toolbar.findViewById<View>(R.id.actionCart)?.setOnClickListener {
             NavigationHelper.openCart(this)
