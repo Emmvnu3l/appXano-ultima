@@ -12,7 +12,7 @@ import com.example.myapplication.R
 import com.example.myapplication.model.User
 
 class UsersAdapter(
-    private val onToggleBlocked: (User, Boolean) -> Unit,
+    private val onChangeStatus: (User, String) -> Unit,
     private val onEdit: (User) -> Unit,
     private val onView: (User) -> Unit
 ) : RecyclerView.Adapter<UsersAdapter.VH>() {
@@ -56,7 +56,7 @@ class UsersAdapter(
         private val name: TextView = itemView.findViewById(R.id.tvName)
         private val email: TextView = itemView.findViewById(R.id.tvEmail)
         private val created: TextView = itemView.findViewById(R.id.tvCreated)
-        private val swBlocked: Switch = itemView.findViewById(R.id.swBlocked)
+        private val btnToggleStatus: Button = itemView.findViewById(R.id.btnToggleStatus)
         private val btnEdit: Button = itemView.findViewById(R.id.btnEdit)
         private val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
         private var suppress = false
@@ -67,11 +67,12 @@ class UsersAdapter(
             val createdText = u.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd").format(java.util.Date(it)) } ?: ""
             created.text = createdText
             val (isBlocked, label) = UsersAdapter.computeStatus(u)
-            suppress = true
-            swBlocked.isChecked = isBlocked
-            suppress = false
             tvStatus.text = label
-            swBlocked.setOnCheckedChangeListener { _, checked -> if (!suppress) onToggleBlocked(u, checked) }
+            btnToggleStatus.text = if (isBlocked) "Desbloquear" else "Bloquear"
+            btnToggleStatus.setOnClickListener {
+                val next = if (isBlocked) "active" else "blocked"
+                onChangeStatus(u, next)
+            }
             btnEdit.setOnClickListener { onEdit(u) }
             itemView.setOnClickListener { onView(u) }
         }

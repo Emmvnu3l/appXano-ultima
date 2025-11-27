@@ -22,11 +22,11 @@ El proyecto ya está configurado para apuntar a las siguientes instancias de Xan
 
 Las URLs base están definidas en `app/build.gradle.kts` y expuestas vía `BuildConfig`.
 
-| Servicio | Variable | URL Base |
-| :--- | :--- | :--- |
-| **Autenticación** | `AUTH_BASE_URL` | `https://x8ki-letl-twmt.n7.xano.io/api:QGdanllI/` |
-| **Tienda (Productos/Ordenes)** | `STORE_BASE_URL` | `https://x8ki-letl-twmt.n7.xano.io/api:3BVxr_UT/` |
-| **Usuarios** | `USER_BASE_URL` | `https://x8ki-letl-twmt.n7.xano.io/api:xfq7gh7l/` |
+| Servicio | Variable | URL Base | Swagger |
+| :--- | :--- | :--- | :--- |
+| **Authentication** | `AUTH_BASE_URL` | `https://x8ki-letl-twmt.n7.xano.io/api:E0E2xd7q/` | `https://x8ki-letl-twmt.n7.xano.io/api:E0E2xd7q` |
+| **Ecommerce API** | `STORE_BASE_URL` | `https://x8ki-letl-twmt.n7.xano.io/api:-51vSSC_/` | `https://x8ki-letl-twmt.n7.xano.io/api:-51vSSC_` |
+| **Members & Accounts** | `USER_BASE_URL` | `https://x8ki-letl-twmt.n7.xano.io/api:Az9iOmEB/` | `https://x8ki-letl-twmt.n7.xano.io/api:Az9iOmEB?token=PUiLFcwB9eZUepGZFzUyY7O3MAs` |
 
 > **Nota**: El endpoint de usuarios (`/user`) requiere un token de autenticación válido obtenido a través del servicio de Autenticación.
 
