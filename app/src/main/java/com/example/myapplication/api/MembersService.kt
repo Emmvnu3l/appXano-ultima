@@ -18,4 +18,10 @@ interface MembersService {
     suspend fun updateStatus(
         @Body body: Map<String, String>
     ): Response<ResponseBody>
+
+    @Headers("Content-Type: application/json")
+    @retrofit2.http.POST("update_user_status")
+    suspend fun updateUserStatus(
+        @Body body: Map<String, Any>
+    ): Response<ResponseBody>
 }

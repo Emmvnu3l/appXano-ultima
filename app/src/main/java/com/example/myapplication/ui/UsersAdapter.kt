@@ -18,6 +18,22 @@ class UsersAdapter(
 ) : RecyclerView.Adapter<UsersAdapter.VH>() {
     private val items: MutableList<User> = mutableListOf()
 
+    companion object {
+        fun computeStatus(u: com.example.myapplication.model.User): Pair<Boolean, String> {
+            val raw = (u.status ?: "").lowercase().trim()
+            val isBlocked = raw == "blocked" || u.blocked
+            val label = if (isBlocked) "bloqueado" else when (raw) {
+                "disconnected" -> "desconectado"
+                "inactive" -> "inactivo"
+                "active" -> "activo"
+                "unlocked" -> "activo"
+                else -> raw.ifEmpty { "activo" }
+            }
+            android.util.Log.d("UsersAdapter", "bind user=${u.id} status=${u.status} blocked=${u.blocked} -> isBlocked=$isBlocked label=$label")
+            return isBlocked to label
+        }
+    }
+
     fun setData(list: List<User>, append: Boolean) {
         if (!append) items.clear()
         items.addAll(list)
@@ -42,17 +58,31 @@ class UsersAdapter(
         private val created: TextView = itemView.findViewById(R.id.tvCreated)
         private val swBlocked: Switch = itemView.findViewById(R.id.swBlocked)
         private val btnEdit: Button = itemView.findViewById(R.id.btnEdit)
+        private val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
+        private var suppress = false
 
         fun bind(u: User) {
-            // avatar: placeholder
             name.text = u.name
             email.text = u.email
             val createdText = u.createdAt?.let { java.text.SimpleDateFormat("yyyy-MM-dd").format(java.util.Date(it)) } ?: ""
             created.text = createdText
-            swBlocked.isChecked = u.blocked
-            swBlocked.setOnCheckedChangeListener { _, checked -> onToggleBlocked(u, checked) }
+            val (isBlocked, label) = UsersAdapter.computeStatus(u)
+            suppress = true
+            swBlocked.isChecked = isBlocked
+            suppress = false
+            tvStatus.text = label
+            swBlocked.setOnCheckedChangeListener { _, checked -> if (!suppress) onToggleBlocked(u, checked) }
             btnEdit.setOnClickListener { onEdit(u) }
             itemView.setOnClickListener { onView(u) }
+        }
+    }
+
+    fun setBlocked(userId: Int, blocked: Boolean) {
+        val idx = items.indexOfFirst { it.id == userId }
+        if (idx >= 0) {
+            val newStatus = if (blocked) "blocked" else "active"
+            items[idx] = items[idx].copy(blocked = blocked, status = newStatus)
+            notifyItemChanged(idx)
         }
     }
 }
