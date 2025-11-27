@@ -14,20 +14,15 @@ class PurchaseSuccessFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.findViewById<View>(R.id.btnClose).setOnClickListener {
-            val act = requireActivity()
-            if (act is HomeActivity) {
-                act.supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(
-                        R.anim.fade_in_300,
-                        R.anim.fade_out_300,
-                        R.anim.fade_in_300,
-                        R.anim.fade_out_300
-                    )
-                    .replace(R.id.fragmentContainer, HomeFragment())
-                    .commit()
-            } else {
-                act.finish()
-            }
+            parentFragmentManager.beginTransaction()
+                .setCustomAnimations(
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300,
+                    R.anim.fade_in_300,
+                    R.anim.fade_out_300
+                )
+                .replace(R.id.fragmentContainer, ProductsFragment.newInstance(null))
+                .commit()
         }
     }
 }
