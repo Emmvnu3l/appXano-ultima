@@ -7,8 +7,13 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.myapplication.R
 import com.example.myapplication.api.TokenManager
+import com.example.myapplication.api.RetrofitClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.example.myapplication.databinding.ActivityLogoutBinding
 
 class LogoutActivity : AppCompatActivity() {
@@ -67,11 +72,19 @@ class LogoutActivity : AppCompatActivity() {
         // Botón centrado para cerrar sesión
         binding.btnLogout.setOnClickListener {
             val tm = TokenManager(this)
-            tm.clear()
-            val intent = Intent(this, MainActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
+            lifecycleScope.launch {
+                try {
+                    withContext(Dispatchers.IO) {
+                        RetrofitClient.createMembersServiceAuthenticated(this@LogoutActivity)
+                            .updateStatus(mapOf("status" to "disconnected"))
+                    }
+                } catch (_: Exception) {}
+                tm.clear()
+                val intent = Intent(this@LogoutActivity, MainActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
+            }
         }
     }
 
